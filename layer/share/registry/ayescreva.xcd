@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  AY ESCREVA - camada de configuração da distribuição.
+  Carregada depois dos arquivos .xcd da base (veja <dependency>), no mesmo nível "share".
+  oor:finalized="true" impede que o perfil do usuário altere a política.
+  SPDX-License-Identifier: MPL-2.0
+-->
+<oor:data xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oor="http://openoffice.org/2001/registry">
+  <dependency file="main"/>
+  <dependency file="writer"/>
+
+  <!-- Identidade do produto -->
+  <oor:component-data oor:package="org.openoffice" oor:name="Setup">
+    <node oor:name="Product">
+      <prop oor:name="ooName"><value>AY ESCREVA</value></prop>
+      <prop oor:name="ooVendor"><value>Projeto AY ESCREVA</value></prop>
+      <prop oor:name="WhatsNew"><value>false</value></prop>
+      <prop oor:name="WhatsNewDialog"><value>false</value></prop>
+    </node>
+    <node oor:name="L10N">
+      <prop oor:name="ooLocale"><value>pt-BR</value></prop>
+    </node>
+  </oor:component-data>
+
+  <!-- Segurança: macros de documentos nunca são executadas e recursos externos não são carregados sem autorização.
+       Nível 3 ("muito alto") só permite macros de locais confiáveis; a lista de locais confiáveis fica vazia e travada.
+       (DisableMacrosExecution=true teria o mesmo efeito, mas exibe o aviso "Macros desativadas" em todo documento,
+       mesmo sem macros; com o nível 3 o aviso só aparece quando o documento realmente contém macros.) -->
+  <oor:component-data oor:package="org.openoffice.Office" oor:name="Common">
+    <node oor:name="Security">
+      <node oor:name="Scripting">
+        <prop oor:name="MacroSecurityLevel" oor:finalized="true"><value>3</value></prop>
+        <prop oor:name="SecureURL" oor:finalized="true"><value/></prop>
+        <prop oor:name="BlockUntrustedRefererLinks" oor:finalized="true"><value>true</value></prop>
+      </node>
+    </node>
+    <node oor:name="Misc">
+      <!-- Relatórios de falha da base seriam enviados à The Document Foundation: desativado. -->
+      <prop oor:name="CrashReport" oor:finalized="true"><value>false</value></prop>
+      <prop oor:name="ShowTipOfTheDay"><value>false</value></prop>
+      <prop oor:name="ShowDonation" oor:finalized="true"><value>false</value></prop>
+    </node>
+    <node oor:name="Filter">
+      <node oor:name="Microsoft">
+        <node oor:name="Export">
+          <!-- O "realce" do AY vira realce do Word (w:highlight), não sombreamento -->
+          <prop oor:name="CharBackgroundToHighlighting"><value>true</value></prop>
+        </node>
+      </node>
+    </node>
+    <node oor:name="Save">
+      <node oor:name="Document">
+        <!-- Avisa antes de salvar em formato que pode perder formatação (DOCX, DOC, RTF, TXT) -->
+        <prop oor:name="WarnAlienFormat"><value>true</value></prop>
+        <!-- Salvamento seguro: mantém cópia da versão anterior na pasta de backup do perfil -->
+        <prop oor:name="CreateBackup"><value>true</value></prop>
+      </node>
+    </node>
+  </oor:component-data>
+
+  <!-- Recuperação após falhas: informações de recuperação a cada 5 minutos -->
+  <oor:component-data oor:package="org.openoffice.Office" oor:name="Recovery">
+    <node oor:name="RecoveryInfo">
+      <prop oor:name="Enabled"><value>true</value></prop>
+    </node>
+    <node oor:name="AutoSave">
+      <prop oor:name="Enabled"><value>true</value></prop>
+      <prop oor:name="TimeIntervall"><value>5</value></prop>
+    </node>
+  </oor:component-data>
+
+  <!-- Barras de aviso que remetem a serviços online da base -->
+  <oor:component-data oor:package="org.openoffice.Office.UI" oor:name="Infobar">
+    <node oor:name="Enabled">
+      <prop oor:name="Donate" oor:finalized="true"><value>false</value></prop>
+      <prop oor:name="GetInvolved" oor:finalized="true"><value>false</value></prop>
+      <prop oor:name="WhatsNew" oor:finalized="true"><value>false</value></prop>
+    </node>
+  </oor:component-data>
+
+  <!-- Atualizações: a verificação da base fica desligada; o AY terá verificação própria e opcional -->
+  <oor:component-data oor:package="org.openoffice.Office" oor:name="Update">
+    <node oor:name="Update">
+      <prop oor:name="Enabled" oor:finalized="true"><value>false</value></prop>
+    </node>
+  </oor:component-data>
+
+  <!-- Idioma padrão dos documentos (ortografia, hifenização) -->
+  <oor:component-data oor:package="org.openoffice.Office" oor:name="Linguistic">
+    <node oor:name="General">
+      <prop oor:name="DefaultLocale"><value>pt-BR</value></prop>
+    </node>
+  </oor:component-data>
+
+  <!-- Writer: vínculos externos só são atualizados mediante pergunta ao usuário (1 = sob demanda) -->
+  <oor:component-data oor:package="org.openoffice.Office" oor:name="Writer">
+    <node oor:name="Content">
+      <node oor:name="Update">
+        <prop oor:name="Link"><value>1</value></prop>
+      </node>
+    </node>
+  </oor:component-data>
+
+  <!-- Interface por abas (faixa de opções) como padrão no Writer -->
+  <oor:component-data oor:package="org.openoffice.Office.UI" oor:name="ToolbarMode">
+    <prop oor:name="ActiveWriter"><value>notebookbar.ui</value></prop>
+    <node oor:name="Applications">
+      <node oor:name="Writer">
+        <!-- "Active" deve conter o CommandArg do modo (o arquivo .ui), não o nome do modo -->
+        <prop oor:name="Active"><value>notebookbar.ui</value></prop>
+      </node>
+    </node>
+  </oor:component-data>
+</oor:data>

@@ -1,0 +1,29 @@
+﻿AY ESCREVA - Licença e avisos
+
+O AY ESCREVA é gratuito. Não há mensalidade, período de avaliação, conta obrigatória
+ou bloqueio pago de ferramentas.
+
+1. Código do projeto AY ESCREVA
+   Lançador, camada de configuração, interface, identidade visual, scripts e testes:
+   Mozilla Public License 2.0 (MPL-2.0) - https://mozilla.org/MPL/2.0/
+
+2. Motor de documentos
+   O AY ESCREVA inclui, sem modificação de código, os binários oficiais do LibreOffice 26.8.1,
+   produzidos e assinados pela The Document Foundation, distribuídos sob a
+   Mozilla Public License 2.0, com partes sob a GNU LGPL v3 ou posterior, a Apache License 2.0
+   e outras licenças livres de componentes de terceiros. Os textos completos são instalados em
+   LICENSE.html, license.txt e NOTICE, e podem ser abertos em Ajuda > Licenças.
+   Código-fonte correspondente: https://download.documentfoundation.org/libreoffice/src/26.8.1/
+
+   "LibreOffice" é marca da The Document Foundation. O AY ESCREVA é um projeto independente,
+   não é produzido, endossado ou mantido pela The Document Foundation.
+
+3. Fontes tipográficas incluídas
+   Liberation, Carlito, Caladea, DejaVu, Noto, Rubik e outras, sob a SIL Open Font License
+   ou licenças compatíveis (veja LICENSE.html).
+
+4. Privacidade
+   Os documentos ficam no seu computador. O AY ESCREVA não envia conteúdo de documentos a
+   servidores, não executa macros de documentos e não carrega recursos externos sem autorização.
+
+O SOFTWARE É FORNECIDO "NO ESTADO EM QUE SE ENCONTRA", SEM GARANTIAS, NOS TERMOS DAS LICENÇAS ACIMA.

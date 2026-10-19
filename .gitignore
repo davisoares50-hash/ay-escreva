@@ -1,0 +1,13 @@
+# Artefatos gerados (reproduzíveis pelos scripts)
+_cache/
+dist/
+out/
+tools/node_modules/
+tests/output/
+*.pyc
+__pycache__/
+
+# Documentos de teste gerados (reproduzíveis por scripts/testar.ps1).
+# As variantes salvas pelo Word levam o nome do usuário do Office nos metadados: nunca versionar.
+tests/fixtures/word/
+tests/fixtures/*.docx

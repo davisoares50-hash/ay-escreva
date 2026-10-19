@@ -1,0 +1,31 @@
+{
+  "descricao": "Base fixada do motor de documentos do AY ESCREVA (binários oficiais, sem modificação de código).",
+  "produto": "LibreOffice",
+  "versao": "26.8.1",
+  "versaoCompleta": "26.8.1.1",
+  "buildid": "bf6ef2662401c7d6dce671ab4deb26ee0af3a7c1",
+  "plataforma": "win-x86_64",
+  "chavePGP": {
+    "fingerprint": "C2839ECAD9408FBE9531C3E9F434A1EFAFEEAEA3",
+    "uid": "LibreOffice Build Team (CODE SIGNING KEY) <build@documentfoundation.org>"
+  },
+  "authenticode": "CN=The Document Foundation, O=The Document Foundation, L=Berlin, S=Berlin, C=DE",
+  "arquivos": [
+    {
+      "nome": "LibreOffice_26.8.1_Win_x86-64.msi",
+      "url": "https://download.documentfoundation.org/libreoffice/stable/26.8.1/win/x86_64/LibreOffice_26.8.1_Win_x86-64.msi",
+      "sha256": "c6298b10cfa1748bcbedad94c62ce771e240e5021bfd6d7a967cd571b04b5312"
+    },
+    {
+      "nome": "LibreOffice_26.8.1_Win_x86-64_helppack_pt-BR.msi",
+      "url": "https://download.documentfoundation.org/libreoffice/stable/26.8.1/win/x86_64/LibreOffice_26.8.1_Win_x86-64_helppack_pt-BR.msi",
+      "sha256": "33777bd040fdd556653bf43d8aefec3dd7667ec81d107dde9ccd256ed12ba927"
+    }
+  ],
+  "codigoFonte": "https://download.documentfoundation.org/libreoffice/src/26.8.1/",
+  "repositorioFonte": "https://git.libreoffice.org/core (tag libreoffice-26.8.1.1)",
+  "idiomasInterface": ["pt-BR", "en-US"],
+  "dicionarios": ["pt-BR", "pt-PT", "en", "es"],
+  "removerExtensoes": ["nlpsolver", "wiki-publisher"],
+  "removerConfiguracoes": ["onlineupdate.xcd"]
+}
