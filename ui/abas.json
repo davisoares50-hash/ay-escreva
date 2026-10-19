@@ -1,382 +1,1938 @@
 {
-  "descricao": "Fonte única da faixa de opções do AY ESCREVA: abas na ordem do produto, grupos, funções, comando do motor, prioridade e critério de aceite. Usada para gerar a matriz (docs/MATRIZ-FUNCIONALIDADES.md), verificar comandos (tests/uno/comandos.py) e, na Etapa 3, gerar a interface por abas. Prioridades: P0 = Etapas 1-2; P1 = Etapa 3; P2 = Etapa 4; P3 = avaliar. comando=null indica lacuna sem comando na base.",
+  "descricao": "Fonte única da faixa de opções do AY ESCREVA. Gera a interface (tools/gerar-faixa.mjs -> notebookbar_ayescreva.ui), a matriz (tests/uno/comandos.py) e os testes pela interface (tests/interface). Prioridades: P0 = Etapas 1-2; P1 = Etapa 3; P2 = Etapa 4; P3 = avaliar. comando = comando do motor; comandoAY = comando implementado pela extensão do AY; sem nenhum dos dois = pendente (não aparece na faixa). botao=false: a função existe, mas é oferecida por outro controle (campo 'via'). grande=true: botão grande com rótulo embaixo. Grupo compacto=true: botões pequenos só com ícone.",
   "abas": [
     {
-      "id": "arquivo", "rotulo": "ARQUIVO",
+      "id": "arquivo",
+      "rotulo": "Arquivo",
+      "mnemonico": "A",
       "grupos": [
-        { "rotulo": "Documento", "itens": [
-          { "funcao": "Novo documento", "comando": ".uno:AddDirect", "prioridade": "P0", "criterio": "Abre documento de texto em branco" },
-          { "funcao": "Modelos", "comando": ".uno:NewDoc", "prioridade": "P1", "criterio": "Abre o gerenciador de modelos e cria documento a partir de um modelo" },
-          { "funcao": "Abrir", "comando": ".uno:Open", "prioridade": "P0", "criterio": "Abre DOCX, ODT, DOC, RTF e TXT locais" },
-          { "funcao": "Recentes", "comando": ".uno:RecentFileList", "prioridade": "P1", "criterio": "Lista os documentos recentes do perfil local" },
-          { "funcao": "Salvar", "comando": ".uno:Save", "prioridade": "P0", "criterio": "Salva no formato atual com aviso para formatos não nativos" },
-          { "funcao": "Salvar como", "comando": ".uno:SaveAs", "prioridade": "P0", "criterio": "Salva em ODT, DOCX, DOC, RTF ou TXT" },
-          { "funcao": "Salvar uma cópia", "comando": ".uno:SaveACopy", "prioridade": "P1", "criterio": "Grava cópia sem trocar o documento aberto" },
-          { "funcao": "Recarregar", "comando": ".uno:Reload", "prioridade": "P2", "criterio": "Recarrega a última versão salva" },
-          { "funcao": "Fechar", "comando": ".uno:CloseDoc", "prioridade": "P0", "criterio": "Fecha o documento perguntando se há alterações" }
-        ]},
-        { "rotulo": "Exportar e imprimir", "itens": [
-          { "funcao": "Exportar PDF (opções)", "comando": ".uno:ExportToPDF", "prioridade": "P0", "criterio": "Exporta PDF, PDF/A e PDF/UA marcado" },
-          { "funcao": "Exportar PDF direto", "comando": ".uno:ExportDirectToPDF", "prioridade": "P1", "criterio": "Exporta PDF com as opções padrão" },
-          { "funcao": "Imprimir", "comando": ".uno:Print", "prioridade": "P0", "criterio": "Imprime pela fila do sistema com prévia no diálogo" },
-          { "funcao": "Visualizar impressão", "comando": ".uno:PrintPreview", "prioridade": "P0", "criterio": "Mostra prévia paginada antes de imprimir" }
-        ]},
-        { "rotulo": "Informações", "itens": [
-          { "funcao": "Propriedades", "comando": ".uno:SetDocumentProperties", "prioridade": "P1", "criterio": "Edita título, autor, palavras-chave e mostra estatísticas" },
-          { "funcao": "Versões", "comando": ".uno:VersionDialog", "prioridade": "P2", "criterio": "Salva e compara versões dentro do ODT" },
-          { "funcao": "Assinatura digital", "comando": ".uno:Signature", "prioridade": "P3", "criterio": "Assina com certificado local do usuário" },
-          { "funcao": "Configurações", "comando": ".uno:OptionsTreeDialog", "prioridade": "P1", "criterio": "Abre as opções do aplicativo" },
-          { "funcao": "Recuperação de documentos", "comando": null, "prioridade": "P1", "criterio": "Após falha, oferece recuperar; pelo menu, lista cópias de segurança e de recuperação", "lacuna": "A recuperação automática após falha já está ativa (configurada a cada 5 min) e a cópia de segurança ao salvar também; falta um comando de menu para abrir as cópias. Implementar como extensão AY." }
-        ]}
+        {
+          "rotulo": "Novo",
+          "itens": [
+            {
+              "funcao": "Novo documento",
+              "comando": ".uno:AddDirect",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Abre documento de texto em branco"
+            },
+            {
+              "funcao": "Modelos",
+              "comando": ".uno:NewDoc",
+              "prioridade": "P1",
+              "criterio": "Abre o gerenciador de modelos e cria documento a partir de um modelo"
+            }
+          ]
+        },
+        {
+          "rotulo": "Documento",
+          "itens": [
+            {
+              "funcao": "Abrir",
+              "comando": ".uno:Open",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Abre DOCX, ODT, DOC, RTF e TXT locais"
+            },
+            {
+              "funcao": "Recentes",
+              "comando": ".uno:Open",
+              "botao": false,
+              "via": "seta do botão Abrir",
+              "prioridade": "P1",
+              "criterio": "Lista os documentos recentes do perfil local"
+            },
+            {
+              "funcao": "Salvar",
+              "comando": ".uno:Save",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Salva no formato atual; avisa possíveis perdas antes de salvar fora do ODT"
+            },
+            {
+              "funcao": "Salvar como",
+              "comando": ".uno:SaveAs",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Salva em ODT, DOCX, DOC, RTF ou TXT com aviso de perdas"
+            },
+            {
+              "funcao": "Salvar uma cópia",
+              "comando": ".uno:SaveACopy",
+              "prioridade": "P1",
+              "criterio": "Grava cópia sem trocar o documento aberto"
+            },
+            {
+              "funcao": "Recarregar",
+              "comando": ".uno:Reload",
+              "prioridade": "P2",
+              "criterio": "Recarrega a última versão salva"
+            },
+            {
+              "funcao": "Fechar",
+              "comando": ".uno:CloseDoc",
+              "prioridade": "P0",
+              "criterio": "Fecha o documento perguntando se há alterações"
+            }
+          ]
+        },
+        {
+          "rotulo": "Exportar e imprimir",
+          "itens": [
+            {
+              "funcao": "Exportar PDF",
+              "comando": ".uno:ExportToPDF",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Exporta PDF, PDF/A e PDF/UA marcado"
+            },
+            {
+              "funcao": "Exportar PDF direto",
+              "comando": ".uno:ExportDirectToPDF",
+              "prioridade": "P1",
+              "criterio": "Exporta PDF com as opções padrão"
+            },
+            {
+              "funcao": "Imprimir",
+              "comando": ".uno:Print",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Imprime pela fila do sistema"
+            },
+            {
+              "funcao": "Visualizar impressão",
+              "comando": ".uno:PrintPreview",
+              "prioridade": "P0",
+              "criterio": "Mostra prévia paginada antes de imprimir"
+            }
+          ]
+        },
+        {
+          "rotulo": "Informações",
+          "itens": [
+            {
+              "funcao": "Propriedades",
+              "comando": ".uno:SetDocumentProperties",
+              "prioridade": "P1",
+              "criterio": "Edita título, autor, palavras-chave e mostra estatísticas"
+            },
+            {
+              "funcao": "Versões",
+              "comando": ".uno:VersionDialog",
+              "prioridade": "P2",
+              "criterio": "Salva e compara versões dentro do ODT"
+            },
+            {
+              "funcao": "Assinatura digital",
+              "comando": ".uno:Signature",
+              "prioridade": "P3",
+              "criterio": "Assina com certificado local do usuário"
+            },
+            {
+              "funcao": "Recuperação de documentos",
+              "comando": null,
+              "comandoAY": "ayescreva:Recuperacao",
+              "icone": "cmd/sc_open.png",
+              "prioridade": "P1",
+              "criterio": "Abre as pastas de cópias de segurança e de recuperação automática do perfil",
+              "lacuna": "A recuperação após falha é automática (oferecida ao reabrir); este botão dá acesso manual às cópias."
+            },
+            {
+              "funcao": "Configurações",
+              "comando": ".uno:OptionsTreeDialog",
+              "prioridade": "P1",
+              "criterio": "Abre as opções do aplicativo"
+            }
+          ]
+        }
       ]
     },
     {
-      "id": "inicio", "rotulo": "PÁGINA INICIAL",
+      "id": "inicio",
+      "rotulo": "Página Inicial",
+      "mnemonico": "P",
+      "padrao": true,
       "grupos": [
-        { "rotulo": "Área de transferência", "itens": [
-          { "funcao": "Colar", "comando": ".uno:Paste", "prioridade": "P0", "criterio": "Cola mantendo formatação" },
-          { "funcao": "Colar especial", "comando": ".uno:PasteSpecial", "prioridade": "P1", "criterio": "Cola como texto sem formatação e outros formatos" },
-          { "funcao": "Recortar", "comando": ".uno:Cut", "prioridade": "P0", "criterio": "Recorta a seleção" },
-          { "funcao": "Copiar", "comando": ".uno:Copy", "prioridade": "P0", "criterio": "Copia a seleção" },
-          { "funcao": "Pincel de formatação", "comando": ".uno:FormatPaintbrush", "prioridade": "P1", "criterio": "Copia a formatação para outro trecho" }
-        ]},
-        { "rotulo": "Fonte", "itens": [
-          { "funcao": "Fonte", "comando": ".uno:CharFontName", "prioridade": "P0", "criterio": "Lista fontes instaladas e as fontes do AY" },
-          { "funcao": "Tamanho", "comando": ".uno:FontHeight", "prioridade": "P0", "criterio": "Define tamanho em pontos" },
-          { "funcao": "Aumentar fonte", "comando": ".uno:Grow", "prioridade": "P1", "criterio": "Aumenta o tamanho" },
-          { "funcao": "Diminuir fonte", "comando": ".uno:Shrink", "prioridade": "P1", "criterio": "Diminui o tamanho" },
-          { "funcao": "Negrito", "comando": ".uno:Bold", "prioridade": "P0", "criterio": "Ctrl+N; preservado em ODT e DOCX" },
-          { "funcao": "Itálico", "comando": ".uno:Italic", "prioridade": "P0", "criterio": "Ctrl+I; preservado em ODT e DOCX" },
-          { "funcao": "Sublinhado", "comando": ".uno:Underline", "prioridade": "P0", "criterio": "Ctrl+S; preservado em ODT e DOCX" },
-          { "funcao": "Tachado", "comando": ".uno:Strikeout", "prioridade": "P0", "criterio": "Preservado em ODT e DOCX" },
-          { "funcao": "Sobrescrito", "comando": ".uno:SuperScript", "prioridade": "P0", "criterio": "Preservado em ODT e DOCX" },
-          { "funcao": "Subscrito", "comando": ".uno:SubScript", "prioridade": "P0", "criterio": "Preservado em ODT e DOCX" },
-          { "funcao": "Cor da fonte", "comando": ".uno:FontColor", "prioridade": "P0", "criterio": "Preservada em ODT e DOCX" },
-          { "funcao": "Realce", "comando": ".uno:CharBackColor", "prioridade": "P0", "criterio": "Vira realce (w:highlight) no DOCX" },
-          { "funcao": "Limpar formatação", "comando": ".uno:ResetAttributes", "prioridade": "P1", "criterio": "Remove formatação direta" },
-          { "funcao": "Caractere (diálogo)", "comando": ".uno:FontDialog", "prioridade": "P1", "criterio": "Todas as opções de caractere" }
-        ]},
-        { "rotulo": "Parágrafo", "itens": [
-          { "funcao": "Alinhar à esquerda", "comando": ".uno:LeftPara", "prioridade": "P0", "criterio": "Preservado em ODT e DOCX" },
-          { "funcao": "Centralizar", "comando": ".uno:CenterPara", "prioridade": "P0", "criterio": "Preservado em ODT e DOCX" },
-          { "funcao": "Alinhar à direita", "comando": ".uno:RightPara", "prioridade": "P0", "criterio": "Preservado em ODT e DOCX" },
-          { "funcao": "Justificar", "comando": ".uno:JustifyPara", "prioridade": "P0", "criterio": "Preservado em ODT e DOCX" },
-          { "funcao": "Aumentar recuo", "comando": ".uno:IncrementIndent", "prioridade": "P0", "criterio": "Altera o recuo à esquerda" },
-          { "funcao": "Diminuir recuo", "comando": ".uno:DecrementIndent", "prioridade": "P0", "criterio": "Altera o recuo à esquerda" },
-          { "funcao": "Espaçamento entre linhas", "comando": ".uno:LineSpacing", "prioridade": "P0", "criterio": "Simples, 1,15, 1,5, duplo e personalizado" },
-          { "funcao": "Aumentar espaço entre parágrafos", "comando": ".uno:ParaspaceIncrease", "prioridade": "P1", "criterio": "Altera espaço antes/depois" },
-          { "funcao": "Diminuir espaço entre parágrafos", "comando": ".uno:ParaspaceDecrease", "prioridade": "P1", "criterio": "Altera espaço antes/depois" },
-          { "funcao": "Marcadores", "comando": ".uno:DefaultBullet", "prioridade": "P0", "criterio": "Lista com marcadores preservada em DOCX" },
-          { "funcao": "Numeração", "comando": ".uno:DefaultNumbering", "prioridade": "P0", "criterio": "Lista numerada preservada em DOCX" },
-          { "funcao": "Lista multinível", "comando": ".uno:SetOutline", "prioridade": "P1", "criterio": "Numeração de títulos e listas em níveis" },
-          { "funcao": "Parágrafo (diálogo)", "comando": ".uno:ParagraphDialog", "prioridade": "P1", "criterio": "Recuos, espaçamento, fluxo e tabulações" },
-          { "funcao": "Marcas de formatação", "comando": ".uno:ControlCodes", "prioridade": "P1", "criterio": "Mostra ¶, espaços e tabulações" }
-        ]},
-        { "rotulo": "Estilos", "itens": [
-          { "funcao": "Galeria de estilos", "comando": ".uno:StyleApply", "prioridade": "P0", "criterio": "Aplica Título 1..n, Corpo de texto etc." },
-          { "funcao": "Painel de estilos", "comando": ".uno:DesignerDialog", "prioridade": "P1", "criterio": "Cria e modifica estilos" }
-        ]},
-        { "rotulo": "Edição", "itens": [
-          { "funcao": "Localizar e substituir", "comando": ".uno:SearchDialog", "prioridade": "P0", "criterio": "Busca com expressões regulares e formatação" },
-          { "funcao": "Selecionar tudo", "comando": ".uno:SelectAll", "prioridade": "P1", "criterio": "Seleciona o documento" }
-        ]}
+        {
+          "rotulo": "Área de transferência",
+          "itens": [
+            {
+              "funcao": "Colar",
+              "comando": ".uno:Paste",
+              "grande": true,
+              "lista": true,
+              "prioridade": "P0",
+              "criterio": "Cola mantendo formatação; seta com opções"
+            },
+            {
+              "funcao": "Recortar",
+              "comando": ".uno:Cut",
+              "prioridade": "P0",
+              "criterio": "Recorta a seleção"
+            },
+            {
+              "funcao": "Copiar",
+              "comando": ".uno:Copy",
+              "prioridade": "P0",
+              "criterio": "Copia a seleção"
+            },
+            {
+              "funcao": "Pincel de formatação",
+              "comando": ".uno:FormatPaintbrush",
+              "prioridade": "P1",
+              "criterio": "Copia a formatação para outro trecho"
+            },
+            {
+              "funcao": "Colar especial",
+              "comando": ".uno:PasteSpecial",
+              "botao": false,
+              "via": "seta do botão Colar",
+              "prioridade": "P1",
+              "criterio": "Cola como texto sem formatação e outros formatos"
+            }
+          ]
+        },
+        {
+          "rotulo": "Fonte",
+          "compacto": true,
+          "linhas": [
+            [
+              "CharFontName",
+              "FontHeight",
+              "Grow",
+              "Shrink"
+            ],
+            [
+              "Bold",
+              "Italic",
+              "Underline",
+              "Strikeout",
+              "SubScript",
+              "SuperScript",
+              "Color",
+              "CharBackColor",
+              "ResetAttributes",
+              "FontDialog"
+            ]
+          ],
+          "itens": [
+            {
+              "funcao": "Fonte",
+              "comando": ".uno:CharFontName",
+              "prioridade": "P0",
+              "criterio": "Lista fontes instaladas e as fontes do AY"
+            },
+            {
+              "funcao": "Tamanho",
+              "comando": ".uno:FontHeight",
+              "prioridade": "P0",
+              "criterio": "Define tamanho em pontos"
+            },
+            {
+              "funcao": "Aumentar fonte",
+              "comando": ".uno:Grow",
+              "prioridade": "P1",
+              "criterio": "Aumenta o tamanho"
+            },
+            {
+              "funcao": "Diminuir fonte",
+              "comando": ".uno:Shrink",
+              "prioridade": "P1",
+              "criterio": "Diminui o tamanho"
+            },
+            {
+              "funcao": "Negrito",
+              "comando": ".uno:Bold",
+              "prioridade": "P0",
+              "criterio": "Preservado em ODT e DOCX"
+            },
+            {
+              "funcao": "Itálico",
+              "comando": ".uno:Italic",
+              "prioridade": "P0",
+              "criterio": "Preservado em ODT e DOCX"
+            },
+            {
+              "funcao": "Sublinhado",
+              "comando": ".uno:Underline",
+              "prioridade": "P0",
+              "criterio": "Preservado em ODT e DOCX"
+            },
+            {
+              "funcao": "Tachado",
+              "comando": ".uno:Strikeout",
+              "prioridade": "P0",
+              "criterio": "Preservado em ODT e DOCX"
+            },
+            {
+              "funcao": "Subscrito",
+              "comando": ".uno:SubScript",
+              "prioridade": "P0",
+              "criterio": "Preservado em ODT e DOCX"
+            },
+            {
+              "funcao": "Sobrescrito",
+              "comando": ".uno:SuperScript",
+              "prioridade": "P0",
+              "criterio": "Preservado em ODT e DOCX"
+            },
+            {
+              "funcao": "Cor da fonte",
+              "comando": ".uno:Color",
+              "lista": true,
+              "prioridade": "P0",
+              "criterio": "Preservada em ODT e DOCX"
+            },
+            {
+              "funcao": "Realce",
+              "comando": ".uno:CharBackColor",
+              "lista": true,
+              "prioridade": "P0",
+              "criterio": "Vira realce (w:highlight) no DOCX"
+            },
+            {
+              "funcao": "Limpar formatação",
+              "comando": ".uno:ResetAttributes",
+              "prioridade": "P1",
+              "criterio": "Remove formatação direta"
+            },
+            {
+              "funcao": "Caractere (diálogo)",
+              "comando": ".uno:FontDialog",
+              "prioridade": "P1",
+              "criterio": "Todas as opções de caractere"
+            }
+          ]
+        },
+        {
+          "rotulo": "Parágrafo",
+          "compacto": true,
+          "linhas": [
+            [
+              "DefaultBullet",
+              "DefaultNumbering",
+              "SetOutline",
+              "DecrementIndent",
+              "IncrementIndent",
+              "ControlCodes"
+            ],
+            [
+              "LeftPara",
+              "CenterPara",
+              "RightPara",
+              "JustifyPara",
+              "LineSpacing",
+              "ParaspaceIncrease",
+              "ParaspaceDecrease",
+              "ParagraphDialog"
+            ]
+          ],
+          "itens": [
+            {
+              "funcao": "Marcadores",
+              "comando": ".uno:DefaultBullet",
+              "prioridade": "P0",
+              "criterio": "Lista com marcadores preservada em DOCX"
+            },
+            {
+              "funcao": "Numeração",
+              "comando": ".uno:DefaultNumbering",
+              "prioridade": "P0",
+              "criterio": "Lista numerada preservada em DOCX"
+            },
+            {
+              "funcao": "Lista multinível",
+              "comando": ".uno:SetOutline",
+              "prioridade": "P1",
+              "criterio": "Numeração de títulos e listas em níveis"
+            },
+            {
+              "funcao": "Diminuir recuo",
+              "comando": ".uno:DecrementIndent",
+              "prioridade": "P0",
+              "criterio": "Altera o recuo à esquerda"
+            },
+            {
+              "funcao": "Aumentar recuo",
+              "comando": ".uno:IncrementIndent",
+              "prioridade": "P0",
+              "criterio": "Altera o recuo à esquerda"
+            },
+            {
+              "funcao": "Marcas de formatação",
+              "comando": ".uno:ControlCodes",
+              "prioridade": "P1",
+              "criterio": "Mostra ¶, espaços e tabulações"
+            },
+            {
+              "funcao": "Alinhar à esquerda",
+              "comando": ".uno:LeftPara",
+              "prioridade": "P0",
+              "criterio": "Preservado em ODT e DOCX"
+            },
+            {
+              "funcao": "Centralizar",
+              "comando": ".uno:CenterPara",
+              "prioridade": "P0",
+              "criterio": "Preservado em ODT e DOCX"
+            },
+            {
+              "funcao": "Alinhar à direita",
+              "comando": ".uno:RightPara",
+              "prioridade": "P0",
+              "criterio": "Preservado em ODT e DOCX"
+            },
+            {
+              "funcao": "Justificar",
+              "comando": ".uno:JustifyPara",
+              "prioridade": "P0",
+              "criterio": "Preservado em ODT e DOCX"
+            },
+            {
+              "funcao": "Espaçamento entre linhas",
+              "comando": ".uno:LineSpacing",
+              "lista": true,
+              "prioridade": "P0",
+              "criterio": "Simples, 1,15, 1,5, duplo e personalizado"
+            },
+            {
+              "funcao": "Aumentar espaço entre parágrafos",
+              "comando": ".uno:ParaspaceIncrease",
+              "prioridade": "P1",
+              "criterio": "Altera espaço antes/depois"
+            },
+            {
+              "funcao": "Diminuir espaço entre parágrafos",
+              "comando": ".uno:ParaspaceDecrease",
+              "prioridade": "P1",
+              "criterio": "Altera espaço antes/depois"
+            },
+            {
+              "funcao": "Parágrafo (diálogo)",
+              "comando": ".uno:ParagraphDialog",
+              "prioridade": "P1",
+              "criterio": "Recuos, espaçamento, fluxo e tabulações"
+            }
+          ]
+        },
+        {
+          "rotulo": "Estilos",
+          "itens": [
+            {
+              "funcao": "Estilo do parágrafo",
+              "comando": ".uno:StyleApply",
+              "prioridade": "P0",
+              "criterio": "Aplica Título 1..n, Corpo de texto etc."
+            },
+            {
+              "funcao": "Painel de estilos",
+              "comando": ".uno:DesignerDialog",
+              "prioridade": "P1",
+              "criterio": "Cria e modifica estilos"
+            }
+          ]
+        },
+        {
+          "rotulo": "Edição",
+          "itens": [
+            {
+              "funcao": "Localizar e substituir",
+              "comando": ".uno:SearchDialog",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Busca com expressões regulares e formatação"
+            },
+            {
+              "funcao": "Selecionar tudo",
+              "comando": ".uno:SelectAll",
+              "prioridade": "P1",
+              "criterio": "Seleciona o documento"
+            }
+          ]
+        }
       ]
     },
     {
-      "id": "inserir", "rotulo": "INSERIR",
+      "id": "inserir",
+      "rotulo": "Inserir",
+      "mnemonico": "I",
       "grupos": [
-        { "rotulo": "Páginas", "itens": [
-          { "funcao": "Capa", "comando": ".uno:TitlePageDialog", "prioridade": "P2", "criterio": "Insere página de rosto com estilo próprio", "lacuna": "A base oferece o diálogo de páginas de título; uma galeria de capas prontas (como no Word) será feita com modelos AY." },
-          { "funcao": "Página em branco", "comando": null, "prioridade": "P1", "criterio": "Insere uma página vazia no ponto do cursor", "lacuna": "Sem comando único na base (equivale a duas quebras de página). Implementar como comando da extensão AY." },
-          { "funcao": "Quebra de página", "comando": ".uno:InsertPagebreak", "prioridade": "P0", "criterio": "Ctrl+Enter; preservada em DOCX" },
-          { "funcao": "Quebras (página, coluna, linha)", "comando": ".uno:InsertBreak", "prioridade": "P1", "criterio": "Inclui quebra com troca de estilo de página" },
-          { "funcao": "Seção", "comando": ".uno:InsertSection", "prioridade": "P1", "criterio": "Seção com colunas e proteção" }
-        ]},
-        { "rotulo": "Tabelas e ilustrações", "itens": [
-          { "funcao": "Tabela", "comando": ".uno:InsertTable", "prioridade": "P0", "criterio": "Insere tabela; preservada em ODT e DOCX" },
-          { "funcao": "Imagem", "comando": ".uno:InsertGraphic", "prioridade": "P0", "criterio": "Insere imagem embutida com texto alternativo" },
-          { "funcao": "Formas", "comando": ".uno:BasicShapes", "prioridade": "P1", "criterio": "Retângulos, elipses, setas etc." },
-          { "funcao": "Caixa de texto", "comando": ".uno:DrawText", "prioridade": "P1", "criterio": "Caixa de texto exportada como forma DOCX" },
-          { "funcao": "Quadro", "comando": ".uno:InsertFrame", "prioridade": "P2", "criterio": "Quadro de texto posicionável" },
-          { "funcao": "Gráfico", "comando": ".uno:InsertObjectChart", "prioridade": "P2", "criterio": "Gráfico com dados internos" },
-          { "funcao": "Fontwork (texto artístico)", "comando": ".uno:FontworkGalleryFloater", "prioridade": "P3", "criterio": "Texto decorativo" }
-        ]},
-        { "rotulo": "Links", "itens": [
-          { "funcao": "Link", "comando": ".uno:HyperlinkDialog", "prioridade": "P0", "criterio": "Hiperlink exige Ctrl+clique e não é acessado ao abrir" },
-          { "funcao": "Indicador", "comando": ".uno:InsertBookmark", "prioridade": "P1", "criterio": "Preservado em DOCX" },
-          { "funcao": "Referência cruzada", "comando": ".uno:InsertReferenceField", "prioridade": "P1", "criterio": "Preservada em DOCX" },
-          { "funcao": "Comentário", "comando": ".uno:InsertAnnotation", "prioridade": "P0", "criterio": "Preservado em ODT e DOCX" }
-        ]},
-        { "rotulo": "Cabeçalho e rodapé", "itens": [
-          { "funcao": "Cabeçalho", "comando": ".uno:InsertPageHeader", "prioridade": "P0", "criterio": "Ativa cabeçalho do estilo de página" },
-          { "funcao": "Rodapé", "comando": ".uno:InsertPageFooter", "prioridade": "P0", "criterio": "Ativa rodapé do estilo de página" },
-          { "funcao": "Número de página", "comando": ".uno:PageNumberWizard", "prioridade": "P0", "criterio": "Insere número de página com posição e formato" }
-        ]},
-        { "rotulo": "Texto e símbolos", "itens": [
-          { "funcao": "Campos", "comando": ".uno:InsertFieldCtrl", "prioridade": "P1", "criterio": "Data, hora, autor, título, contagem de páginas" },
-          { "funcao": "Data", "comando": ".uno:InsertDateField", "prioridade": "P1", "criterio": "Campo de data" },
-          { "funcao": "Símbolo", "comando": ".uno:CharmapControl", "prioridade": "P1", "criterio": "Símbolos recentes e caracteres especiais" },
-          { "funcao": "Equação", "comando": ".uno:InsertObjectStarMath", "prioridade": "P2", "criterio": "Equação editável; OMML do DOCX importado vira equação", "lacuna": "Editor de equações usa a sintaxe da base (não o editor do Word); exportação para OMML coberta pelo filtro." }
-        ]}
+        {
+          "rotulo": "Páginas",
+          "itens": [
+            {
+              "funcao": "Capa",
+              "comando": ".uno:TitlePageDialog",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Insere página de rosto com estilo próprio",
+              "lacuna": "A base oferece o diálogo de páginas de título; uma galeria de capas prontas (como no Word) será feita com modelos AY."
+            },
+            {
+              "funcao": "Página em branco",
+              "comando": null,
+              "comandoAY": "ayescreva:PaginaEmBranco",
+              "grande": true,
+              "icone": "cmd/lc_insertpagebreak.png",
+              "prioridade": "P1",
+              "criterio": "Insere uma página vazia no ponto do cursor"
+            },
+            {
+              "funcao": "Quebra de página",
+              "comando": ".uno:InsertPagebreak",
+              "prioridade": "P0",
+              "criterio": "Preservada em DOCX"
+            },
+            {
+              "funcao": "Quebras (página, coluna, linha)",
+              "comando": ".uno:InsertBreak",
+              "prioridade": "P1",
+              "criterio": "Inclui quebra com troca de estilo de página"
+            },
+            {
+              "funcao": "Seção",
+              "comando": ".uno:InsertSection",
+              "prioridade": "P1",
+              "criterio": "Seção com colunas e proteção"
+            }
+          ]
+        },
+        {
+          "rotulo": "Tabelas",
+          "itens": [
+            {
+              "funcao": "Tabela",
+              "comando": ".uno:InsertTable",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Insere tabela; preservada em ODT e DOCX"
+            }
+          ]
+        },
+        {
+          "rotulo": "Ilustrações",
+          "itens": [
+            {
+              "funcao": "Imagem",
+              "comando": ".uno:InsertGraphic",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Insere imagem embutida com texto alternativo"
+            },
+            {
+              "funcao": "Formas",
+              "comando": ".uno:BasicShapes",
+              "grande": true,
+              "prioridade": "P1",
+              "criterio": "Retângulos, elipses, setas etc."
+            },
+            {
+              "funcao": "Gráfico",
+              "comando": ".uno:InsertObjectChart",
+              "prioridade": "P2",
+              "criterio": "Gráfico com dados internos"
+            },
+            {
+              "funcao": "Fontwork (texto artístico)",
+              "comando": ".uno:FontworkGalleryFloater",
+              "prioridade": "P3",
+              "criterio": "Texto decorativo"
+            }
+          ]
+        },
+        {
+          "rotulo": "Links e comentários",
+          "itens": [
+            {
+              "funcao": "Link",
+              "comando": ".uno:HyperlinkDialog",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Hiperlink exige Ctrl+clique e não é acessado ao abrir"
+            },
+            {
+              "funcao": "Indicador",
+              "comando": ".uno:InsertBookmark",
+              "prioridade": "P1",
+              "criterio": "Preservado em DOCX"
+            },
+            {
+              "funcao": "Referência cruzada",
+              "comando": ".uno:InsertReferenceField",
+              "prioridade": "P1",
+              "criterio": "Preservada em DOCX"
+            },
+            {
+              "funcao": "Comentário",
+              "comando": ".uno:InsertAnnotation",
+              "prioridade": "P0",
+              "criterio": "Preservado em ODT e DOCX"
+            }
+          ]
+        },
+        {
+          "rotulo": "Cabeçalho e rodapé",
+          "itens": [
+            {
+              "funcao": "Cabeçalho",
+              "comando": ".uno:InsertPageHeader",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Ativa cabeçalho do estilo de página"
+            },
+            {
+              "funcao": "Rodapé",
+              "comando": ".uno:InsertPageFooter",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Ativa rodapé do estilo de página"
+            },
+            {
+              "funcao": "Número de página",
+              "comando": ".uno:PageNumberWizard",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Insere número de página com posição e formato"
+            }
+          ]
+        },
+        {
+          "rotulo": "Texto",
+          "itens": [
+            {
+              "funcao": "Caixa de texto",
+              "comando": ".uno:DrawText",
+              "grande": true,
+              "prioridade": "P1",
+              "criterio": "Caixa de texto exportada como forma DOCX"
+            },
+            {
+              "funcao": "Quadro",
+              "comando": ".uno:InsertFrame",
+              "prioridade": "P2",
+              "criterio": "Quadro de texto posicionável"
+            },
+            {
+              "funcao": "Campos",
+              "comando": ".uno:InsertFieldCtrl",
+              "lista": true,
+              "prioridade": "P1",
+              "criterio": "Data, hora, autor, título, contagem de páginas"
+            },
+            {
+              "funcao": "Data",
+              "comando": ".uno:InsertDateField",
+              "prioridade": "P1",
+              "criterio": "Campo de data"
+            }
+          ]
+        },
+        {
+          "rotulo": "Símbolos",
+          "itens": [
+            {
+              "funcao": "Equação",
+              "comando": ".uno:InsertObjectStarMath",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Equação editável; OMML do DOCX importado vira equação",
+              "lacuna": "Editor de equações usa a sintaxe da base (não o editor do Word); exportação para OMML coberta pelo filtro."
+            },
+            {
+              "funcao": "Símbolo",
+              "comando": ".uno:CharmapControl",
+              "grande": true,
+              "prioridade": "P1",
+              "criterio": "Símbolos recentes e caracteres especiais"
+            }
+          ]
+        }
       ]
     },
     {
-      "id": "desenhar", "rotulo": "DESENHAR",
+      "id": "desenhar",
+      "rotulo": "Desenhar",
+      "mnemonico": "D",
       "grupos": [
-        { "rotulo": "Ferramentas", "itens": [
-          { "funcao": "Caneta (linha à mão livre)", "comando": ".uno:Freeline_Unfilled", "prioridade": "P2", "criterio": "Desenha traço com mouse ou caneta; salvo como forma em ODT e DOCX" },
-          { "funcao": "Forma livre preenchida", "comando": ".uno:Freeline", "prioridade": "P2", "criterio": "Desenha forma fechada" },
-          { "funcao": "Linha", "comando": ".uno:Line", "prioridade": "P2", "criterio": "Linha reta" },
-          { "funcao": "Curva", "comando": ".uno:Bezier_Unfilled", "prioridade": "P3", "criterio": "Curva de Bézier" },
-          { "funcao": "Selecionar traços", "comando": ".uno:SelectObject", "prioridade": "P2", "criterio": "Seleciona traços e formas" },
-          { "funcao": "Marca-texto", "comando": null, "prioridade": "P2", "criterio": "Traço largo e translúcido sobre o texto", "lacuna": "Sem ferramenta própria na base; implementar como predefinição de traço (cor amarela, transparência, espessura) via extensão AY." },
-          { "funcao": "Borracha", "comando": null, "prioridade": "P3", "criterio": "Apaga traços passando o cursor", "lacuna": "A base só exclui o traço selecionado (.uno:Delete). Borracha por arrasto exige código C++ na versão derivada." },
-          { "funcao": "Sensibilidade à pressão da caneta", "comando": null, "prioridade": "P3", "criterio": "Espessura varia com a pressão", "lacuna": "Não suportado pela base; tinta do Word (InkML) é importada como imagem ou forma, sem pressão." }
-        ]},
-        { "rotulo": "Traço", "itens": [
-          { "funcao": "Cor do traço", "comando": ".uno:XLineColor", "prioridade": "P2", "criterio": "Altera a cor da linha selecionada" },
-          { "funcao": "Espessura e estilo", "comando": ".uno:FormatLine", "prioridade": "P2", "criterio": "Espessura, estilo e transparência" },
-          { "funcao": "Agrupar", "comando": ".uno:FormatGroup", "prioridade": "P3", "criterio": "Agrupa traços" },
-          { "funcao": "Excluir traço", "comando": ".uno:Delete", "prioridade": "P2", "criterio": "Remove o traço selecionado" }
-        ]}
+        {
+          "rotulo": "Ferramentas",
+          "itens": [
+            {
+              "funcao": "Selecionar traços",
+              "comando": ".uno:SelectObject",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Seleciona traços e formas"
+            },
+            {
+              "funcao": "Caneta (linha à mão livre)",
+              "comando": ".uno:Freeline_Unfilled",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Desenha traço com mouse ou caneta; salvo como forma em ODT e DOCX"
+            },
+            {
+              "funcao": "Forma livre preenchida",
+              "comando": ".uno:Freeline",
+              "prioridade": "P2",
+              "criterio": "Desenha forma fechada"
+            },
+            {
+              "funcao": "Linha",
+              "comando": ".uno:Line",
+              "prioridade": "P2",
+              "criterio": "Linha reta"
+            },
+            {
+              "funcao": "Curva",
+              "comando": ".uno:Bezier_Unfilled",
+              "prioridade": "P3",
+              "criterio": "Curva de Bézier"
+            },
+            {
+              "funcao": "Marca-texto",
+              "comando": null,
+              "prioridade": "P2",
+              "criterio": "Traço largo e translúcido sobre o texto",
+              "lacuna": "Sem ferramenta própria na base; previsto como predefinição de traço (amarelo, translúcido, largo) na extensão AY."
+            },
+            {
+              "funcao": "Borracha",
+              "comando": null,
+              "prioridade": "P3",
+              "criterio": "Apaga traços passando o cursor",
+              "lacuna": "A base só exclui o traço selecionado (botão Excluir traço). Borracha por arrasto exige código C++ (Nível 2)."
+            },
+            {
+              "funcao": "Sensibilidade à pressão da caneta",
+              "comando": null,
+              "prioridade": "P3",
+              "criterio": "Espessura varia com a pressão",
+              "lacuna": "Não suportado pela base; tinta do Word (InkML) é importada como imagem ou forma, sem pressão."
+            }
+          ]
+        },
+        {
+          "rotulo": "Traço",
+          "itens": [
+            {
+              "funcao": "Cor do traço",
+              "comando": ".uno:XLineColor",
+              "prioridade": "P2",
+              "criterio": "Altera a cor da linha selecionada"
+            },
+            {
+              "funcao": "Espessura e estilo",
+              "comando": ".uno:FormatLine",
+              "prioridade": "P2",
+              "criterio": "Espessura, estilo e transparência"
+            },
+            {
+              "funcao": "Agrupar",
+              "comando": ".uno:FormatGroup",
+              "prioridade": "P3",
+              "criterio": "Agrupa traços"
+            },
+            {
+              "funcao": "Excluir traço",
+              "comando": ".uno:Delete",
+              "prioridade": "P2",
+              "criterio": "Remove o traço selecionado"
+            }
+          ]
+        }
       ]
     },
     {
-      "id": "design", "rotulo": "DESIGN",
+      "id": "design",
+      "rotulo": "Design",
+      "mnemonico": "G",
       "grupos": [
-        { "rotulo": "Formatação do documento", "itens": [
-          { "funcao": "Temas, cores e fontes do documento", "comando": ".uno:ThemeDialog", "prioridade": "P2", "criterio": "Aplica tema de cores ao documento" },
-          { "funcao": "Conjuntos de estilos", "comando": ".uno:LoadStyles", "prioridade": "P2", "criterio": "Importa estilos de um modelo", "lacuna": "A base importa estilos de modelos; a galeria visual de conjuntos (como no Word) será feita com modelos AY." }
-        ]},
-        { "rotulo": "Plano de fundo da página", "itens": [
-          { "funcao": "Marca-d'água", "comando": ".uno:Watermark", "prioridade": "P1", "criterio": "Marca-d'água de texto preservada em DOCX" },
-          { "funcao": "Cor da página", "comando": ".uno:PageDialog", "prioridade": "P2", "criterio": "Cor de fundo do estilo de página (aba Área)" },
-          { "funcao": "Bordas de página", "comando": ".uno:PageDialog", "prioridade": "P2", "criterio": "Bordas do estilo de página (aba Bordas)" }
-        ]}
+        {
+          "rotulo": "Formatação do documento",
+          "itens": [
+            {
+              "funcao": "Temas, cores e fontes do documento",
+              "comando": ".uno:ThemeDialog",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Aplica tema de cores ao documento"
+            },
+            {
+              "funcao": "Conjuntos de estilos",
+              "comando": ".uno:LoadStyles",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Importa estilos de um modelo",
+              "lacuna": "A base importa estilos de modelos; a galeria visual de conjuntos (como no Word) será feita com modelos AY."
+            }
+          ]
+        },
+        {
+          "rotulo": "Plano de fundo da página",
+          "itens": [
+            {
+              "funcao": "Marca-d'água",
+              "comando": ".uno:Watermark",
+              "grande": true,
+              "prioridade": "P1",
+              "criterio": "Marca-d'água de texto preservada em DOCX"
+            },
+            {
+              "funcao": "Cor e bordas da página",
+              "comando": ".uno:PageDialog",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Cor de fundo (aba Área) e bordas (aba Bordas) do estilo de página"
+            },
+            {
+              "funcao": "Bordas de página",
+              "comando": ".uno:PageDialog",
+              "botao": false,
+              "via": "botão Cor e bordas da página",
+              "prioridade": "P2",
+              "criterio": "Bordas do estilo de página"
+            }
+          ]
+        }
       ]
     },
     {
-      "id": "layout", "rotulo": "LAYOUT",
+      "id": "layout",
+      "rotulo": "Layout",
+      "mnemonico": "L",
       "grupos": [
-        { "rotulo": "Configurar página", "itens": [
-          { "funcao": "Margens", "comando": ".uno:PageMargin", "prioridade": "P0", "criterio": "Predefinições e personalizadas" },
-          { "funcao": "Orientação", "comando": ".uno:Orientation", "prioridade": "P0", "criterio": "Retrato/paisagem por seção" },
-          { "funcao": "Tamanho do papel", "comando": ".uno:AttributePageSize", "prioridade": "P0", "criterio": "A4, Carta, Ofício etc." },
-          { "funcao": "Colunas", "comando": ".uno:PageColumnType", "prioridade": "P1", "criterio": "1 a 3 colunas; preservadas em DOCX" },
-          { "funcao": "Quebras de página e seção", "comando": ".uno:InsertBreak", "prioridade": "P1", "criterio": "Quebra com novo estilo de página = seção do Word" },
-          { "funcao": "Hifenização", "comando": ".uno:Hyphenate", "prioridade": "P2", "criterio": "Hifenização pt-BR" },
-          { "funcao": "Numeração de linhas", "comando": ".uno:LineNumberingDialog", "prioridade": "P3", "criterio": "Numera linhas" },
-          { "funcao": "Estilo de página (diálogo)", "comando": ".uno:PageDialog", "prioridade": "P1", "criterio": "Todas as opções de página" }
-        ]},
-        { "rotulo": "Parágrafo", "itens": [
-          { "funcao": "Recuos e espaçamento", "comando": ".uno:ParagraphDialog", "prioridade": "P1", "criterio": "Recuos e espaços antes/depois" }
-        ]},
-        { "rotulo": "Organizar objetos", "itens": [
-          { "funcao": "Sem quebra automática", "comando": ".uno:WrapOff", "prioridade": "P1", "criterio": "Texto acima e abaixo do objeto" },
-          { "funcao": "Quebra automática", "comando": ".uno:WrapOn", "prioridade": "P1", "criterio": "Texto em volta do objeto" },
-          { "funcao": "Quebra ideal", "comando": ".uno:WrapIdeal", "prioridade": "P2", "criterio": "Texto no lado mais largo" },
-          { "funcao": "Atrás/na frente do texto", "comando": ".uno:WrapThrough", "prioridade": "P2", "criterio": "Objeto sobre o texto" },
-          { "funcao": "Trazer para frente", "comando": ".uno:BringToFront", "prioridade": "P2", "criterio": "Ordem de sobreposição" },
-          { "funcao": "Enviar para trás", "comando": ".uno:SendToBack", "prioridade": "P2", "criterio": "Ordem de sobreposição" },
-          { "funcao": "Ancorar à página", "comando": ".uno:SetAnchorToPage", "prioridade": "P2", "criterio": "Posição fixa na página" },
-          { "funcao": "Ancorar ao parágrafo", "comando": ".uno:SetAnchorToPara", "prioridade": "P2", "criterio": "Objeto acompanha o parágrafo" },
-          { "funcao": "Ancorar como caractere", "comando": ".uno:SetAnchorToChar", "prioridade": "P2", "criterio": "Objeto em linha com o texto" },
-          { "funcao": "Alinhar objetos", "comando": ".uno:ObjectAlignLeft", "prioridade": "P3", "criterio": "Alinha objetos entre si" },
-          { "funcao": "Girar", "comando": ".uno:ToggleObjectRotateMode", "prioridade": "P3", "criterio": "Rotação livre" }
-        ]}
+        {
+          "rotulo": "Configurar página",
+          "itens": [
+            {
+              "funcao": "Margens",
+              "comando": ".uno:PageMargin",
+              "grande": true,
+              "lista": true,
+              "prioridade": "P0",
+              "criterio": "Predefinições e personalizadas"
+            },
+            {
+              "funcao": "Orientação",
+              "comando": ".uno:Orientation",
+              "grande": true,
+              "lista": true,
+              "prioridade": "P0",
+              "criterio": "Retrato/paisagem"
+            },
+            {
+              "funcao": "Tamanho do papel",
+              "comando": ".uno:AttributePageSize",
+              "grande": true,
+              "lista": true,
+              "prioridade": "P0",
+              "criterio": "A4, Carta, Ofício etc."
+            },
+            {
+              "funcao": "Colunas",
+              "comando": ".uno:PageColumnType",
+              "grande": true,
+              "lista": true,
+              "prioridade": "P1",
+              "criterio": "1 a 3 colunas; preservadas em DOCX"
+            },
+            {
+              "funcao": "Quebras de página e seção",
+              "comando": ".uno:InsertBreak",
+              "prioridade": "P1",
+              "criterio": "Quebra com novo estilo de página = seção do Word"
+            },
+            {
+              "funcao": "Hifenização",
+              "comando": ".uno:Hyphenate",
+              "prioridade": "P2",
+              "criterio": "Hifenização pt-BR"
+            },
+            {
+              "funcao": "Numeração de linhas",
+              "comando": ".uno:LineNumberingDialog",
+              "prioridade": "P3",
+              "criterio": "Numera linhas"
+            },
+            {
+              "funcao": "Estilo de página (diálogo)",
+              "comando": ".uno:PageDialog",
+              "prioridade": "P1",
+              "criterio": "Todas as opções de página"
+            }
+          ]
+        },
+        {
+          "rotulo": "Parágrafo",
+          "itens": [
+            {
+              "funcao": "Recuos e espaçamento",
+              "comando": ".uno:ParagraphDialog",
+              "grande": true,
+              "prioridade": "P1",
+              "criterio": "Recuos e espaços antes/depois"
+            }
+          ]
+        },
+        {
+          "rotulo": "Organizar",
+          "itens": [
+            {
+              "funcao": "Sem quebra automática",
+              "comando": ".uno:WrapOff",
+              "prioridade": "P1",
+              "criterio": "Texto acima e abaixo do objeto"
+            },
+            {
+              "funcao": "Quebra automática",
+              "comando": ".uno:WrapOn",
+              "prioridade": "P1",
+              "criterio": "Texto em volta do objeto"
+            },
+            {
+              "funcao": "Quebra ideal",
+              "comando": ".uno:WrapIdeal",
+              "prioridade": "P2",
+              "criterio": "Texto no lado mais largo"
+            },
+            {
+              "funcao": "Atrás/na frente do texto",
+              "comando": ".uno:WrapThrough",
+              "prioridade": "P2",
+              "criterio": "Objeto sobre o texto"
+            },
+            {
+              "funcao": "Trazer para frente",
+              "comando": ".uno:BringToFront",
+              "prioridade": "P2",
+              "criterio": "Ordem de sobreposição"
+            },
+            {
+              "funcao": "Enviar para trás",
+              "comando": ".uno:SendToBack",
+              "prioridade": "P2",
+              "criterio": "Ordem de sobreposição"
+            },
+            {
+              "funcao": "Ancorar à página",
+              "comando": ".uno:SetAnchorToPage",
+              "prioridade": "P2",
+              "criterio": "Posição fixa na página"
+            },
+            {
+              "funcao": "Ancorar ao parágrafo",
+              "comando": ".uno:SetAnchorToPara",
+              "prioridade": "P2",
+              "criterio": "Objeto acompanha o parágrafo"
+            },
+            {
+              "funcao": "Ancorar como caractere",
+              "comando": ".uno:SetAnchorToChar",
+              "prioridade": "P2",
+              "criterio": "Objeto em linha com o texto"
+            },
+            {
+              "funcao": "Alinhar objetos",
+              "comando": ".uno:ObjectAlignLeft",
+              "prioridade": "P3",
+              "criterio": "Alinha objetos entre si"
+            },
+            {
+              "funcao": "Girar",
+              "comando": ".uno:ToggleObjectRotateMode",
+              "prioridade": "P3",
+              "criterio": "Rotação livre"
+            }
+          ]
+        }
       ]
     },
     {
-      "id": "referencias", "rotulo": "REFERÊNCIAS",
+      "id": "referencias",
+      "rotulo": "Referências",
+      "mnemonico": "R",
       "grupos": [
-        { "rotulo": "Sumário", "itens": [
-          { "funcao": "Sumário automático", "comando": ".uno:InsertMultiIndex", "prioridade": "P1", "criterio": "Gera sumário a partir dos títulos; preservado em DOCX" },
-          { "funcao": "Atualizar sumário", "comando": ".uno:UpdateCurIndex", "prioridade": "P1", "criterio": "Atualiza números de página e entradas" },
-          { "funcao": "Atualizar todos os índices", "comando": ".uno:UpdateAllIndexes", "prioridade": "P1", "criterio": "Atualiza sumários, listas e índices" }
-        ]},
-        { "rotulo": "Notas", "itens": [
-          { "funcao": "Nota de rodapé", "comando": ".uno:InsertFootnote", "prioridade": "P0", "criterio": "Preservada em ODT e DOCX" },
-          { "funcao": "Nota de fim", "comando": ".uno:InsertEndnote", "prioridade": "P0", "criterio": "Preservada em ODT e DOCX" },
-          { "funcao": "Configurar notas", "comando": ".uno:FootnoteDialog", "prioridade": "P2", "criterio": "Numeração, posição e separador" }
-        ]},
-        { "rotulo": "Citações e bibliografia", "itens": [
-          { "funcao": "Inserir citação", "comando": ".uno:InsertAuthoritiesEntry", "prioridade": "P2", "criterio": "Entrada bibliográfica no texto" },
-          { "funcao": "Banco de dados bibliográfico", "comando": ".uno:BibliographyComponent", "prioridade": "P3", "criterio": "Gerencia fontes locais" },
-          { "funcao": "Bibliografia", "comando": ".uno:InsertMultiIndex", "prioridade": "P2", "criterio": "Índice do tipo Bibliografia", "lacuna": "Mesmo diálogo do sumário (escolher o tipo). Estilos ABNT exigem modelo AY." }
-        ]},
-        { "rotulo": "Legendas", "itens": [
-          { "funcao": "Inserir legenda", "comando": ".uno:InsertCaptionDialog", "prioridade": "P1", "criterio": "Figura/Tabela numeradas" },
-          { "funcao": "Lista de figuras", "comando": ".uno:InsertMultiIndex", "prioridade": "P2", "criterio": "Índice do tipo Ilustrações" },
-          { "funcao": "Referência cruzada", "comando": ".uno:InsertReferenceField", "prioridade": "P1", "criterio": "Referência a títulos, legendas e indicadores" }
-        ]},
-        { "rotulo": "Índice remissivo", "itens": [
-          { "funcao": "Marcar entrada", "comando": ".uno:InsertIndexesEntry", "prioridade": "P2", "criterio": "Marca termo para o índice" },
-          { "funcao": "Inserir índice remissivo", "comando": ".uno:InsertMultiIndex", "prioridade": "P2", "criterio": "Índice do tipo Alfabético" },
-          { "funcao": "Atualizar campos", "comando": ".uno:UpdateFields", "prioridade": "P1", "criterio": "Atualiza campos do documento" }
-        ]}
+        {
+          "rotulo": "Sumário",
+          "itens": [
+            {
+              "funcao": "Sumário e índices",
+              "comando": ".uno:InsertMultiIndex",
+              "grande": true,
+              "prioridade": "P1",
+              "criterio": "Gera sumário a partir dos títulos (também bibliografia, ilustrações e índice remissivo, escolhendo o tipo); preservado em DOCX"
+            },
+            {
+              "funcao": "Atualizar sumário",
+              "comando": ".uno:UpdateCurIndex",
+              "prioridade": "P1",
+              "criterio": "Atualiza números de página e entradas"
+            },
+            {
+              "funcao": "Atualizar todos os índices",
+              "comando": ".uno:UpdateAllIndexes",
+              "prioridade": "P1",
+              "criterio": "Atualiza sumários, listas e índices"
+            }
+          ]
+        },
+        {
+          "rotulo": "Notas",
+          "itens": [
+            {
+              "funcao": "Nota de rodapé",
+              "comando": ".uno:InsertFootnote",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Preservada em ODT e DOCX"
+            },
+            {
+              "funcao": "Nota de fim",
+              "comando": ".uno:InsertEndnote",
+              "prioridade": "P0",
+              "criterio": "Preservada em ODT e DOCX"
+            },
+            {
+              "funcao": "Configurar notas",
+              "comando": ".uno:FootnoteDialog",
+              "prioridade": "P2",
+              "criterio": "Numeração, posição e separador"
+            }
+          ]
+        },
+        {
+          "rotulo": "Citações e bibliografia",
+          "itens": [
+            {
+              "funcao": "Inserir citação",
+              "comando": ".uno:InsertAuthoritiesEntry",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Entrada bibliográfica no texto"
+            },
+            {
+              "funcao": "Banco de dados bibliográfico",
+              "comando": ".uno:BibliographyComponent",
+              "prioridade": "P3",
+              "criterio": "Gerencia fontes locais"
+            },
+            {
+              "funcao": "Bibliografia",
+              "comando": ".uno:InsertMultiIndex",
+              "botao": false,
+              "via": "botão Sumário e índices, tipo Bibliografia",
+              "prioridade": "P2",
+              "criterio": "Índice do tipo Bibliografia",
+              "lacuna": "Estilos ABNT exigem modelo AY."
+            }
+          ]
+        },
+        {
+          "rotulo": "Legendas",
+          "itens": [
+            {
+              "funcao": "Inserir legenda",
+              "comando": ".uno:InsertCaptionDialog",
+              "grande": true,
+              "prioridade": "P1",
+              "criterio": "Figura/Tabela numeradas"
+            },
+            {
+              "funcao": "Lista de figuras",
+              "comando": ".uno:InsertMultiIndex",
+              "botao": false,
+              "via": "botão Sumário e índices, tipo Índice de ilustrações",
+              "prioridade": "P2",
+              "criterio": "Índice do tipo Ilustrações"
+            },
+            {
+              "funcao": "Referência cruzada",
+              "comando": ".uno:InsertReferenceField",
+              "prioridade": "P1",
+              "criterio": "Referência a títulos, legendas e indicadores"
+            }
+          ]
+        },
+        {
+          "rotulo": "Índice remissivo",
+          "itens": [
+            {
+              "funcao": "Marcar entrada",
+              "comando": ".uno:InsertIndexesEntry",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Marca termo para o índice"
+            },
+            {
+              "funcao": "Inserir índice remissivo",
+              "comando": ".uno:InsertMultiIndex",
+              "botao": false,
+              "via": "botão Sumário e índices, tipo Índice alfabético",
+              "prioridade": "P2",
+              "criterio": "Índice do tipo Alfabético"
+            },
+            {
+              "funcao": "Atualizar campos",
+              "comando": ".uno:UpdateFields",
+              "prioridade": "P1",
+              "criterio": "Atualiza campos do documento"
+            }
+          ]
+        }
       ]
     },
     {
-      "id": "correspondencia", "rotulo": "CORRESPONDÊNCIA",
+      "id": "correspondencia",
+      "rotulo": "Correspondência",
+      "mnemonico": "C",
       "grupos": [
-        { "rotulo": "Criar", "itens": [
-          { "funcao": "Envelopes", "comando": ".uno:InsertEnvelope", "prioridade": "P2", "criterio": "Envelope com remetente e destinatário" },
-          { "funcao": "Etiquetas", "comando": ".uno:InsertLabels", "prioridade": "P2", "criterio": "Folha de etiquetas (Pimaco/Avery)" }
-        ]},
-        { "rotulo": "Mala direta", "itens": [
-          { "funcao": "Assistente de mala direta", "comando": ".uno:MailMergeWizard", "prioridade": "P2", "criterio": "Importa destinatários (CSV, planilha) e gera documentos" },
-          { "funcao": "Selecionar destinatários", "comando": ".uno:ChangeDatabaseField", "prioridade": "P2", "criterio": "Troca a fonte de dados" },
-          { "funcao": "Exibir fonte de dados", "comando": ".uno:ViewDataSourceBrowser", "prioridade": "P2", "criterio": "Mostra registros e permite arrastar campos" },
-          { "funcao": "Inserir campo de mesclagem", "comando": ".uno:InsertFieldCtrl", "prioridade": "P2", "criterio": "Campos do banco de dados" },
-          { "funcao": "Primeiro registro", "comando": ".uno:MailMergeFirstEntry", "prioridade": "P2", "criterio": "Prévia" },
-          { "funcao": "Registro anterior", "comando": ".uno:MailMergePrevEntry", "prioridade": "P2", "criterio": "Prévia" },
-          { "funcao": "Próximo registro", "comando": ".uno:MailMergeNextEntry", "prioridade": "P2", "criterio": "Prévia" },
-          { "funcao": "Último registro", "comando": ".uno:MailMergeLastEntry", "prioridade": "P2", "criterio": "Prévia" },
-          { "funcao": "Gerar documentos", "comando": ".uno:MailMergeCreateDocuments", "prioridade": "P2", "criterio": "Documento único com todos os registros" },
-          { "funcao": "Salvar documentos mesclados", "comando": ".uno:MailMergeSaveDocuments", "prioridade": "P2", "criterio": "Um arquivo por registro ou arquivo único" },
-          { "funcao": "Imprimir documentos mesclados", "comando": ".uno:MailMergePrintDocuments", "prioridade": "P2", "criterio": "Impressão em lote" },
-          { "funcao": "Enviar por e-mail", "comando": ".uno:MailMergeEmailDocuments", "prioridade": "P3", "criterio": "Só com servidor configurado pelo usuário", "lacuna": "Exige SMTP configurado pelo usuário; fica oculto por padrão (o produto não envia nada sem autorização)." }
-        ]}
+        {
+          "rotulo": "Criar",
+          "itens": [
+            {
+              "funcao": "Envelopes",
+              "comando": ".uno:InsertEnvelope",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Envelope com remetente e destinatário"
+            },
+            {
+              "funcao": "Etiquetas",
+              "comando": ".uno:InsertLabels",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Folha de etiquetas (Pimaco/Avery)"
+            }
+          ]
+        },
+        {
+          "rotulo": "Iniciar mala direta",
+          "itens": [
+            {
+              "funcao": "Assistente de mala direta",
+              "comando": ".uno:MailMergeWizard",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Importa destinatários (CSV, planilha) e gera documentos"
+            },
+            {
+              "funcao": "Selecionar destinatários",
+              "comando": ".uno:ChangeDatabaseField",
+              "prioridade": "P2",
+              "criterio": "Troca a fonte de dados"
+            },
+            {
+              "funcao": "Exibir fonte de dados",
+              "comando": ".uno:ViewDataSourceBrowser",
+              "prioridade": "P2",
+              "criterio": "Mostra registros e permite arrastar campos"
+            },
+            {
+              "funcao": "Inserir campo de mesclagem",
+              "comando": ".uno:InsertFieldCtrl",
+              "lista": true,
+              "prioridade": "P2",
+              "criterio": "Campos do banco de dados"
+            }
+          ]
+        },
+        {
+          "rotulo": "Visualizar resultados",
+          "compacto": true,
+          "itens": [
+            {
+              "funcao": "Primeiro registro",
+              "comando": ".uno:MailMergeFirstEntry",
+              "prioridade": "P2",
+              "criterio": "Prévia"
+            },
+            {
+              "funcao": "Registro anterior",
+              "comando": ".uno:MailMergePrevEntry",
+              "prioridade": "P2",
+              "criterio": "Prévia"
+            },
+            {
+              "funcao": "Próximo registro",
+              "comando": ".uno:MailMergeNextEntry",
+              "prioridade": "P2",
+              "criterio": "Prévia"
+            },
+            {
+              "funcao": "Último registro",
+              "comando": ".uno:MailMergeLastEntry",
+              "prioridade": "P2",
+              "criterio": "Prévia"
+            }
+          ]
+        },
+        {
+          "rotulo": "Concluir",
+          "itens": [
+            {
+              "funcao": "Gerar documentos",
+              "comando": ".uno:MailMergeCreateDocuments",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Documento único com todos os registros"
+            },
+            {
+              "funcao": "Salvar documentos mesclados",
+              "comando": ".uno:MailMergeSaveDocuments",
+              "prioridade": "P2",
+              "criterio": "Um arquivo por registro ou arquivo único"
+            },
+            {
+              "funcao": "Imprimir documentos mesclados",
+              "comando": ".uno:MailMergePrintDocuments",
+              "prioridade": "P2",
+              "criterio": "Impressão em lote"
+            },
+            {
+              "funcao": "Enviar por e-mail",
+              "comando": ".uno:MailMergeEmailDocuments",
+              "botao": false,
+              "via": "fora da faixa por decisão de privacidade",
+              "prioridade": "P3",
+              "criterio": "Só com servidor configurado pelo usuário",
+              "lacuna": "Exige SMTP configurado pelo usuário; fica fora da faixa por padrão (o produto não envia nada sem autorização)."
+            }
+          ]
+        }
       ]
     },
     {
-      "id": "revisao", "rotulo": "REVISÃO",
+      "id": "revisao",
+      "rotulo": "Revisão",
+      "mnemonico": "S",
       "grupos": [
-        { "rotulo": "Revisão de texto", "itens": [
-          { "funcao": "Ortografia e gramática", "comando": ".uno:SpellingAndGrammarDialog", "prioridade": "P0", "criterio": "Dicionário pt-BR offline (VERO)" },
-          { "funcao": "Revisão automática", "comando": ".uno:SpellOnline", "prioridade": "P0", "criterio": "Sublinha erros durante a digitação" },
-          { "funcao": "Sinônimos", "comando": ".uno:ThesaurusDialog", "prioridade": "P1", "criterio": "Dicionário de sinônimos pt-BR" },
-          { "funcao": "Idioma do texto", "comando": ".uno:SetLanguageAllTextMenu", "tipo": "menu", "prioridade": "P1", "criterio": "Define idioma da seleção/documento" },
-          { "funcao": "Contagem de palavras", "comando": ".uno:WordCountDialog", "prioridade": "P0", "criterio": "Palavras e caracteres da seleção e do documento" },
-          { "funcao": "Verificar acessibilidade", "comando": ".uno:SidebarDeck.A11yCheckDeck", "prioridade": "P1", "criterio": "Aponta imagens sem texto alternativo, títulos etc." },
-          { "funcao": "Revisão gramatical offline avançada", "comando": null, "prioridade": "P3", "criterio": "Avaliar LanguageTool local e Lightproof pt-BR", "lacuna": "Avaliação separada: LanguageTool local exige Java e servidor local (~300 MB); a base já traz verificação gramatical básica para pt-BR no dicionário." }
-        ]},
-        { "rotulo": "Comentários", "itens": [
-          { "funcao": "Novo comentário", "comando": ".uno:InsertAnnotation", "prioridade": "P0", "criterio": "Preservado em DOCX com autor e data" },
-          { "funcao": "Excluir todos os comentários", "comando": ".uno:DeleteAllNotes", "prioridade": "P1", "criterio": "Remove comentários" },
-          { "funcao": "Mostrar comentários", "comando": ".uno:ShowAnnotations", "prioridade": "P1", "criterio": "Mostra/oculta a margem de comentários" }
-        ]},
-        { "rotulo": "Controle de alterações", "itens": [
-          { "funcao": "Controlar alterações", "comando": ".uno:TrackChanges", "prioridade": "P0", "criterio": "Grava inserções, exclusões e formatação com autor" },
-          { "funcao": "Mostrar alterações", "comando": ".uno:ShowTrackedChanges", "prioridade": "P1", "criterio": "Alterna exibição" },
-          { "funcao": "Alteração anterior", "comando": ".uno:PreviousTrackedChange", "prioridade": "P1", "criterio": "Navega" },
-          { "funcao": "Próxima alteração", "comando": ".uno:NextTrackedChange", "prioridade": "P1", "criterio": "Navega" },
-          { "funcao": "Aceitar", "comando": ".uno:AcceptTrackedChange", "prioridade": "P0", "criterio": "Aceita a alteração atual" },
-          { "funcao": "Rejeitar", "comando": ".uno:RejectTrackedChange", "prioridade": "P0", "criterio": "Rejeita a alteração atual" },
-          { "funcao": "Aceitar todas", "comando": ".uno:AcceptAllTrackedChanges", "prioridade": "P0", "criterio": "Aceita todas" },
-          { "funcao": "Rejeitar todas", "comando": ".uno:RejectAllTrackedChanges", "prioridade": "P0", "criterio": "Rejeita todas" },
-          { "funcao": "Gerenciar alterações", "comando": ".uno:AcceptTrackedChanges", "prioridade": "P1", "criterio": "Lista e filtra alterações" },
-          { "funcao": "Proteger controle de alterações", "comando": ".uno:ProtectTraceChangeMode", "prioridade": "P3", "criterio": "Exige senha para desligar" }
-        ]},
-        { "rotulo": "Comparar", "itens": [
-          { "funcao": "Comparar documentos", "comando": ".uno:CompareDocuments", "prioridade": "P1", "criterio": "Gera alterações controladas a partir de duas versões" },
-          { "funcao": "Combinar documentos", "comando": ".uno:MergeDocuments", "prioridade": "P3", "criterio": "Junta revisões de cópias" }
-        ]}
+        {
+          "rotulo": "Revisão de texto",
+          "itens": [
+            {
+              "funcao": "Ortografia e gramática",
+              "comando": ".uno:SpellingAndGrammarDialog",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Dicionário pt-BR offline (VERO)"
+            },
+            {
+              "funcao": "Revisão automática",
+              "comando": ".uno:SpellOnline",
+              "prioridade": "P0",
+              "criterio": "Sublinha erros durante a digitação"
+            },
+            {
+              "funcao": "Sinônimos",
+              "comando": ".uno:ThesaurusDialog",
+              "prioridade": "P1",
+              "criterio": "Dicionário de sinônimos pt-BR"
+            },
+            {
+              "funcao": "Contagem de palavras",
+              "comando": ".uno:WordCountDialog",
+              "prioridade": "P0",
+              "criterio": "Palavras e caracteres da seleção e do documento"
+            },
+            {
+              "funcao": "Idioma do texto",
+              "comando": ".uno:SetLanguageAllTextMenu",
+              "tipo": "menu",
+              "botao": false,
+              "via": "clique no idioma, na barra de status",
+              "prioridade": "P1",
+              "criterio": "Define idioma da seleção/documento"
+            },
+            {
+              "funcao": "Verificar acessibilidade",
+              "comando": ".uno:SidebarDeck.A11yCheckDeck",
+              "prioridade": "P1",
+              "criterio": "Aponta imagens sem texto alternativo, títulos etc."
+            },
+            {
+              "funcao": "Revisão gramatical offline avançada",
+              "comando": null,
+              "prioridade": "P3",
+              "criterio": "Avaliar LanguageTool local e Lightproof pt-BR",
+              "lacuna": "Avaliação separada: LanguageTool local exige Java e servidor local (~300 MB)."
+            }
+          ]
+        },
+        {
+          "rotulo": "Comentários",
+          "itens": [
+            {
+              "funcao": "Novo comentário",
+              "comando": ".uno:InsertAnnotation",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Preservado em DOCX com autor e data"
+            },
+            {
+              "funcao": "Excluir todos os comentários",
+              "comando": ".uno:DeleteAllNotes",
+              "prioridade": "P1",
+              "criterio": "Remove comentários"
+            },
+            {
+              "funcao": "Mostrar comentários",
+              "comando": ".uno:ShowAnnotations",
+              "prioridade": "P1",
+              "criterio": "Mostra/oculta a margem de comentários"
+            }
+          ]
+        },
+        {
+          "rotulo": "Controle de alterações",
+          "itens": [
+            {
+              "funcao": "Controlar alterações",
+              "comando": ".uno:TrackChanges",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Grava inserções, exclusões e formatação com autor"
+            },
+            {
+              "funcao": "Mostrar alterações",
+              "comando": ".uno:ShowTrackedChanges",
+              "prioridade": "P1",
+              "criterio": "Alterna exibição"
+            },
+            {
+              "funcao": "Gerenciar alterações",
+              "comando": ".uno:AcceptTrackedChanges",
+              "prioridade": "P1",
+              "criterio": "Lista e filtra alterações"
+            },
+            {
+              "funcao": "Proteger controle de alterações",
+              "comando": ".uno:ProtectTraceChangeMode",
+              "prioridade": "P3",
+              "criterio": "Exige senha para desligar"
+            }
+          ]
+        },
+        {
+          "rotulo": "Alterações",
+          "itens": [
+            {
+              "funcao": "Aceitar",
+              "comando": ".uno:AcceptTrackedChange",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Aceita a alteração atual"
+            },
+            {
+              "funcao": "Rejeitar",
+              "comando": ".uno:RejectTrackedChange",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Rejeita a alteração atual"
+            },
+            {
+              "funcao": "Alteração anterior",
+              "comando": ".uno:PreviousTrackedChange",
+              "prioridade": "P1",
+              "criterio": "Navega"
+            },
+            {
+              "funcao": "Próxima alteração",
+              "comando": ".uno:NextTrackedChange",
+              "prioridade": "P1",
+              "criterio": "Navega"
+            },
+            {
+              "funcao": "Aceitar todas",
+              "comando": ".uno:AcceptAllTrackedChanges",
+              "prioridade": "P0",
+              "criterio": "Aceita todas"
+            },
+            {
+              "funcao": "Rejeitar todas",
+              "comando": ".uno:RejectAllTrackedChanges",
+              "prioridade": "P0",
+              "criterio": "Rejeita todas"
+            }
+          ]
+        },
+        {
+          "rotulo": "Comparar",
+          "itens": [
+            {
+              "funcao": "Comparar documentos",
+              "comando": ".uno:CompareDocuments",
+              "grande": true,
+              "prioridade": "P1",
+              "criterio": "Gera alterações controladas a partir de duas versões"
+            },
+            {
+              "funcao": "Combinar documentos",
+              "comando": ".uno:MergeDocuments",
+              "prioridade": "P3",
+              "criterio": "Junta revisões de cópias"
+            }
+          ]
+        }
       ]
     },
     {
-      "id": "exibir", "rotulo": "EXIBIR",
+      "id": "exibir",
+      "rotulo": "Exibir",
+      "mnemonico": "E",
       "grupos": [
-        { "rotulo": "Modos", "itens": [
-          { "funcao": "Layout de impressão", "comando": ".uno:PrintLayout", "prioridade": "P0", "criterio": "Páginas com limites visíveis" },
-          { "funcao": "Layout da web", "comando": ".uno:BrowseView", "prioridade": "P3", "criterio": "Texto sem paginação" },
-          { "funcao": "Modo de leitura", "comando": null, "prioridade": "P2", "criterio": "Leitura em tela cheia, sem faixa de opções, páginas lado a lado", "lacuna": "A base tem tela inteira (.uno:FullScreen) e exibição de livro (.uno:ShowBookview); um modo de leitura dedicado será um comando da extensão AY que combina os dois e bloqueia edição." },
-          { "funcao": "Tela inteira", "comando": ".uno:FullScreen", "prioridade": "P1", "criterio": "Esconde barras" }
-        ]},
-        { "rotulo": "Zoom", "itens": [
-          { "funcao": "Zoom", "comando": ".uno:Zoom", "prioridade": "P0", "criterio": "Diálogo de zoom" },
-          { "funcao": "100%", "comando": ".uno:Zoom100Percent", "prioridade": "P1", "criterio": "Zoom real" },
-          { "funcao": "Página inteira", "comando": ".uno:ZoomPage", "prioridade": "P1", "criterio": "Ajusta à página" },
-          { "funcao": "Largura da página", "comando": ".uno:ZoomPageWidth", "prioridade": "P1", "criterio": "Ajusta à largura" },
-          { "funcao": "Uma página", "comando": ".uno:ShowSinglePage", "prioridade": "P1", "criterio": "Uma página por linha" },
-          { "funcao": "Várias páginas", "comando": ".uno:ShowTwoPages", "prioridade": "P1", "criterio": "Páginas lado a lado" },
-          { "funcao": "Exibição de livro", "comando": ".uno:ShowBookview", "prioridade": "P2", "criterio": "Páginas espelhadas" }
-        ]},
-        { "rotulo": "Mostrar", "itens": [
-          { "funcao": "Régua", "comando": ".uno:Ruler", "prioridade": "P0", "criterio": "Mostra/oculta a régua" },
-          { "funcao": "Painel de navegação", "comando": ".uno:Navigator", "prioridade": "P1", "criterio": "Títulos, tabelas, imagens e comentários" },
-          { "funcao": "Barra lateral", "comando": ".uno:Sidebar", "prioridade": "P1", "criterio": "Propriedades, estilos e galeria" },
-          { "funcao": "Marcas de formatação", "comando": ".uno:ControlCodes", "prioridade": "P1", "criterio": "Mostra ¶" },
-          { "funcao": "Limites do texto", "comando": ".uno:ViewBounds", "prioridade": "P2", "criterio": "Mostra margens" },
-          { "funcao": "Grade", "comando": ".uno:GridVisible", "prioridade": "P3", "criterio": "Grade de alinhamento" },
-          { "funcao": "Ocultar espaço em branco", "comando": ".uno:ShowWhitespace", "prioridade": "P3", "criterio": "Oculta margens superior/inferior" }
-        ]},
-        { "rotulo": "Janela e tema", "itens": [
-          { "funcao": "Nova janela", "comando": ".uno:NewWindow", "prioridade": "P2", "criterio": "Segunda janela do mesmo documento" },
-          { "funcao": "Fechar janela", "comando": ".uno:CloseWin", "prioridade": "P2", "criterio": "Fecha a janela atual" },
-          { "funcao": "Alternar entre janelas", "comando": ".uno:WindowList", "tipo": "menu", "prioridade": "P2", "criterio": "Lista janelas abertas" },
-          { "funcao": "Tema claro/escuro", "comando": ".uno:ChangeTheme", "prioridade": "P1", "criterio": "Segue o sistema ou força claro/escuro" }
-        ]}
+        {
+          "rotulo": "Modos de exibição",
+          "itens": [
+            {
+              "funcao": "Layout de impressão",
+              "comando": ".uno:PrintLayout",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Páginas com limites visíveis"
+            },
+            {
+              "funcao": "Layout da web",
+              "comando": ".uno:BrowseView",
+              "grande": true,
+              "prioridade": "P3",
+              "criterio": "Texto sem paginação"
+            },
+            {
+              "funcao": "Tela inteira",
+              "comando": ".uno:FullScreen",
+              "grande": true,
+              "prioridade": "P1",
+              "criterio": "Esconde barras"
+            },
+            {
+              "funcao": "Modo de leitura",
+              "comando": null,
+              "prioridade": "P2",
+              "criterio": "Leitura em tela cheia, sem faixa de opções, páginas lado a lado",
+              "lacuna": "Hoje: Tela inteira + Exibição de livro. Modo de leitura dedicado (sem edição) previsto na extensão AY."
+            }
+          ]
+        },
+        {
+          "rotulo": "Zoom",
+          "itens": [
+            {
+              "funcao": "Zoom",
+              "comando": ".uno:Zoom",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Diálogo de zoom"
+            },
+            {
+              "funcao": "100%",
+              "comando": ".uno:Zoom100Percent",
+              "prioridade": "P1",
+              "criterio": "Zoom real"
+            },
+            {
+              "funcao": "Página inteira",
+              "comando": ".uno:ZoomPage",
+              "prioridade": "P1",
+              "criterio": "Ajusta à página"
+            },
+            {
+              "funcao": "Largura da página",
+              "comando": ".uno:ZoomPageWidth",
+              "prioridade": "P1",
+              "criterio": "Ajusta à largura"
+            },
+            {
+              "funcao": "Uma página",
+              "comando": ".uno:ShowSinglePage",
+              "prioridade": "P1",
+              "criterio": "Uma página por linha"
+            },
+            {
+              "funcao": "Várias páginas",
+              "comando": ".uno:ShowTwoPages",
+              "prioridade": "P1",
+              "criterio": "Páginas lado a lado"
+            },
+            {
+              "funcao": "Exibição de livro",
+              "comando": ".uno:ShowBookview",
+              "prioridade": "P2",
+              "criterio": "Páginas espelhadas"
+            }
+          ]
+        },
+        {
+          "rotulo": "Mostrar",
+          "itens": [
+            {
+              "funcao": "Régua",
+              "comando": ".uno:Ruler",
+              "prioridade": "P0",
+              "criterio": "Mostra/oculta a régua"
+            },
+            {
+              "funcao": "Painel de navegação",
+              "comando": ".uno:Navigator",
+              "prioridade": "P1",
+              "criterio": "Títulos, tabelas, imagens e comentários"
+            },
+            {
+              "funcao": "Barra lateral",
+              "comando": ".uno:Sidebar",
+              "prioridade": "P1",
+              "criterio": "Propriedades, estilos e galeria"
+            },
+            {
+              "funcao": "Marcas de formatação",
+              "comando": ".uno:ControlCodes",
+              "prioridade": "P1",
+              "criterio": "Mostra ¶"
+            },
+            {
+              "funcao": "Limites do texto",
+              "comando": ".uno:ViewBounds",
+              "prioridade": "P2",
+              "criterio": "Mostra margens"
+            },
+            {
+              "funcao": "Grade",
+              "comando": ".uno:GridVisible",
+              "prioridade": "P3",
+              "criterio": "Grade de alinhamento"
+            },
+            {
+              "funcao": "Ocultar espaço em branco",
+              "comando": ".uno:ShowWhitespace",
+              "prioridade": "P3",
+              "criterio": "Oculta margens superior/inferior"
+            }
+          ]
+        },
+        {
+          "rotulo": "Janela e tema",
+          "itens": [
+            {
+              "funcao": "Nova janela",
+              "comando": ".uno:NewWindow",
+              "grande": true,
+              "prioridade": "P2",
+              "criterio": "Segunda janela do mesmo documento"
+            },
+            {
+              "funcao": "Fechar janela",
+              "comando": ".uno:CloseWin",
+              "prioridade": "P2",
+              "criterio": "Fecha a janela atual"
+            },
+            {
+              "funcao": "Alternar entre janelas",
+              "comando": ".uno:WindowList",
+              "tipo": "menu",
+              "botao": false,
+              "via": "menu ≡ > Janela",
+              "prioridade": "P2",
+              "criterio": "Lista janelas abertas"
+            },
+            {
+              "funcao": "Tema claro/escuro",
+              "comando": ".uno:ChangeTheme",
+              "grande": true,
+              "prioridade": "P1",
+              "criterio": "Segue o sistema ou força claro/escuro"
+            }
+          ]
+        }
       ]
     },
     {
-      "id": "ajuda", "rotulo": "AJUDA",
+      "id": "ajuda",
+      "rotulo": "Ajuda",
+      "mnemonico": "J",
       "grupos": [
-        { "rotulo": "Ajuda", "itens": [
-          { "funcao": "Ajuda offline", "comando": ".uno:HelpIndex", "prioridade": "P1", "criterio": "Abre a ajuda local em pt-BR (sem internet)" },
-          { "funcao": "Guia de utilização do AY", "comando": null, "prioridade": "P1", "criterio": "Guia próprio do AY, offline", "lacuna": "Conteúdo próprio a escrever e comando da extensão AY para abri-lo." },
-          { "funcao": "Atalhos de teclado", "comando": null, "prioridade": "P1", "criterio": "Lista de atalhos em pt-BR", "lacuna": "Sem tela de atalhos na base (só personalização em Ferramentas > Personalizar). Gerar página própria a partir da configuração." }
-        ]},
-        { "rotulo": "Sobre", "itens": [
-          { "funcao": "Sobre o AY ESCREVA", "comando": ".uno:About", "prioridade": "P0", "criterio": "Mostra versão, base e licenças" },
-          { "funcao": "Licenças", "comando": ".uno:ShowLicense", "prioridade": "P0", "criterio": "Texto das licenças (MPL, LGPL e terceiros)" },
-          { "funcao": "Créditos", "comando": ".uno:ShowCredits", "prioridade": "P1", "criterio": "Créditos da base" }
-        ]},
-        { "rotulo": "Diagnóstico", "itens": [
-          { "funcao": "Reiniciar em modo de segurança", "comando": ".uno:SafeMode", "prioridade": "P1", "criterio": "Restaura perfil e desativa extensões" },
-          { "funcao": "Relatório de diagnóstico", "comando": null, "prioridade": "P2", "criterio": "Gera arquivo local com versão, sistema e configuração (sem conteúdo de documentos)", "lacuna": "Comando da extensão AY." },
-          { "funcao": "Verificar atualizações (opcional)", "comando": null, "prioridade": "P2", "criterio": "Só consulta quando o usuário pede; nunca envia conteúdo", "lacuna": "A verificação da base está desligada. Implementar consulta própria do AY." }
-        ]}
+        {
+          "rotulo": "Ajuda",
+          "itens": [
+            {
+              "funcao": "Guia de utilização do AY",
+              "comando": null,
+              "comandoAY": "ayescreva:Guia",
+              "grande": true,
+              "icone": "cmd/lc_helpindex.png",
+              "prioridade": "P1",
+              "criterio": "Guia próprio do AY, offline"
+            },
+            {
+              "funcao": "Atalhos de teclado",
+              "comando": null,
+              "comandoAY": "ayescreva:Atalhos",
+              "grande": true,
+              "icone": "cmd/lc_shortcutkeysdialog.png",
+              "prioridade": "P1",
+              "criterio": "Lista de atalhos em pt-BR, offline"
+            },
+            {
+              "funcao": "Ajuda do motor (offline)",
+              "comando": ".uno:HelpIndex",
+              "prioridade": "P1",
+              "criterio": "Abre a ajuda local em pt-BR (sem internet)"
+            },
+            {
+              "funcao": "Limitações conhecidas",
+              "comando": null,
+              "comandoAY": "ayescreva:Limitacoes",
+              "icone": "cmd/sc_helpindex.png",
+              "prioridade": "P1",
+              "criterio": "Lista o que ainda não funciona ou difere do Word"
+            }
+          ]
+        },
+        {
+          "rotulo": "Sobre",
+          "itens": [
+            {
+              "funcao": "Sobre o AY ESCREVA",
+              "comando": ".uno:About",
+              "grande": true,
+              "prioridade": "P0",
+              "criterio": "Mostra versão, base e licenças"
+            },
+            {
+              "funcao": "Licenças",
+              "comando": ".uno:ShowLicense",
+              "prioridade": "P0",
+              "criterio": "Texto das licenças (MPL, LGPL e terceiros)"
+            },
+            {
+              "funcao": "Créditos",
+              "comando": ".uno:ShowCredits",
+              "prioridade": "P1",
+              "criterio": "Créditos da base"
+            }
+          ]
+        },
+        {
+          "rotulo": "Diagnóstico",
+          "itens": [
+            {
+              "funcao": "Relatório de diagnóstico",
+              "comando": null,
+              "comandoAY": "ayescreva:Diagnostico",
+              "grande": true,
+              "icone": "cmd/lc_inspectordeck.png",
+              "prioridade": "P2",
+              "criterio": "Gera arquivo local com versão, sistema e configuração (sem conteúdo de documentos)"
+            },
+            {
+              "funcao": "Reiniciar em modo de segurança",
+              "comando": ".uno:SafeMode",
+              "prioridade": "P1",
+              "criterio": "Restaura perfil e desativa extensões"
+            },
+            {
+              "funcao": "Verificar atualizações (opcional)",
+              "comando": null,
+              "prioridade": "P2",
+              "criterio": "Só consulta quando o usuário pede; nunca envia conteúdo",
+              "lacuna": "Depende do endereço definitivo do site; a verificação da base está desligada."
+            }
+          ]
+        }
       ]
     }
   ],
   "contextuais": [
     {
-      "id": "tabela", "rotulo": "TABELA", "contexto": "Table",
+      "id": "tabela",
+      "rotulo": "Tabela",
+      "mnemonico": "T",
+      "contexto": [
+        "Table"
+      ],
       "itens": [
-        { "funcao": "Inserir linha acima", "comando": ".uno:InsertRowsBefore", "prioridade": "P1", "criterio": "Insere linha" },
-        { "funcao": "Inserir linha abaixo", "comando": ".uno:InsertRowsAfter", "prioridade": "P1", "criterio": "Insere linha" },
-        { "funcao": "Inserir coluna à esquerda", "comando": ".uno:InsertColumnsBefore", "prioridade": "P1", "criterio": "Insere coluna" },
-        { "funcao": "Inserir coluna à direita", "comando": ".uno:InsertColumnsAfter", "prioridade": "P1", "criterio": "Insere coluna" },
-        { "funcao": "Excluir linhas", "comando": ".uno:DeleteRows", "prioridade": "P1", "criterio": "Exclui linhas" },
-        { "funcao": "Excluir colunas", "comando": ".uno:DeleteColumns", "prioridade": "P1", "criterio": "Exclui colunas" },
-        { "funcao": "Excluir tabela", "comando": ".uno:DeleteTable", "prioridade": "P1", "criterio": "Exclui a tabela" },
-        { "funcao": "Mesclar células", "comando": ".uno:MergeCells", "prioridade": "P1", "criterio": "Mescla preservada em DOCX" },
-        { "funcao": "Dividir células", "comando": ".uno:SplitCell", "prioridade": "P1", "criterio": "Divide células" },
-        { "funcao": "Ajustar largura das colunas", "comando": ".uno:SetOptimalColumnWidth", "prioridade": "P2", "criterio": "Largura ideal" },
-        { "funcao": "Bordas", "comando": ".uno:SetBorderStyle", "prioridade": "P1", "criterio": "Bordas preservadas em DOCX" },
-        { "funcao": "Sombreamento", "comando": ".uno:TableCellBackgroundColor", "prioridade": "P1", "criterio": "Cor de fundo da célula" },
-        { "funcao": "Estilos de tabela", "comando": ".uno:AutoFormat", "prioridade": "P2", "criterio": "Formatos prontos" },
-        { "funcao": "Classificar", "comando": ".uno:SortDialog", "prioridade": "P3", "criterio": "Ordena linhas" },
-        { "funcao": "Propriedades da tabela", "comando": ".uno:TableDialog", "prioridade": "P1", "criterio": "Largura, alinhamento, cabeçalho repetido" },
-        { "funcao": "Selecionar tabela", "comando": ".uno:SelectTable", "prioridade": "P2", "criterio": "Seleciona a tabela" }
+        {
+          "funcao": "Inserir linha acima",
+          "comando": ".uno:InsertRowsBefore",
+          "prioridade": "P1",
+          "criterio": "Insere linha"
+        },
+        {
+          "funcao": "Inserir linha abaixo",
+          "comando": ".uno:InsertRowsAfter",
+          "prioridade": "P1",
+          "criterio": "Insere linha"
+        },
+        {
+          "funcao": "Inserir coluna à esquerda",
+          "comando": ".uno:InsertColumnsBefore",
+          "prioridade": "P1",
+          "criterio": "Insere coluna"
+        },
+        {
+          "funcao": "Inserir coluna à direita",
+          "comando": ".uno:InsertColumnsAfter",
+          "prioridade": "P1",
+          "criterio": "Insere coluna"
+        },
+        {
+          "funcao": "Excluir linhas",
+          "comando": ".uno:DeleteRows",
+          "prioridade": "P1",
+          "criterio": "Exclui linhas"
+        },
+        {
+          "funcao": "Excluir colunas",
+          "comando": ".uno:DeleteColumns",
+          "prioridade": "P1",
+          "criterio": "Exclui colunas"
+        },
+        {
+          "funcao": "Excluir tabela",
+          "comando": ".uno:DeleteTable",
+          "prioridade": "P1",
+          "criterio": "Exclui a tabela"
+        },
+        {
+          "funcao": "Mesclar células",
+          "comando": ".uno:MergeCells",
+          "prioridade": "P1",
+          "criterio": "Mescla preservada em DOCX"
+        },
+        {
+          "funcao": "Dividir células",
+          "comando": ".uno:SplitCell",
+          "prioridade": "P1",
+          "criterio": "Divide células"
+        },
+        {
+          "funcao": "Ajustar largura das colunas",
+          "comando": ".uno:SetOptimalColumnWidth",
+          "prioridade": "P2",
+          "criterio": "Largura ideal"
+        },
+        {
+          "funcao": "Bordas",
+          "comando": ".uno:SetBorderStyle",
+          "lista": true,
+          "prioridade": "P1",
+          "criterio": "Bordas preservadas em DOCX"
+        },
+        {
+          "funcao": "Sombreamento",
+          "comando": ".uno:TableCellBackgroundColor",
+          "prioridade": "P1",
+          "criterio": "Cor de fundo da célula"
+        },
+        {
+          "funcao": "Estilos de tabela",
+          "comando": ".uno:AutoFormat",
+          "prioridade": "P2",
+          "criterio": "Formatos prontos"
+        },
+        {
+          "funcao": "Classificar",
+          "comando": ".uno:SortDialog",
+          "prioridade": "P3",
+          "criterio": "Ordena linhas"
+        },
+        {
+          "funcao": "Propriedades da tabela",
+          "comando": ".uno:TableDialog",
+          "prioridade": "P1",
+          "criterio": "Largura, alinhamento, cabeçalho repetido"
+        },
+        {
+          "funcao": "Selecionar tabela",
+          "comando": ".uno:SelectTable",
+          "prioridade": "P2",
+          "criterio": "Seleciona a tabela"
+        }
       ]
     },
     {
-      "id": "imagem", "rotulo": "IMAGEM", "contexto": "Graphic",
+      "id": "imagem",
+      "rotulo": "Imagem",
+      "mnemonico": "M",
+      "contexto": [
+        "Graphic"
+      ],
       "itens": [
-        { "funcao": "Recortar", "comando": ".uno:Crop", "prioridade": "P1", "criterio": "Recorte preservado em DOCX" },
-        { "funcao": "Texto alternativo", "comando": ".uno:ObjectTitleDescription", "prioridade": "P0", "criterio": "Descrição preservada em ODT e DOCX" },
-        { "funcao": "Trocar imagem", "comando": ".uno:ChangePicture", "prioridade": "P2", "criterio": "Mantém tamanho e posição" },
-        { "funcao": "Compactar imagem", "comando": ".uno:CompressGraphic", "prioridade": "P2", "criterio": "Reduz tamanho do arquivo" },
-        { "funcao": "Salvar imagem", "comando": ".uno:SaveGraphic", "prioridade": "P3", "criterio": "Exporta a imagem" },
-        { "funcao": "Girar à esquerda", "comando": ".uno:RotateLeft", "prioridade": "P2", "criterio": "90°" },
-        { "funcao": "Girar à direita", "comando": ".uno:RotateRight", "prioridade": "P2", "criterio": "90°" },
-        { "funcao": "Espelhar vertical", "comando": ".uno:FlipVertical", "prioridade": "P3", "criterio": "Espelha" },
-        { "funcao": "Espelhar horizontal", "comando": ".uno:FlipHorizontal", "prioridade": "P3", "criterio": "Espelha" },
-        { "funcao": "Propriedades da imagem", "comando": ".uno:GraphicDialog", "prioridade": "P1", "criterio": "Tamanho, posição e quebra" },
-        { "funcao": "Legenda", "comando": ".uno:InsertCaptionDialog", "prioridade": "P1", "criterio": "Figura numerada" }
+        {
+          "funcao": "Recortar",
+          "comando": ".uno:Crop",
+          "prioridade": "P1",
+          "criterio": "Recorte preservado em DOCX"
+        },
+        {
+          "funcao": "Texto alternativo",
+          "comando": ".uno:ObjectTitleDescription",
+          "prioridade": "P0",
+          "criterio": "Descrição preservada em ODT e DOCX"
+        },
+        {
+          "funcao": "Trocar imagem",
+          "comando": ".uno:ChangePicture",
+          "prioridade": "P2",
+          "criterio": "Mantém tamanho e posição"
+        },
+        {
+          "funcao": "Compactar imagem",
+          "comando": ".uno:CompressGraphic",
+          "prioridade": "P2",
+          "criterio": "Reduz tamanho do arquivo"
+        },
+        {
+          "funcao": "Salvar imagem",
+          "comando": ".uno:SaveGraphic",
+          "prioridade": "P3",
+          "criterio": "Exporta a imagem"
+        },
+        {
+          "funcao": "Girar à esquerda",
+          "comando": ".uno:RotateLeft",
+          "prioridade": "P2",
+          "criterio": "90°"
+        },
+        {
+          "funcao": "Girar à direita",
+          "comando": ".uno:RotateRight",
+          "prioridade": "P2",
+          "criterio": "90°"
+        },
+        {
+          "funcao": "Espelhar vertical",
+          "comando": ".uno:FlipVertical",
+          "prioridade": "P3",
+          "criterio": "Espelha"
+        },
+        {
+          "funcao": "Espelhar horizontal",
+          "comando": ".uno:FlipHorizontal",
+          "prioridade": "P3",
+          "criterio": "Espelha"
+        },
+        {
+          "funcao": "Propriedades da imagem",
+          "comando": ".uno:GraphicDialog",
+          "prioridade": "P1",
+          "criterio": "Tamanho, posição e quebra"
+        },
+        {
+          "funcao": "Legenda",
+          "comando": ".uno:InsertCaptionDialog",
+          "prioridade": "P1",
+          "criterio": "Figura numerada"
+        }
       ]
     },
     {
-      "id": "forma", "rotulo": "FORMA", "contexto": "Draw",
+      "id": "forma",
+      "rotulo": "Forma",
+      "mnemonico": "F",
+      "contexto": [
+        "Draw",
+        "DrawLine",
+        "3DObject",
+        "MultiObject"
+      ],
       "itens": [
-        { "funcao": "Preenchimento", "comando": ".uno:FillColor", "prioridade": "P1", "criterio": "Cor de preenchimento" },
-        { "funcao": "Área", "comando": ".uno:FormatArea", "prioridade": "P2", "criterio": "Gradiente, padrão, transparência" },
-        { "funcao": "Linha", "comando": ".uno:FormatLine", "prioridade": "P1", "criterio": "Contorno" },
-        { "funcao": "Posição e tamanho", "comando": ".uno:TransformDialog", "prioridade": "P1", "criterio": "Posição exata" },
-        { "funcao": "Agrupar", "comando": ".uno:FormatGroup", "prioridade": "P2", "criterio": "Agrupa formas" },
-        { "funcao": "Desagrupar", "comando": ".uno:FormatUngroup", "prioridade": "P2", "criterio": "Desagrupa" }
+        {
+          "funcao": "Preenchimento",
+          "comando": ".uno:FillColor",
+          "prioridade": "P1",
+          "criterio": "Cor de preenchimento"
+        },
+        {
+          "funcao": "Área",
+          "comando": ".uno:FormatArea",
+          "prioridade": "P2",
+          "criterio": "Gradiente, padrão, transparência"
+        },
+        {
+          "funcao": "Linha",
+          "comando": ".uno:FormatLine",
+          "prioridade": "P1",
+          "criterio": "Contorno"
+        },
+        {
+          "funcao": "Posição e tamanho",
+          "comando": ".uno:TransformDialog",
+          "prioridade": "P1",
+          "criterio": "Posição exata"
+        },
+        {
+          "funcao": "Agrupar",
+          "comando": ".uno:FormatGroup",
+          "prioridade": "P2",
+          "criterio": "Agrupa formas"
+        },
+        {
+          "funcao": "Desagrupar",
+          "comando": ".uno:FormatUngroup",
+          "prioridade": "P2",
+          "criterio": "Desagrupa"
+        }
+      ]
+    },
+    {
+      "id": "previa",
+      "rotulo": "Visualizar impressão",
+      "mnemonico": "V",
+      "contexto": [
+        "Printpreview"
+      ],
+      "itens": [
+        {
+          "funcao": "Imprimir",
+          "comando": ".uno:Print",
+          "grande": true,
+          "prioridade": "P0",
+          "criterio": "Imprime a partir da prévia"
+        },
+        {
+          "funcao": "Fechar visualização",
+          "comando": ".uno:ClosePreview",
+          "grande": true,
+          "prioridade": "P0",
+          "criterio": "Volta à edição"
+        },
+        {
+          "funcao": "Primeira página",
+          "comando": ".uno:GoToStartOfDoc",
+          "prioridade": "P1",
+          "criterio": "Navega na prévia"
+        },
+        {
+          "funcao": "Página anterior",
+          "comando": ".uno:PageUp",
+          "prioridade": "P1",
+          "criterio": "Navega na prévia"
+        },
+        {
+          "funcao": "Próxima página",
+          "comando": ".uno:PageDown",
+          "prioridade": "P1",
+          "criterio": "Navega na prévia"
+        },
+        {
+          "funcao": "Última página",
+          "comando": ".uno:GoToEndOfDoc",
+          "prioridade": "P1",
+          "criterio": "Navega na prévia"
+        },
+        {
+          "funcao": "Várias páginas na prévia",
+          "comando": ".uno:ShowMultiplePages",
+          "lista": true,
+          "prioridade": "P1",
+          "criterio": "Escolhe quantas páginas ver"
+        },
+        {
+          "funcao": "Tela inteira",
+          "comando": ".uno:FullScreen",
+          "prioridade": "P2",
+          "criterio": "Prévia em tela cheia"
+        }
       ]
     }
   ]

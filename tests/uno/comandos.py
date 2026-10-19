@@ -12,6 +12,7 @@ SPDX-License-Identifier: MPL-2.0
 """
 import json
 import sys
+import time
 from datetime import date
 from pathlib import Path
 
@@ -55,7 +56,7 @@ def main():
         modulo = 'com.sun.star.text.TextDocument'
 
         def verificar(item):
-            cmd = item['comando']
+            cmd = item['comando'] or item.get('comandoAY')
             if not cmd:
                 return None, False, False
             rotulo = None
@@ -75,76 +76,123 @@ def main():
             for grupo in aba['grupos']:
                 for item in grupo['itens']:
                     rot, reg, desp = verificar(item)
-                    resultados.append({'aba': aba['rotulo'], 'grupo': grupo['rotulo'], **item,
+                    resultados.append({'aba': aba['rotulo'], 'rotuloAba': aba['rotulo'], 'grupo': grupo['rotulo'], **item,
                                        'rotuloBase': rot, 'registrado': reg, 'despacho': desp})
+        despachante = motor.servico('com.sun.star.frame.DispatchHelper')
         for aba in abas['contextuais']:
+            previa = aba.get('id') == 'previa'
+            if previa:
+                # Os comandos da visualização de impressão só existem com o documento nessa vista
+                despachante.executeDispatch(frame, '.uno:PrintPreview', '', 0, ())
+                time.sleep(2)
             for item in aba['itens']:
                 rot, reg, desp = verificar(item)
-                resultados.append({'aba': aba['rotulo'] + ' (contextual)', 'grupo': '', **item,
+                resultados.append({'aba': aba['rotulo'] + ' (contextual)', 'rotuloAba': aba['rotulo'], 'grupo': '', **item,
                                    'rotuloBase': rot, 'registrado': reg, 'despacho': desp})
+            if previa:
+                despachante.executeDispatch(frame, '.uno:ClosePreview', '', 0, ())
+                time.sleep(1)
         fechar(doc)
 
     SAIDA_TESTES.mkdir(parents=True, exist_ok=True)
     (SAIDA_TESTES / 'comandos.json').write_text(json.dumps(resultados, ensure_ascii=False, indent=2), encoding='utf-8')
     gerar_matriz(resultados)
 
-    com_cmd = [r for r in resultados if r['comando']]
+    com_cmd = [r for r in resultados if r['comando'] or r.get('comandoAY')]
     ok = [r for r in com_cmd if r['despacho']]
     falhos = [r for r in com_cmd if not r['despacho']]
-    print(f'Funções: {len(resultados)} | com comando: {len(com_cmd)} | despachados: {len(ok)} | '
-          f'sem despacho: {len(falhos)} | lacunas: {len(resultados) - len(com_cmd)}')
+    print(f'Funções: {len(resultados)} | com comando: {len(com_cmd)} | encontrados: {len(ok)} | '
+          f'não encontrados: {len(falhos)} | pendentes sem comando: {len(resultados) - len(com_cmd)}')
     for r in falhos:
-        print(f'  SEM DESPACHO: {r["aba"]} / {r["funcao"]} -> {r["comando"]}')
+        print(f'  NÃO ENCONTRADO: {r["aba"]} / {r["funcao"]} -> {r["comando"] or r.get("comandoAY")}')
     return 1 if falhos else 0
 
 
-def situacao(r):
-    if not r['comando']:
-        return 'Lacuna'
-    if r['despacho']:
-        return 'Na base (comando verificado)'
-    return 'Comando não encontrado'
+def _carregar(caminho):
+    try:
+        return json.loads(caminho.read_text(encoding='utf-8-sig'))
+    except Exception:
+        return None
+
+
+def niveis(r, mapa, faixa):
+    """Três níveis pedidos: comando encontrado / funcionalidade implementada / funcionamento validado."""
+    cmd = r['comando'] or r.get('comandoAY')
+    chave = f"{r['rotuloAba']} › {r['funcao']}"
+    t = (faixa or {}).get('funcoes', {}).get(chave, {})
+    if not cmd:
+        encontrado = '—'
+    elif r['despacho']:
+        encontrado = 'Sim (extensão AY)' if not r['comando'] else 'Sim'
+    else:
+        encontrado = 'Não'
+    no_mapa = any(b['comando'] == cmd and b['rotuloAba'] == r['rotuloAba'] for b in (mapa or {}).get('botoes', []))
+    if not cmd:
+        impl = 'Não — pendente'
+    elif r.get('botao') is False:
+        impl = f"Sim, por outro controle ({r.get('via', '')})"
+    elif no_mapa and t.get('presente'):
+        impl = 'Sim — botão na faixa (confirmado pela interface)'
+    elif no_mapa:
+        impl = 'Sim — botão na faixa (presença não confirmada pelo teste)'
+    else:
+        impl = 'Não — fora da faixa'
+    val = []
+    if t.get('validado'):
+        val.append('Pela interface: ' + '; '.join(d for d in t.get('detalhes', []) if not d.startswith(('na aba', 'clique na faixa', 'aba contextual')))[:160])
+    elif t.get('acionado'):
+        det = next((d for d in t.get('detalhes', []) if d.startswith('abriu')), '')
+        val.append('Acionado pela interface' + (f': {det}' if det else '') + ' (efeito não conferido)')
+    if EVIDENCIA.get(r['comando'] or ''):
+        val.append('Por API: ' + EVIDENCIA[r['comando']])
+    return encontrado, impl, ' · '.join(val) or 'Não validado'
 
 
 def gerar_matriz(res):
-    contagem = {}
-    for r in res:
-        contagem[situacao(r)] = contagem.get(situacao(r), 0) + 1
+    mapa = _carregar(RAIZ / 'out' / 'faixa' / 'mapa.json')
+    faixa = _carregar(SAIDA_TESTES / 'interface' / 'faixa-resultado.json')
+    linhas_n = [(r, *niveis(r, mapa, faixa)) for r in res]
+    tot = len(res)
+    n_enc = sum(1 for _, e, _i, _v in linhas_n if e.startswith('Sim'))
+    n_impl = sum(1 for _, _e, i, _v in linhas_n if i.startswith('Sim'))
+    n_conf = sum(1 for _, _e, i, _v in linhas_n if 'confirmado pela interface' in i)
+    n_val_ui = sum(1 for _, _e, _i, v in linhas_n if v.startswith('Pela interface'))
+    n_acion = sum(1 for _, _e, _i, v in linhas_n if v.startswith('Acionado'))
+    n_val_api = sum(1 for _, _e, _i, v in linhas_n if 'Por API' in v)
+    n_pend = sum(1 for _, _e, i, _v in linhas_n if i.startswith('Não'))
+    teste_ui = f"teste pela interface de {faixa.get('inicio', '?')}" if faixa else 'teste pela interface ainda não executado'
     lin = [
         '# Matriz de funcionalidades do AY ESCREVA',
         '',
-        f'> Gerado por `tests/uno/comandos.py` a partir de `ui/abas.json` em {date.today().isoformat()}. Não editar à mão.',
+        f'> Gerado por `tests/uno/comandos.py` a partir de `ui/abas.json`, do mapa da faixa e do {teste_ui}, em {date.today().isoformat()}. Não editar à mão.',
         '',
         '**Como ler as colunas**',
         '',
-        '- **Implementação na base**: *Na base (comando verificado)* quer dizer que o comando existe no motor e o quadro do',
-        '  Writer devolveu um despachante para ele no teste automático; não quer dizer que o botão já esteja na faixa do AY.',
-        '  *Lacuna* quer dizer que não há comando pronto: o caminho previsto está na coluna de lacunas e dependências.',
-        '- **Validado por**: teste automatizado que exercitou a função de ponta a ponta (via API, sem clicar no botão).',
-        '  Vazio = ainda não validado.',
-        '- **Faixa AY**: estado do botão na faixa de opções própria do AY. Na Etapa 1 as funções com comando da base estão acessíveis pelos',
-        '  menus e pela faixa por abas da base; as lacunas não estão acessíveis. As abas AY, na ordem pedida, são a Etapa 3.',
+        '- **Comando encontrado**: o comando existe no motor (o quadro do Writer devolveu um despachante, ou há controlador de menu) — verificado em `tests/uno/comandos.py`. Não diz nada sobre botão.',
+        '- **Funcionalidade implementada**: há um botão na faixa de opções do AY ligado a esse comando (ou a função é oferecida por outro controle, indicado). *Confirmado pela interface* = o teste dentro do aplicativo encontrou o botão na aba (`tests/interface`).',
+        '- **Funcionamento validado**: *Pela interface* = o teste clicou no botão da faixa, confirmou o comando disparado e conferiu o efeito no documento ou na exibição. *Acionado pela interface* = o clique disparou o comando certo (e o diálogo/lista que abriu foi registrado), mas o efeito não tem verificação automática. *Por API* = a função foi exercitada de ponta a ponta pelos testes de documento, sem clicar no botão.',
         '- **Prioridade**: P0 = Etapas 1-2, P1 = Etapa 3, P2 = Etapa 4, P3 = avaliar.',
         '',
-        '**Resumo**: ' + ' · '.join(f'{k}: {v}' for k, v in sorted(contagem.items())) + f' · Total: {len(res)}',
+        f'**Resumo** ({tot} funções): comando encontrado {n_enc} · implementadas {n_impl} (botão confirmado pela interface: {n_conf}) · validadas pela interface {n_val_ui} · só acionadas pela interface {n_acion} · validadas por API {n_val_api} · pendentes {n_pend}',
         '',
     ]
     aba_atual = None
-    for r in res:
+    cel = lambda s: (s or '').replace('|', '\\|').replace('~', '')
+    for r, enc, impl, val in linhas_n:
         if r['aba'] != aba_atual:
             aba_atual = r['aba']
             lin += ['', f'## {aba_atual}', '',
-                    '| Grupo | Função | Comando da base | Rótulo na base | Implementação na base | Validado por | Faixa AY | Prioridade | Critério de aceite | Lacunas e dependências |',
-                    '|---|---|---|---|---|---|---|---|---|---|']
-        cel = lambda s: (s or '').replace('|', '\\|').replace('~', '')
+                    '| Grupo | Função | Comando | Comando encontrado | Funcionalidade implementada | Funcionamento validado | Prioridade | Critério de aceite | Pendências e observações |',
+                    '|---|---|---|---|---|---|---|---|---|']
+        cmd = r['comando'] or r.get('comandoAY')
         lin.append('| ' + ' | '.join([
-            cel(r['grupo']), cel(r['funcao']), f'`{r["comando"]}`' if r['comando'] else '—', cel(r['rotuloBase']),
-            situacao(r), cel(EVIDENCIA.get(r['comando'] or '', '')), 'Pendente (Etapa 3)', r['prioridade'],
+            cel(r['grupo']), cel(r['funcao']), f'`{cmd}`' if cmd else '—', enc, cel(impl), cel(val), r['prioridade'],
             cel(r['criterio']), cel(r.get('lacuna', ''))]) + ' |')
     destino = RAIZ / 'docs' / 'MATRIZ-FUNCIONALIDADES.md'
     destino.parent.mkdir(parents=True, exist_ok=True)
-    destino.write_text('\n'.join(lin) + '\n', encoding='utf-8')
+    destino.write_text(chr(10).join(lin) + chr(10), encoding='utf-8')
     print(f'Matriz gerada: {destino}')
+    print(f'  encontrados {n_enc} · implementadas {n_impl} (confirmadas {n_conf}) · validadas UI {n_val_ui} · acionadas {n_acion} · API {n_val_api} · pendentes {n_pend}')
 
 
 if __name__ == '__main__':

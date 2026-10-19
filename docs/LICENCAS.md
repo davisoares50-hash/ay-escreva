@@ -4,8 +4,8 @@
 
 Tudo o que o projeto escreve (lançador, camada de configuração, interface `.ui`, extensão, identidade visual,
 scripts, testes e documentação) é licenciado sob a **Mozilla Public License 2.0** (MPL-2.0), a mesma licença
-principal do motor. Arquivos derivados de arquivos da base, como a futura `notebookbar_ayescreva.ui` gerada
-a partir das `.ui` da base, **precisam** permanecer sob MPL-2.0.
+principal do motor. A faixa `notebookbar_ayescreva.ui` é gerada por `tools/gerar-faixa.mjs` a partir de
+`ui/abas.json` e usa as classes da base e os ícones do tema Colibre (CC0); fica, como o restante, sob MPL-2.0.
 
 ## Motor (LibreOffice 26.8.1.1, binários oficiais sem modificação de código)
 
@@ -30,6 +30,20 @@ a partir das `.ui` da base, **precisam** permanecer sob MPL-2.0.
 O logotipo, o ícone e as imagens são gerados por `tools/marca.mjs`. As letras são contornos da fonte **Rubik**
 (SIL Open Font License 1.1, incluída na base), e a OFL permite usar contornos de glifos em logotipos.
 Nome, cores e símbolo pertencem ao projeto AY ESCREVA.
+
+## Site oficial
+
+- Código e textos do site (`site/`, `tools/gerar-site.mjs`): MPL-2.0, como o restante do projeto.
+- A fonte Rubik do site é servida pelo próprio site (sem Google Fonts nem outro recurso externo), sob a SIL Open
+  Font License 1.1; o aviso está na página Licenças do site.
+- As capturas de tela do site são do próprio AY ESCREVA (os ícones Colibre da base são CC0, de Andreas Kainz).
+
+## Ferramentas de geração (não distribuídas no produto)
+
+| Ferramenta | Licença | Uso no projeto | Custo |
+|---|---|---|---|
+| Inno Setup 6.7.3 (instalado por `winget`, por usuário) | licença própria de Jordan Russell: "Permission is granted to anyone to use this software for any purpose, including commercial applications", com obrigação de manter avisos | compilar o instalador | gratuito, sem licença paga para este uso |
+| GitHub Pages e GitHub Releases (planejados para a publicação) | termos do GitHub | hospedar o site e os instaladores | plano gratuito; ver [SITE.md](SITE.md) |
 
 ## Dependências de desenvolvimento (não distribuídas no produto)
 

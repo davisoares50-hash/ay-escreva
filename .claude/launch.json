@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site-previa",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["tools/servir-site.mjs", "out/site", "8737"],
+      "port": 8737
+    },
+    {
+      "name": "site-ensaio",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["tools/servir-site.mjs", "out/site-ensaio", "8738"],
+      "port": 8738
+    }
+  ]
+}

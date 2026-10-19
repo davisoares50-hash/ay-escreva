@@ -1,0 +1,45 @@
+{
+  "descricao": "Versões e plataformas do AY ESCREVA exibidas no site. Tamanho e SHA-256 são calculados pelo gerador a partir do arquivo real (out/instalador); a página não é gerada se um arquivo marcado como disponível não existir.",
+  "atual": "0.2.0",
+  "versoes": [
+    {
+      "versao": "0.2.0",
+      "data": "2026-10-19",
+      "canal": "Versão inicial de testes",
+      "publicada": true,
+      "notas": [
+        "Faixa de opções própria com as abas Arquivo, Página Inicial, Inserir, Desenhar, Design, Layout, Referências, Correspondência, Revisão, Exibir e Ajuda, mais as abas contextuais Tabela, Imagem, Forma e Visualizar impressão.",
+        "Aviso antes de salvar em DOCX, DOC, RTF ou TXT, com a lista do que pode se perder naquele documento e as opções de salvar em ODT ou guardar também uma cópia completa em ODT.",
+        "Aviso de fontes substituídas ao abrir documentos com fontes que não estão instaladas.",
+        "Comandos próprios: página em branco, recuperação de documentos, guia, atalhos, limitações conhecidas e relatório de diagnóstico.",
+        "Guia de utilização e lista de atalhos que funcionam sem internet."
+      ],
+      "arquivos": [
+        { "plataforma": "windows11-x64", "arquivo": "AYEscreva-0.2.0-teste-windows11-x64.exe", "assinado": false }
+      ]
+    },
+    {
+      "versao": "0.1.0",
+      "data": "2026-10-19",
+      "canal": "Interna (não publicada)",
+      "publicada": false,
+      "notas": [
+        "Primeira montagem: motor de documentos, identidade visual, perfil isolado, macros bloqueadas, recuperação automática e instalador por usuário.",
+        "Usava a faixa de opções padrão do motor; substituída pela faixa do AY na versão 0.2.0."
+      ],
+      "arquivos": []
+    }
+  ],
+  "plataformas": [
+    { "id": "windows11-x64", "nome": "Windows 11", "detalhe": "64 bits (x64)", "status": "disponivel",
+      "requisitos": ["Windows 11 de 64 bits (versão 21H2, build 22000, ou mais nova)", "Cerca de 850 MB livres em disco", "Não precisa de internet nem de conta", "Memória: ainda não medida; testado em computador com 16 GB"] },
+    { "id": "windows10-x64", "nome": "Windows 10", "detalhe": "64 bits (x64)", "status": "em-desenvolvimento",
+      "nota": "O motor de documentos é compatível com o Windows 10, segundo o fornecedor, mas o AY ESCREVA ainda não foi testado nele. O instalador atual só aceita Windows 11." },
+    { "id": "windows-arm64", "nome": "Windows 11 em ARM", "detalhe": "ARM64", "status": "em-desenvolvimento",
+      "nota": "Depende de testes em computador ARM." },
+    { "id": "macos", "nome": "macOS", "detalhe": "Intel e Apple Silicon", "status": "em-desenvolvimento",
+      "nota": "Exige assinatura e notarização próprias da Apple." },
+    { "id": "linux", "nome": "Linux", "detalhe": "x86_64", "status": "em-desenvolvimento",
+      "nota": "Pacote previsto em AppImage ou Flatpak." }
+  ]
+}

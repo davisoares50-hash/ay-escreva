@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limitações conhecidas — AY ESCREVA</title>
+<style>
+:root{--verde:#11806A;--amarelo:#F5C443;--tinta:#1E2A28;--cinza:#5B6664;--fundo:#fff;--suave:#F3F7F6;--linha:#E3E8E7}
+@media (prefers-color-scheme:dark){:root{--tinta:#E8EEEC;--cinza:#A9B4B2;--fundo:#141A19;--suave:#1B2321;--linha:#2A3533}}
+body{font-family:"Segoe UI",system-ui,sans-serif;margin:0;background:var(--fundo);color:var(--tinta);line-height:1.55}
+header{background:var(--verde);color:#fff;padding:24px}h1{margin:0}main{max-width:860px;margin:0 auto;padding:8px 24px 48px}
+h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:32px}li{margin:6px 0}a{color:var(--verde)}
+</style>
+</head>
+<body>
+<header><h1>Limitações conhecidas</h1><div>AY ESCREVA 0.2.0 · versão inicial de testes para Windows 11 x64</div></header>
+<main>
+<h2>Sistemas</h2>
+<ul>
+<li>Validado somente no <strong>Windows 11 x64</strong>. Windows 10, Windows em ARM, macOS e Linux estão em desenvolvimento.</li>
+<li>O instalador ainda não tem assinatura digital: o Windows pode mostrar o aviso de "editor desconhecido".</li>
+</ul>
+
+<h2>Compatibilidade com o Word</h2>
+<ul>
+<li>A aparência de um mesmo DOCX no AY e no Word pode diferir um pouco (quebras de linha, fonte das equações, cores das revisões). O número de páginas coincidiu nos testes, mas não há garantia de igualdade.</li>
+<li>Quando uma seção reinicia a numeração de páginas em uma página par, o AY insere uma página em branco automática: o campo "total de páginas" pode mostrar uma página a mais que o Word.</li>
+<li>Salvar em <strong>RTF</strong> pode perder quebras de seção com mudança de orientação e os níveis de tópico dos títulos (o sumário deixa de se atualizar). O AY avisa antes de salvar.</li>
+<li>Seções em paisagem com duas colunas podem refluir ao converter de ODT para DOCX.</li>
+<li>Os atalhos de teclado seguem o padrão do motor, não o do Word em português (negrito é Ctrl+B, não Ctrl+N).</li>
+<li>Fontes que não estão instaladas são substituídas por fontes parecidas; o AY avisa e mantém o nome original no arquivo.</li>
+</ul>
+
+<h2>Ferramentas ainda não disponíveis</h2>
+<ul>
+<li><strong>Desenhar:</strong> marca-texto, borracha por arrasto e sensibilidade à pressão da caneta. Traços feitos com mouse ou caneta são salvos como formas.</li>
+<li><strong>Exibir:</strong> modo de leitura dedicado (use Tela inteira e Exibição de livro).</li>
+<li><strong>Inserir:</strong> galeria de capas prontas (o botão Capa abre o diálogo de páginas de rosto).</li>
+<li><strong>Design:</strong> galeria visual de conjuntos de estilos (o botão importa estilos de um modelo).</li>
+<li><strong>Revisão:</strong> revisão gramatical avançada offline (há verificação ortográfica pt-BR completa).</li>
+<li><strong>Ajuda:</strong> verificação de atualizações.</li>
+<li>Em janelas estreitas, os grupos da faixa de opções não se recolhem automaticamente: alguns botões ficam fora da área visível.</li>
+</ul>
+
+<h2>Acessibilidade</h2>
+<ul>
+<li>O documento, a régua, a barra lateral e a barra de status são expostos a leitores de tela. A leitura das abas e botões da faixa de opções por NVDA e Narrador <strong>ainda não foi validada</strong>.</li>
+</ul>
+
+<h2>Automação</h2>
+<ul>
+<li>Programas externos que controlam o AY pela interface UNO enquanto a faixa de opções está na tela podem fazê-lo fechar inesperadamente (falha do motor, reproduzida também no LibreOffice 26.8.1 sem alterações). O uso normal pela interface não apresentou o problema nos testes.</li>
+</ul>
+<p><a href="guia.html">Voltar ao guia</a></p>
+</main>
+</body>
+</html>

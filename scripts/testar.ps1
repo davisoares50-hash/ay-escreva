@@ -7,22 +7,26 @@
                      fechar, reabrir, conferir e exportar PDF e PDF/UA
   2. impressao       imprime pela fila do Windows somente na impressora virtual "Microsoft Print to PDF"
   3. seguranca       macro no evento "ao abrir" não executa (com controle positivo) e imagem remota não é baixada
-  4. comandos        confere cada comando da matriz (ui\abas.json) no motor e regenera a matriz
-  5. fixtures        gera o DOCX representativo escrito diretamente em OOXML
-  6. word            (opcional, se o Microsoft Word estiver instalado) inventário independente e variantes DOC/RTF/ODT/PDF
-  7. ida_e_volta     abre -> salva (DOCX, ODT, formato original) -> reabre, compara a estrutura
-  8. visual          compara os PDFs página a página (pixels) e gera imagens das diferenças
+  4. fixtures        gera o DOCX representativo escrito diretamente em OOXML
+  5. interface       (só com -ComInterface; ≈25 min) testes pela faixa de opções, de dentro do aplicativo
+                     (tests\interface\testar_faixa.ps1); alimenta a coluna "Funcionamento validado" da matriz
+  6. comandos        confere cada comando da matriz (ui\abas.json) no motor e regenera a matriz
+  7. word            (opcional, se o Microsoft Word estiver instalado) inventário independente e variantes DOC/RTF/ODT/PDF
+  8. ida_e_volta     abre -> salva (DOCX, ODT, formato original) -> reabre, compara a estrutura
+  9. visual          compara os PDFs página a página (pixels) e gera imagens das diferenças
   Os resultados ficam em tests\output\ e o resumo em tests\output\resumo.json.
 
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File scripts\testar.ps1
   powershell -ExecutionPolicy Bypass -File scripts\testar.ps1 -SemWord -SemImpressao
+  powershell -ExecutionPolicy Bypass -File scripts\testar.ps1 -ComInterface
 #>
 [CmdletBinding()]
 param(
   [string]$Dist,
   [switch]$SemWord,
-  [switch]$SemImpressao
+  [switch]$SemImpressao,
+  [switch]$ComInterface
 )
 $ErrorActionPreference = 'Stop'
 $Raiz = Split-Path -Parent $PSScriptRoot
@@ -53,8 +57,11 @@ if (-not $SemImpressao) {
   }
 }
 Etapa 'seguranca' { Remove-Item (Join-Path $Saida 'seguranca\.~lock.*') -Force -ErrorAction SilentlyContinue; & $Py (Join-Path $Raiz 'tests\uno\seguranca.py') }
-Etapa 'comandos' { & $Py (Join-Path $Raiz 'tests\uno\comandos.py') }
 Etapa 'fixtures' { & $Py (Join-Path $Fx 'gerar_docx.py') $Fx (Join-Path $Raiz 'out\marca\icone-128.png') }
+if ($ComInterface) {
+  Etapa 'interface' { & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Raiz 'tests\interface\testar_faixa.ps1') -Dist $Dist }
+}
+Etapa 'comandos' { & $Py (Join-Path $Raiz 'tests\uno\comandos.py') }
 
 $entradas = @(Join-Path $Fx 'compatibilidade-ooxml.docx')
 $temWord = $false

@@ -65,6 +65,21 @@ $sig = Get-AuthenticodeSignature $Instalador
 Verificar 'assinatura digital do instalador (esperado: sem assinatura nesta versão)' ($sig.Status -eq 'NotSigned') "$($sig.Status)"
 if (Test-Path $ChaveDesinst) { throw 'O AY ESCREVA já está instalado para este usuário; desinstale antes do teste.' }
 
+# Sem LibreOffice nesta máquina, um perfil simulado (sentinela) comprova que instalar, usar e desinstalar o AY
+# não toca no perfil do LibreOffice. Só é criado se a pasta não existir, e é removido no fim do teste.
+$perfilLO = Join-Path $env:APPDATA 'LibreOffice'
+$marcaSentinela = Join-Path $perfilLO '4\user\config\sentinela-ay.txt'
+if ((Test-Path $marcaSentinela) -and @(Get-ChildItem $perfilLO -Recurse -File).Count -eq 2) { Remove-Item -Recurse -Force $perfilLO }  # sobra de teste interrompido
+$sentinela = $false
+if (-not (Test-Path $perfilLO)) {
+  $sentinela = $true
+  New-Item -ItemType Directory -Force (Split-Path $marcaSentinela) | Out-Null
+  Set-Content -Encoding UTF8 (Join-Path $perfilLO '4\user\registrymodifications.xcu') ('<?xml version="1.0" encoding="UTF-8"?>' + "`r`n" + '<oor:items xmlns:oor="http://openoffice.org/2001/registry"><!-- perfil simulado pelo teste do AY ESCREVA --></oor:items>')
+  Set-Content -Encoding UTF8 $marcaSentinela 'Perfil simulado criado pelo teste de instalação do AY ESCREVA; removido ao final do teste.'
+}
+$hashesLO = @{}
+foreach ($f in Get-ChildItem $perfilLO -Recurse -File -ErrorAction SilentlyContinue) { $hashesLO[$f.FullName] = (Get-FileHash -Algorithm SHA256 $f.FullName).Hash }
+
 $antes = Foto-LibreOffice
 $antes | ConvertTo-Json | Set-Content -Encoding UTF8 (Join-Path $Saida 'libreoffice-antes.json')
 
@@ -105,9 +120,12 @@ if ($janela) {
 Write-Host "`n== Criar, salvar, reabrir e exportar com o motor instalado"
 $env:PYTHONIOENCODING = 'utf-8'
 $pyInst = Join-Path $PastaApp 'program\python.exe'
+$codificacao = [Console]::OutputEncoding
+[Console]::OutputEncoding = [Text.Encoding]::UTF8     # a saída do Python vem em UTF-8
 $saidaAceite = & $pyInst (Join-Path $Raiz 'tests\uno\aceite_etapa1.py') 2>&1 | ForEach-Object { "$_" }
+[Console]::OutputEncoding = $codificacao
 $saidaAceite | Set-Content -Encoding UTF8 (Join-Path $Saida 'aceite-motor-instalado.txt')
-$resumo = $saidaAceite | Select-String 'verificações aprovadas' | Select-Object -Last 1
+$resumo = $saidaAceite | Select-String 'aprovadas' | Select-Object -Last 1
 Verificar 'aceite (criar, formatar, tabela, imagem, salvar, fechar, reabrir, PDF) com o motor instalado' ($LASTEXITCODE -eq 0) "$resumo"
 
 # ---------------------------------------------------------------------------
@@ -127,6 +145,10 @@ $depois = Foto-LibreOffice
 $depois | ConvertTo-Json | Set-Content -Encoding UTF8 (Join-Path $Saida 'libreoffice-depois.json')
 $difs = @($antes.Keys | Where-Object { $antes[$_] -ne $depois[$_] } | ForEach-Object { "$_ : '$($antes[$_])' -> '$($depois[$_])'" })
 Verificar 'outras instalações do LibreOffice e associações de arquivo intactas' ($difs.Count -eq 0) $(if ($difs.Count) { $difs -join '; ' } else { (($antes.GetEnumerator() | Select-Object -First 3 | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; ') })
+$alterados = @($hashesLO.Keys | Where-Object { -not (Test-Path $_) -or (Get-FileHash -Algorithm SHA256 $_).Hash -ne $hashesLO[$_] })
+$novos = @(Get-ChildItem $perfilLO -Recurse -File -ErrorAction SilentlyContinue | Where-Object { -not $hashesLO.ContainsKey($_.FullName) })
+Verificar ('perfil do LibreOffice idêntico, arquivo por arquivo (SHA-256){0}' -f $(if ($sentinela) { ' — perfil simulado, sem LibreOffice nesta máquina' } else { '' })) (($alterados.Count + $novos.Count) -eq 0) ("{0} arquivo(s) conferido(s); alterados/removidos: {1}; novos: {2}" -f $hashesLO.Count, $alterados.Count, $novos.Count)
+if ($sentinela) { Remove-Item -Recurse -Force $perfilLO }
 
 $falhas = @($itens | Where-Object { -not $_.ok })
 [ordered]@{ instalador = $Instalador; sha256 = $hash; data = (Get-Date).ToString('s'); itens = $itens } | ConvertTo-Json -Depth 4 | Set-Content -Encoding UTF8 (Join-Path $Saida 'resultado.json')

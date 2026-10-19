@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Rótulos dos comandos próprios do AY (a faixa de opções e os menus leem daqui). -->
+<oor:component-data xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema" oor:name="GenericCommands" oor:package="org.openoffice.Office.UI">
+  <node oor:name="UserInterface">
+    <node oor:name="Commands">
+      <node oor:name="ayescreva:PaginaEmBranco" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Página em branco</value><value xml:lang="en-US">Blank Page</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Insere uma página vazia no ponto do cursor</value><value xml:lang="en-US">Insert a blank page at the cursor</value></prop>
+      </node>
+      <node oor:name="ayescreva:Recuperacao" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Recuperação de documentos</value><value xml:lang="en-US">Document Recovery</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Abre a pasta com cópias de segurança e de recuperação automática</value><value xml:lang="en-US">Open backup and autorecovery folder</value></prop>
+      </node>
+      <node oor:name="ayescreva:Guia" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Guia do AY ESCREVA</value><value xml:lang="en-US">AY ESCREVA Guide</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Abre o guia de utilização (funciona sem internet)</value><value xml:lang="en-US">Open the user guide (offline)</value></prop>
+      </node>
+      <node oor:name="ayescreva:Atalhos" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Atalhos de teclado</value><value xml:lang="en-US">Keyboard Shortcuts</value></prop>
+      </node>
+      <node oor:name="ayescreva:Limitacoes" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Limitações conhecidas</value><value xml:lang="en-US">Known Limitations</value></prop>
+      </node>
+      <node oor:name="ayescreva:Diagnostico" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Relatório de diagnóstico</value><value xml:lang="en-US">Diagnostic Report</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Gera um arquivo local com versão e configuração (sem conteúdo de documentos)</value><value xml:lang="en-US">Create a local file with version and settings</value></prop>
+      </node>
+      <node oor:name="ayescreva:DetalhesFontes" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Detalhes das fontes substituídas</value><value xml:lang="en-US">Substituted Fonts</value></prop>
+      </node>
+    </node>
+  </node>
+</oor:component-data>

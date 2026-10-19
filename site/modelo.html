@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITULO}}</title>
+<meta name="description" content="{{DESCRICAO}}">
+<meta name="theme-color" content="#11806A">
+<link rel="icon" href="assets/img/icone.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/icone-32.png" sizes="32x32" type="image/png">
+<link rel="stylesheet" href="assets/estilo.css">
+<meta property="og:title" content="{{TITULO}}">
+<meta property="og:description" content="{{DESCRICAO}}">
+<meta property="og:image" content="assets/img/tela-inicio.webp">
+</head>
+<body>
+<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+<header class="topo">
+  <div class="largura topo-linha">
+    <a class="marca" href="index.html" aria-label="AY ESCREVA — página inicial">
+      <img src="assets/img/icone.svg" alt="" width="36" height="36">
+      <span>AY ESCREVA</span>
+    </a>
+    <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu-principal">Menu</button>
+    <nav id="menu-principal" class="menu" aria-label="Principal">
+      <a href="recursos.html"{{ATIVO_recursos}}>Recursos</a>
+      <a href="instalar.html"{{ATIVO_instalar}}>Como instalar</a>
+      <a href="versoes.html"{{ATIVO_versoes}}>Versões</a>
+      <a href="ajuda.html"{{ATIVO_ajuda}}>Ajuda</a>
+      <a class="botao botao-pequeno" href="baixar.html"{{ATIVO_baixar}}>Baixar grátis</a>
+    </nav>
+  </div>
+</header>
+<div class="aviso-teste" role="note">
+  <div class="largura"><strong>Versão inicial de testes {{VERSAO}}</strong> — disponível somente para Windows 11 de 64 bits. <a href="versoes.html#limitacoes">Veja o que ainda não funciona</a>.</div>
+</div>
+<main id="conteudo">
+{{CONTEUDO}}
+</main>
+<footer class="rodape">
+  <div class="largura rodape-grade">
+    <div>
+      <p class="marca-rodape"><img src="assets/img/icone.svg" alt="" width="28" height="28"> AY ESCREVA</p>
+      <p>Editor de textos gratuito, em português do Brasil. Sem conta, sem mensalidade, funciona sem internet.</p>
+    </div>
+    <nav aria-label="Rodapé">
+      <ul>
+        <li><a href="baixar.html">Baixar</a></li>
+        <li><a href="instalar.html">Como instalar</a></li>
+        <li><a href="recursos.html">Recursos</a></li>
+        <li><a href="versoes.html">Versões e limitações</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Informações">
+      <ul>
+        <li><a href="ajuda.html">Ajuda</a></li>
+        <li><a href="privacidade.html">Privacidade</a></li>
+        <li><a href="licencas.html">Licenças</a></li>
+        {{LINK_PROJETO}}
+      </ul>
+    </nav>
+  </div>
+  <div class="largura rodape-nota">
+    <p>O AY ESCREVA é um projeto independente construído sobre o motor de documentos do LibreOffice. “LibreOffice” é marca da The Document Foundation, que não produz nem endossa este projeto. Este site não usa cookies, não usa rastreadores e não carrega nada de outros servidores.</p>
+  </div>
+</footer>
+<script src="assets/site.js" defer></script>
+</body>
+</html>

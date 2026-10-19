@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guia do AY ESCREVA</title>
+<style>
+:root{--verde:#11806A;--verde-esc:#0A5C4C;--amarelo:#F5C443;--tinta:#1E2A28;--cinza:#5B6664;--fundo:#fff;--suave:#F3F7F6;--linha:#E3E8E7}
+@media (prefers-color-scheme:dark){:root{--tinta:#E8EEEC;--cinza:#A9B4B2;--fundo:#141A19;--suave:#1B2321;--linha:#2A3533}}
+*{box-sizing:border-box}body{font-family:"Segoe UI",system-ui,sans-serif;margin:0;background:var(--fundo);color:var(--tinta);line-height:1.55}
+header{background:var(--verde);color:#fff;padding:24px}header h1{margin:0;font-size:28px}header p{margin:4px 0 0;opacity:.9}
+nav{background:var(--suave);border-bottom:1px solid var(--linha);padding:10px 24px;font-size:14px}nav a{color:var(--verde);margin-right:14px}
+main{max-width:860px;margin:0 auto;padding:8px 24px 48px}h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:36px}
+kbd{font-family:Consolas,monospace;background:rgba(17,128,106,.12);border:1px solid rgba(17,128,106,.35);border-radius:4px;padding:1px 6px}
+.caixa{background:var(--suave);border-left:4px solid var(--verde);padding:12px 16px;border-radius:6px}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--linha);padding:6px 8px;text-align:left;vertical-align:top}
+a{color:var(--verde)}
+</style>
+</head>
+<body>
+<header><h1>Guia do AY ESCREVA</h1><p>Versão inicial de testes para Windows 11 x64 · funciona sem internet</p></header>
+<nav><a href="#comecar">Começar</a><a href="#faixa">Faixa de opções</a><a href="#salvar">Salvar e formatos</a><a href="#pdf">PDF e impressão</a><a href="#seguranca">Segurança</a><a href="#recuperar">Recuperar</a><a href="#teclado">Teclado e acessibilidade</a><a href="atalhos.html">Atalhos</a><a href="limitacoes.html">Limitações</a></nav>
+<main>
+
+<h2 id="comecar">Começar</h2>
+<p>O AY ESCREVA é um editor de textos gratuito, sem conta e sem mensalidade. Seus documentos ficam no seu computador.</p>
+<ul>
+<li><strong>Novo documento:</strong> aba <em>Arquivo</em> › <em>Novo documento</em>, ou <kbd>Ctrl+N</kbd>.</li>
+<li><strong>Abrir:</strong> aba <em>Arquivo</em> › <em>Abrir</em> (a seta ao lado lista os documentos recentes), ou <kbd>Ctrl+O</kbd>. Abre DOCX, ODT, DOC, RTF e TXT.</li>
+<li><strong>Salvar:</strong> <kbd>Ctrl+S</kbd>. Documentos novos são salvos em <strong>ODT</strong>, o formato nativo, que guarda tudo.</li>
+</ul>
+
+<h2 id="faixa">Faixa de opções</h2>
+<p>As ferramentas ficam em abas, nesta ordem:</p>
+<table>
+<tr><th>Aba</th><th>O que tem</th></tr>
+<tr><td>Arquivo</td><td>Novo, modelos, abrir, salvar, salvar como, exportar PDF, imprimir, visualizar impressão, propriedades, versões, recuperação de documentos e configurações.</td></tr>
+<tr><td>Página Inicial</td><td>Colar e pincel de formatação; fonte, tamanho, negrito, itálico, sublinhado, tachado, subscrito, sobrescrito, cor e realce; marcadores, numeração, recuos, alinhamento e espaçamento; estilos; localizar e substituir.</td></tr>
+<tr><td>Inserir</td><td>Capa (página de rosto), página em branco, quebras, seção, tabela, imagem, formas, gráfico, link, indicador, referência cruzada, comentário, cabeçalho, rodapé, número de página, caixa de texto, campos, equação e símbolo.</td></tr>
+<tr><td>Desenhar</td><td>Selecionar, linha à mão livre (mouse ou caneta), forma livre, linha, curva, cor e espessura do traço, agrupar e excluir traço.</td></tr>
+<tr><td>Design</td><td>Tema de cores do documento, estilos de um modelo, marca-d'água, cor e bordas da página.</td></tr>
+<tr><td>Layout</td><td>Margens, orientação, tamanho do papel, colunas, quebras, hifenização, numeração de linhas, parágrafo e organização de objetos.</td></tr>
+<tr><td>Referências</td><td>Sumário e índices (sumário, bibliografia, ilustrações, remissivo), notas de rodapé e de fim, citações, legendas, referência cruzada e campos.</td></tr>
+<tr><td>Correspondência</td><td>Envelopes, etiquetas e mala direta (destinatários de planilha ou CSV, campos, prévia e geração dos documentos).</td></tr>
+<tr><td>Revisão</td><td>Ortografia em português do Brasil, sinônimos, contagem de palavras, verificação de acessibilidade, comentários, controle de alterações (aceitar, rejeitar) e comparação de documentos.</td></tr>
+<tr><td>Exibir</td><td>Layout de impressão, web, tela inteira, zoom, uma ou várias páginas, régua, navegador, barra lateral, nova janela e tema claro/escuro.</td></tr>
+<tr><td>Ajuda</td><td>Este guia, atalhos, ajuda detalhada do motor, limitações conhecidas, sobre, licenças e diagnóstico.</td></tr>
+</table>
+<p>Abas extras aparecem sozinhas quando fazem sentido: <em>Tabela</em> (cursor numa tabela), <em>Imagem</em>, <em>Forma</em> e <em>Visualizar impressão</em>. O botão <strong>≡</strong>, à direita, abre o menu completo.</p>
+
+<h2 id="salvar">Salvar e formatos</h2>
+<div class="caixa"><strong>ODT</strong> guarda tudo o que o AY faz. Ao salvar em <strong>DOCX, DOC, RTF ou TXT</strong>, o AY verifica o documento e, se encontrar algo que pode se perder nesse formato, mostra a lista <em>antes</em> de gravar, com três opções: salvar no formato escolhido, salvar em ODT, ou salvar no formato escolhido e guardar também uma cópia completa em ODT.</div>
+<ul>
+<li><strong>DOCX</strong> é o formato do Word atual. Tabelas, imagens, notas, comentários, alterações controladas, cabeçalhos e rodapés são preservados nos testes do AY; a aparência pode variar um pouco.</li>
+<li><strong>RTF</strong> pode perder quebras de seção com mudança de orientação e os níveis de tópico dos títulos.</li>
+<li><strong>TXT</strong> guarda só o texto.</li>
+</ul>
+<p><strong>Fontes:</strong> se um documento usa uma fonte que não está instalada, aparece uma faixa amarela avisando e o botão <em>Detalhes</em> mostra qual fonte está sendo usada no lugar. O nome original continua salvo no documento.</p>
+
+<h2 id="pdf">PDF e impressão</h2>
+<ul>
+<li><em>Arquivo</em> › <em>Exportar PDF</em> permite PDF comum, PDF/A (arquivamento) e PDF/UA (acessível, com marcação).</li>
+<li><em>Arquivo</em> › <em>Visualizar impressão</em> mostra as páginas como sairão; <em>Imprimir</em> usa as impressoras do Windows.</li>
+</ul>
+
+<h2 id="seguranca">Segurança e privacidade</h2>
+<ul>
+<li>Macros de documentos <strong>nunca</strong> são executadas.</li>
+<li>Imagens e outros conteúdos vinculados a endereços da internet <strong>não</strong> são baixados ao abrir.</li>
+<li>O AY não envia conteúdo de documentos a servidores e não pede conta. Não há relatório automático de falhas.</li>
+</ul>
+
+<h2 id="recuperar">Recuperar documentos</h2>
+<p>O AY guarda informações de recuperação a cada 5 minutos. Se o programa fechar inesperadamente, ao abrir de novo ele oferece recuperar o trabalho. Ao salvar, a versão anterior fica como cópia de segurança. <em>Arquivo</em> › <em>Recuperação de documentos</em> abre a pasta dessas cópias.</p>
+
+<h2 id="teclado">Teclado e acessibilidade</h2>
+<ul>
+<li><kbd>Alt</kbd> mostra as letras de acesso das abas; <kbd>F6</kbd> alterna entre faixa, documento, barra lateral e barra de status.</li>
+<li><em>Revisão</em> › <em>Verificar acessibilidade</em> aponta imagens sem texto alternativo, problemas de títulos e outros itens.</li>
+<li>A lista completa de atalhos está em <a href="atalhos.html">Atalhos de teclado</a>.</li>
+</ul>
+<p>Esta é uma versão de testes: veja as <a href="limitacoes.html">limitações conhecidas</a>.</p>
+</main>
+</body>
+</html>

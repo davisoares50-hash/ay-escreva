@@ -144,6 +144,19 @@ Copy-Item (Join-Path $Marca 'ayescreva.ico') $Saida -Force
 Etapa 'Camada de configuração AY'
 Robo (Join-Path $Raiz 'layer') $Saida @()
 
+Etapa 'Faixa de opções AY (gerada de ui\abas.json)'
+& node.exe (Join-Path $Raiz 'tools\gerar-faixa.mjs') (Join-Path $Raiz 'ui\abas.json') `
+  (Join-Path $Saida 'share\config\soffice.cfg\modules\swriter\ui\notebookbar_ayescreva.ui') `
+  (Join-Path $Saida 'share\config\images_colibre.zip') '-' (Join-Path $Raiz 'out\faixa\mapa.json')
+if ($LASTEXITCODE) { throw 'Geração da faixa falhou' }
+
+Etapa 'Extensão AY (comandos, avisos de perdas e de fontes, ajuda offline)'
+$ext = Join-Path $Saida 'share\extensions\ayescreva'
+Robo (Join-Path $Raiz 'extensao\ayescreva') $ext @()
+# Página de atalhos gerada da configuração REAL do motor montado (nunca lista atalho inexistente)
+& node.exe (Join-Path $Raiz 'tools\gerar-atalhos.mjs') (Join-Path $Saida 'share\registry') (Join-Path $ext 'ajuda\atalhos.html')
+if ($LASTEXITCODE) { throw 'Geração da página de atalhos falhou' }
+
 function Definir-Ini([string]$arquivo, [hashtable]$valores) {
   $linhas = [IO.File]::ReadAllLines($arquivo)
   $vistos = @{}
@@ -181,7 +194,7 @@ if ($LASTEXITCODE) { throw 'Compilação do lançador falhou' }
 # ---------------------------------------------------------------------------
 Etapa 'Manifesto da distribuição'
 $manifesto = [ordered]@{
-  produto = 'AY ESCREVA'; versao = $VersaoAY
+  produto = 'AY ESCREVA'; versao = $VersaoAY; canal = 'versão inicial de testes'; plataformaValidada = 'Windows 11 x64'
   base = [ordered]@{ produto = $Lock.produto; versao = $Lock.versaoCompleta; buildid = $Lock.buildid; codigoFonte = $Lock.codigoFonte }
   montadoEm = (Get-Date).ToString('s')
 }

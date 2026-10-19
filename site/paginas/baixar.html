@@ -1,0 +1,54 @@
+<!-- titulo: Baixar o AY ESCREVA grátis | descricao: Baixe gratuitamente o AY ESCREVA. Instalador para Windows 11 de 64 bits, com SHA-256 para conferência. Windows 10, macOS e Linux em desenvolvimento. -->
+<section class="secao">
+  <div class="largura">
+    <h1>Baixar o AY ESCREVA</h1>
+    <p class="chamada">Gratuito, sem cadastro e sem mensalidade. Depois de instalado, funciona sem internet.</p>
+    <p id="sugestao" class="alerta" role="status" hidden></p>
+
+    <div class="download-principal">
+      <h2>Windows 11 · 64 bits <span class="estado estado-disponivel">Disponível</span></h2>
+      <dl class="dados">
+        <dt>Versão</dt><dd>{{VERSAO}} — {{CANAL}}</dd>
+        <dt>Lançamento</dt><dd>{{DATA_LONGA}}</dd>
+        <dt>Arquivo</dt><dd>{{ARQUIVO_WIN11}}</dd>
+        <dt>Tamanho</dt><dd>{{TAMANHO}}</dd>
+        <dt>Assinatura digital</dt><dd>{{ASSINATURA_WIN11}}</dd>
+      </dl>
+      <div class="acoes">
+        <a class="botao" href="{{URL_WIN11}}" download>
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M11 3h2v9.6l3.3-3.3 1.4 1.4L12 16.4l-5.7-5.7 1.4-1.4 3.3 3.3zM5 19h14v2H5z"/></svg>
+          Baixar gratuitamente ({{TAMANHO}})
+        </a>
+        <a href="instalar.html">Como instalar</a>
+      </div>
+      <p><strong>SHA-256</strong> (para conferir se o arquivo chegou íntegro):</p>
+      <code class="hash" id="hash-win11">{{SHA256_WIN11}}</code>
+      <p class="miudo"><button class="botao botao-pequeno botao-secundario" type="button" data-copiar="hash-win11">Copiar</button> · <a href="{{URL_SHA256SUMS}}">Arquivo SHA256SUMS da versão</a></p>
+      <div class="alerta">
+        <p><strong>Sem assinatura digital, por enquanto.</strong> O instalador ainda não é assinado com certificado de editor. Por isso o Windows pode mostrar “O Windows protegeu o computador” (SmartScreen). Confira o SHA-256 acima e siga as instruções em <a href="instalar.html#smartscreen">Como instalar</a>.</p>
+      </div>
+      <h3>Requisitos</h3>
+      <ul>{{REQUISITOS_WIN11}}</ul>
+    </div>
+  </div>
+</section>
+
+<section class="secao secao-suave">
+  <div class="largura">
+    <h2 id="todas">Todas as versões por sistema</h2>
+    <p>Só aparecem como disponíveis as versões que foram testadas. As demais estão em desenvolvimento e serão publicadas aqui quando validadas.</p>
+    <div class="plataformas">
+{{TABELA_PLATAFORMAS}}
+    </div>
+  </div>
+</section>
+
+<section class="secao">
+  <div class="largura">
+    <h2>Conferir o arquivo baixado</h2>
+    <p>No Windows, abra o PowerShell na pasta Downloads e rode:</p>
+    <code class="codigo">Get-FileHash .\{{ARQUIVO_WIN11}} -Algorithm SHA256</code>
+    <p>O resultado deve ser igual ao SHA-256 acima (maiúsculas e minúsculas não importam). Se for diferente, apague o arquivo e baixe de novo.</p>
+    <p class="miudo">{{NOTA_HTTPS}} Versões anteriores ficam listadas em <a href="versoes.html">Versões</a>.</p>
+  </div>
+</section>

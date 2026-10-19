@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns="http://openoffice.org/extensions/description/2006" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:d="http://openoffice.org/extensions/description/2006">
+  <identifier value="br.ayescreva.extensao"/>
+  <version value="0.2.0"/>
+  <display-name>
+    <name lang="pt-BR">AY ESCREVA - comandos e avisos</name>
+    <name lang="en-US">AY ESCREVA - commands and warnings</name>
+  </display-name>
+  <publisher>
+    <name xlink:href="https://www.mozilla.org/MPL/2.0/" lang="pt-BR">Projeto AY ESCREVA (MPL-2.0)</name>
+  </publisher>
+  <dependencies>
+    <d:OpenOffice.org-minimal-version value="4.1" d:name="OpenOffice.org 4.1"/>
+  </dependencies>
+</description>

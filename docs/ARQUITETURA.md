@@ -82,9 +82,10 @@ O que muda em relação à base, sem tocar no código C++:
 | Sem envio de dados | relatório de falhas desligado e travado; verificação de atualização da base removida (`onlineupdate.xcd`), sem URLs em `version.ini`; extensão de publicação em wiki removida | `ayescreva.xcd`, `montar.ps1` |
 | Recuperação e salvamento seguro | informação de recuperação a cada 5 min; cópia de segurança ao salvar | `ayescreva.xcd` |
 | pt-BR | interface pt-BR, idioma padrão dos documentos pt-BR, ajuda offline pt-BR | `ayescreva.xcd`, helppack |
-| Interface por abas | modo "Abas" (notebookbar) como padrão; na Etapa 3, `notebookbar_ayescreva.ui` própria na ordem pedida | `ayescreva.xcd`, `ui/abas.json` |
+| Interface por abas | faixa própria `notebookbar_ayescreva.ui`, gerada de `ui/abas.json` por `tools/gerar-faixa.mjs`, na ordem pedida; modo "AY ESCREVA" registrado em `ToolbarMode` e padrão | `ayescreva.xcd`, `ui/abas.json`, `tools/gerar-faixa.mjs` |
 | Compatibilidade Word | realce exportado como realce do Word, não sombreamento | `ayescreva.xcd` |
-| Comandos que faltam na base | extensão UNO própria (Python), com protocolo `ayescreva:` para página em branco, modo de leitura, recuperação, guia, diagnóstico etc. (Etapas 3-4) | `extensao/` (a criar) |
+| Comandos que faltam na base | extensão UNO própria (Python), protocolo `ayescreva:`: página em branco, recuperação de documentos, guia, atalhos, limitações e diagnóstico | `extensao/ayescreva/` |
+| Avisos de perda e de fontes | a extensão intercepta Salvar, Salvar como e Salvar uma cópia (`XDispatchProviderInterceptor`) e, em formato não nativo, lista as perdas possíveis no documento e oferece ODT ou cópia em ODT; ao abrir, mostra uma barra de informação com as fontes substituídas | `extensao/ayescreva/ayescreva.py` |
 
 Atualização da base: trocar a versão em `base/base.lock.json` (URL + SHA-256), rodar `scripts/montar.ps1` e
 `scripts/testar.ps1`. Como não há patch de código, não há conflito de rebase.
@@ -95,6 +96,10 @@ Limites do Nível 1, que motivam o Nível 2:
   AppUserModelID da base. O título da janela é "… — AY ESCREVA Writer".
 - O executável do motor continua `soffice.exe`; textos internos de "Sobre/Créditos" citam o LibreOffice, o que
   é correto como atribuição.
+- A automação UNO **externa** (outro processo controlando o motor) com a faixa por abas na tela pode derrubar o
+  motor 26.8.1 (falha em `KERNELBASE.dll`, deslocamento `0xc408a`), inclusive na base sem alterações. O uso pela
+  interface e o código que roda dentro do aplicativo (extensão, testes pela interface) não apresentaram o problema.
+  Os testes que usam UNO externo rodam com a barra clássica num perfil descartável.
 - Correções de compatibilidade que exigem C++ (ex.: página em branco automática no reinício de numeração,
   borracha de traços, pressão da caneta) não são possíveis.
 

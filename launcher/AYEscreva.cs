@@ -22,7 +22,7 @@ namespace AYEscreva
 {
     internal static class Lancador
     {
-        public const string Versao = "0.1.0.0";
+        public const string Versao = "0.2.0.0";
 
         [STAThread]
         private static int Main(string[] args)

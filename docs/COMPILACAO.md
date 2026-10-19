@@ -12,7 +12,7 @@
 | Node.js | 24.18.0 | ícones/marca e comparação visual de PDFs (`tools/`) |
 | Git para Windows | 2.53 | opcional: o `gpg` dele confere a assinatura PGP da base |
 | Espaço em disco | ~3 GB na unidade do projeto | download 380 MB + base extraída 1,5 GB + distribuição 0,8 GB |
-| Inno Setup 6 | **não instalado** | só para gerar o instalador (`winget install --id JRSoftware.InnoSetup -e`) |
+| Inno Setup | 6.7.3, por usuário (`winget install --id JRSoftware.InnoSetup -e --scope user`) | só para gerar o instalador; licença gratuita, inclusive para uso comercial |
 | Microsoft Word | 16.0 | **opcional**, só como oráculo nos testes; o produto não depende dele |
 
 ### Passo a passo
@@ -26,6 +26,22 @@ powershell -ExecutionPolicy Bypass -File scripts\testar.ps1      # bateria compl
 & "dist\AY ESCREVA\AYEscreva.exe"                                # abre o editor
 powershell -ExecutionPolicy Bypass -File scripts\instalador.ps1  # requer Inno Setup 6; -Portatil também gera .zip
 ```
+
+Opcional: `scripts\testar.ps1 -ComInterface` acrescenta os testes pela faixa de opções (≈25 min).
+
+### Instalador e teste de instalação
+
+`scripts\instalador.ps1` gera `out\instalador\AYEscreva-<versão>-teste-windows11-x64.exe` e o `.sha256` ao lado
+(a versão vem de `launcher/AYEscreva.cs`; `-Canal` muda o rótulo "teste"). O instalador é por usuário, sem
+administrador, exige Windows 11 (`MinVersion=10.0.22000`) e se identifica como versão inicial de testes.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tests\instalacao\testar_instalacao.ps1 -Instalador out\instalador\AYEscreva-0.2.0-teste-windows11-x64.exe
+```
+
+O teste instala em silêncio, confere arquivos, atalho, registro e "Abrir com", abre pela interface, roda o aceite
+com o motor instalado, desinstala e compara antes × depois o perfil, o registro e as associações de outras
+instalações do LibreOffice. O perfil `%APPDATA%\AYEscreva` é preservado de propósito na desinstalação.
 
 Tempos medidos nesta máquina: `montar.ps1` ≈ 15 min na primeira vez (a cópia de ~20 mil arquivos é lenta com
 antivírus ativo); `testar.ps1` ≈ 2 min.
