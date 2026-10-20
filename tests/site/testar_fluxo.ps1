@@ -40,12 +40,15 @@ Verificar 'página inicial responde' ($ini.StatusCode -eq 200) "HTTP $($ini.Stat
 Verificar 'endereço usa HTTPS (exigido na publicação; a prévia local usa HTTP)' ($base.Scheme -eq 'https') $base.Scheme
 $m = [regex]::Match($ini.Content, '<a[^>]*href="([^"]+)"[^>]*>(?:(?!</a>).)*?Baixar gratuitamente', 'Singleline')
 Verificar 'botão "Baixar gratuitamente" na página inicial' $m.Success $(if ($m.Success) { $m.Groups[1].Value } else { '' })
-$urlBaixar = Absoluto $base $m.Groups[1].Value
+$urlBotaoInicio = Absoluto $base $m.Groups[1].Value
+Verificar 'o botão da página inicial aponta para o instalador (download direto)' ($urlBotaoInicio.AbsolutePath -match '\.exe$') $urlBotaoInicio.AbsoluteUri
+$urlBaixar = Absoluto $base 'baixar.html'
 $pb = Pagina $urlBaixar
 Verificar 'página Baixar responde' ($pb.StatusCode -eq 200) $urlBaixar.AbsoluteUri
 
 $principal = [regex]::Match($pb.Content, '<div class="download-principal">.*?<a class="botao" href="([^"]+)" download>', 'Singleline')
 Verificar 'botão principal de download na página Baixar' $principal.Success $(if ($principal.Success) { $principal.Groups[1].Value } else { '' })
+Verificar 'página inicial e página Baixar levam ao mesmo arquivo' ((Absoluto $urlBaixar $principal.Groups[1].Value).AbsoluteUri -eq $urlBotaoInicio.AbsoluteUri)
 $hashPagina = [regex]::Match($pb.Content, '<code class="hash" id="hash-win11">([0-9a-fA-F]{64})</code>').Groups[1].Value.ToLowerInvariant()
 Verificar 'SHA-256 publicado na página Baixar' ($hashPagina.Length -eq 64) $hashPagina
 $sums = [regex]::Match($pb.Content, 'href="([^"]+)">Arquivo SHA256SUMS')

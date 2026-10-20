@@ -67,16 +67,24 @@ Write-Host "   gerado em $siteDir"
 Passo 'Repositório'
 if (-not $existe) {
   if (-not $CriarRepositorio) { Faria "repositório $Repositorio não existe; nada será criado sem -CriarRepositorio" }
-  elseif (-not $Executar) { Faria "gh repo create $Repositorio --public --source `"$Raiz`" --push" }
-  else { Invocar-Gh repo create $Repositorio --public --description 'AY ESCREVA: editor de textos gratuito em português do Brasil' --source $Raiz --remote origin --push }
+  elseif (-not $Executar) { Faria "gh repo create $Repositorio --public; git push -u origin main" }
+  else {
+    Invocar-Gh repo create $Repositorio --public --description 'AY ESCREVA: editor de textos gratuito em português do Brasil (versão de testes para Windows 11 x64)' --homepage $urlSite
+    if (-not (git -C $Raiz remote)) { git -C $Raiz remote add origin "https://github.com/$Repositorio.git" }
+  }
 } else { Write-Host '   já existe' }
+if ($Executar -and ($existe -or $CriarRepositorio)) {
+  # Credencial do gh só para este comando (não altera a configuração global do git)
+  git -C $Raiz -c credential.helper= -c 'credential.helper=!gh auth git-credential' push -u origin main
+  if ($LASTEXITCODE) { throw 'git push do main falhou' }
+}
 
 Passo "Versão $tag no GitHub Releases"
 $titulo = "AY ESCREVA $versao — versão inicial de testes (Windows 11 x64)"
 $temRelease = Sonda-Gh release view $tag --repo $Repositorio
 if ($temRelease) { Write-Host '   já existe (arquivos não são substituídos; para trocar, crie uma nova versão)' }
 elseif (-not $Executar) { Faria "gh release create $tag `"$exe`" `"$pub\SHA256SUMS.txt`" --repo $Repositorio --title `"$titulo`" --notes-file `"$pub\NOTAS.md`" --prerelease" }
-else { Invocar-Gh release create $tag $exe (Join-Path $pub 'SHA256SUMS.txt') --repo $Repositorio --title $titulo --notes-file (Join-Path $pub 'NOTAS.md') --prerelease }
+else { Invocar-Gh release create $tag $exe (Join-Path $pub 'SHA256SUMS.txt') --repo $Repositorio --target main --title $titulo --notes-file (Join-Path $pub 'NOTAS.md') --prerelease }
 
 $urlArq = "https://github.com/$Repositorio/releases/download/$tag/$arquivo"
 if ($Executar) {

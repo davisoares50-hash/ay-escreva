@@ -1,7 +1,7 @@
 {
   "descricao": "Configuração de publicação do site. modo 'local' = prévia: o instalador é copiado para dentro do site (downloads/<versão>/). modo 'github' = publicação: links para os arquivos da versão no GitHub Releases do repositório indicado (HTTPS, sem custo para repositórios públicos).",
   "modo": "local",
-  "repositorio": "",
-  "urlSite": "",
-  "urlProjeto": ""
+  "repositorio": "davisoares50-hash/ay-escreva",
+  "urlSite": "https://davisoares50-hash.github.io/ay-escreva/",
+  "urlProjeto": "https://github.com/davisoares50-hash/ay-escreva"
 }

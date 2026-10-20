@@ -10,6 +10,25 @@
     });
   }
 
+  // "Baixar gratuitamente" da página inicial baixa direto o instalador do Windows 11 x64. Em outro sistema
+  // (celular, Mac, Linux, Windows 10 ou ARM), leva à página Baixar, que mostra o que existe para cada um.
+  var diretos = document.querySelectorAll('[data-baixar-direto]');
+  if (diretos.length) {
+    var uaD = navigator.userAgent || '';
+    var platD = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+    var paraPaginaBaixar = function () {
+      diretos.forEach(function (a) { a.setAttribute('href', 'baixar.html'); a.removeAttribute('download'); });
+    };
+    if (!(/Windows/i.test(platD) || /Windows NT/i.test(uaD))) {
+      paraPaginaBaixar();
+    } else if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+      navigator.userAgentData.getHighEntropyValues(['platformVersion', 'architecture']).then(function (v) {
+        var maior = parseInt((v.platformVersion || '0').split('.')[0], 10);
+        if (v.architecture === 'arm' || (maior > 0 && maior < 13)) paraPaginaBaixar();
+      }).catch(function () {});
+    }
+  }
+
   // Sugestão de download: só destaca; todas as versões continuam listadas.
   var alvo = document.getElementById('sugestao');
   if (alvo) {

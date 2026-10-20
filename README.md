@@ -76,6 +76,7 @@ código): [docs/RESULTADOS-TESTES.md](docs/RESULTADOS-TESTES.md).
 
 ## Licença
 
-Código do projeto: MPL-2.0. O motor (LibreOffice) é distribuído sem alterações sob as licenças dele.
+Código do projeto: MPL-2.0 (texto completo em [LICENSE](LICENSE)). O motor (LibreOffice 26.8.1) é distribuído
+sem alterações sob as licenças dele; código-fonte em <https://download.documentfoundation.org/libreoffice/src/26.8.1/>.
 "LibreOffice" é marca da The Document Foundation; o AY ESCREVA é um projeto independente.
 Veja [docs/LICENCAS.md](docs/LICENCAS.md).

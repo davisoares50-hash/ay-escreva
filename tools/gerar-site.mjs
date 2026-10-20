@@ -53,6 +53,8 @@ mkdirSync(join(SAIDA, 'assets/fontes'), { recursive: true });
 for (const f of ['estilo.css', 'site.js']) copyFileSync(join(RAIZ, 'site/assets', f), join(SAIDA, 'assets', f));
 const fontes = join(RAIZ, 'dist/AY ESCREVA/share/fonts/truetype');
 for (const f of ['Rubik-Bold.ttf', 'Rubik-Regular.ttf']) copyFileSync(join(fontes, f), join(SAIDA, 'assets/fontes', f));
+// A OFL exige que o aviso de copyright e a licença acompanhem a fonte redistribuída
+copyFileSync(join(RAIZ, 'site/assets/fontes/OFL.txt'), join(SAIDA, 'assets/fontes/OFL.txt'));
 const marca = join(RAIZ, 'out/marca');
 copyFileSync(join(marca, 'icone.svg'), join(SAIDA, 'assets/img/icone.svg'));
 copyFileSync(join(marca, 'icone-32.png'), join(SAIDA, 'assets/img/icone-32.png'));
@@ -104,14 +106,49 @@ for (const a of atual.arquivos) {
 if (modo === 'local') writeFileSync(join(SAIDA, 'downloads', atual.versao, 'SHA256SUMS.txt'), linhasSums.join('\n') + '\n');
 mkdirSync(join(RAIZ, 'out/publicacao', `v${atual.versao}`), { recursive: true });
 writeFileSync(join(RAIZ, 'out/publicacao', `v${atual.versao}`, 'SHA256SUMS.txt'), linhasSums.join('\n') + '\n');
-// Notas da versão para o GitHub Releases
+// Notas da versão para o GitHub Releases: novidades, SHA-256, instalação, limitações, licenças e código-fonte
+function limitacoesMd() {
+  const html = readFileSync(join(RAIZ, 'extensao/ayescreva/ajuda/limitacoes.html'), 'utf8');
+  const main = (html.match(/<main>([\s\S]*?)<\/main>/) || [, ''])[1].replace(/<p><a href="guia.html">Voltar ao guia<\/a><\/p>/, '');
+  const texto = (s) => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/\s+/g, ' ').trim();
+  const linhas = [];
+  for (const m of main.matchAll(/<h2>([\s\S]*?)<\/h2>|<li>([\s\S]*?)<\/li>|<p>([\s\S]*?)<\/p>/g)) {
+    if (m[1]) linhas.push('', `#### ${texto(m[1])}`, '');
+    else linhas.push(m[2] ? `- ${texto(m[2])}` : texto(m[3]));
+  }
+  return linhas;
+}
+const urlProjetoNotas = config.urlProjeto || `https://github.com/${config.repositorio || '<dono>/<nome>'}`;
 writeFileSync(join(RAIZ, 'out/publicacao', `v${atual.versao}`, 'NOTAS.md'), [
-  `AY ESCREVA ${atual.versao} — ${atual.canal}, validada somente no Windows 11 de 64 bits.`, '',
+  `**AY ESCREVA ${atual.versao} — ${atual.canal.toLowerCase()}, validada somente no Windows 11 de 64 bits (x64).** ` +
+  'Windows 10, Windows em ARM, macOS e Linux ainda estão em desenvolvimento e não têm instalador.', '',
+  config.urlSite ? `Site: ${config.urlSite}` : '', '',
+  '### Novidades', '',
   ...atual.notas.map((n) => `- ${n}`), '',
-  '**O instalador ainda não tem assinatura digital.** Confira o SHA-256 abaixo (também em SHA256SUMS.txt):', '',
+  '### Conferir o arquivo (SHA-256)', '',
+  '**O instalador ainda não tem assinatura digital.** O Windows pode mostrar "O Windows protegeu o computador" ' +
+  '(SmartScreen). Antes de executar, confira o SHA-256 (também no arquivo `SHA256SUMS.txt` desta versão):', '',
   ...linhasSums.map((l) => `    ${l}`), '',
-  'Limitações conhecidas: veja a página Versões do site ou Ajuda › Limitações conhecidas no aplicativo.', '',
+  'No PowerShell, na pasta Downloads:', '',
+  ...Object.values(arqs).map((a) => `    Get-FileHash .\\${a.arquivo} -Algorithm SHA256`), '',
+  'O resultado deve ser igual ao valor acima (maiúsculas e minúsculas não importam).', '',
+  '### Instalar e abrir', '',
+  `1. Baixe \`${win0().arquivo}\` (${mb(win0().tamanho)}) e confira o SHA-256.`,
+  '2. Abra o arquivo. Se aparecer "O Windows protegeu o computador", clique em **Mais informações** e depois em **Executar assim mesmo**.',
+  '3. Siga o instalador. Ele instala só para o seu usuário, sem pedir senha de administrador (cerca de 850 MB livres).',
+  '4. Abra pelo menu Iniciar: **AY ESCREVA**. Não precisa de internet nem de conta.',
+  '5. Para desinstalar: Configurações › Aplicativos › AY ESCREVA › Desinstalar (seus documentos e o perfil `%APPDATA%\\AYEscreva` são mantidos).', '',
+  '### Limitações conhecidas', '',
+  ...limitacoesMd(), '',
+  '### Licenças e código-fonte', '',
+  `- Código do AY ESCREVA: Mozilla Public License 2.0 — ${urlProjetoNotas} (versão marcada \`v${atual.versao}\`).`,
+  '- Inclui, sem modificação de código, os binários oficiais do LibreOffice 26.8.1 (The Document Foundation), sob MPL 2.0 com partes ' +
+  'em LGPL v3+, Apache 2.0 e outras licenças livres. Código-fonte correspondente: https://download.documentfoundation.org/libreoffice/src/26.8.1/',
+  '- Os textos completos das licenças e os avisos de terceiros (LICENSE.html, license.txt, NOTICE, CREDITS.fodt) são instalados com o aplicativo.',
+  '- "LibreOffice" é marca da The Document Foundation. O AY ESCREVA é um projeto independente, não endossado pela The Document Foundation.',
+  '- O software é fornecido "no estado em que se encontra", sem garantias. Esta é uma versão de testes.', '',
 ].join('\n'));
+function win0() { return arqs['windows11-x64']; }
 
 const win = arqs['windows11-x64'];
 const plataformasHtml = versoes.plataformas.map((p) => {
