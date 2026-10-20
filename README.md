@@ -4,7 +4,12 @@ Editor de textos gratuito, instalável e em português do Brasil, com experiênc
 identidade própria. Sem mensalidade, sem conta, offline e com documentos locais.
 
 **Estado:** 0.2.0, **versão inicial de testes para Windows 11 x64** (o único sistema validado). Windows 10,
-macOS e Linux estão em desenvolvimento. Veja [docs/PLANO.md](docs/PLANO.md).
+Windows em ARM, macOS e Linux estão em desenvolvimento. Veja [docs/PLANO.md](docs/PLANO.md).
+
+- Site: https://davisoares50-hash.github.io/ay-escreva/
+- Baixar (Windows 11 x64, 208 MB, sem assinatura digital): https://github.com/davisoares50-hash/ay-escreva/releases/download/v0.2.0/AYEscreva-0.2.0-teste-windows11-x64.exe
+- SHA-256: `d2ba364d4fac8f6d24bf4308c02937abffa681be2222ad4f27d89051d58636e6`
+- Notas da versão: https://github.com/davisoares50-hash/ay-escreva/releases/tag/v0.2.0
 
 ## Arquitetura em uma frase
 
@@ -17,9 +22,9 @@ comparação com as alternativas em [docs/ARQUITETURA.md](docs/ARQUITETURA.md).
 
 ## Instalar e testar (Windows 11 x64)
 
-1. Rode `out\instalador\AYEscreva-0.2.0-teste-windows11-x64.exe` (por usuário, sem administrador). Como o
+1. Baixe o instalador pelo link acima (ou use `out\instalador\…` se montou localmente) e abra o arquivo (por usuário, sem administrador). Como o
    instalador ainda não tem assinatura digital, o SmartScreen pode mostrar "O Windows protegeu o computador":
-   confira o SHA-256 (`Get-FileHash <arquivo> -Algorithm SHA256`, comparar com o `.sha256` ao lado) e use
+   confira o SHA-256 (`Get-FileHash <arquivo> -Algorithm SHA256`, comparar com o valor acima) e use
    "Mais informações › Executar assim mesmo".
 2. Abra pelo menu Iniciar: **AY ESCREVA**.
 3. Teste: escreva, use as abas (Página Inicial, Inserir, Layout…), insira uma tabela e uma imagem, salve em ODT
@@ -52,7 +57,7 @@ Site oficial e publicação de versões: [docs/SITE.md](docs/SITE.md).
 | Segurança (macro não executa, com controle positivo; imagem remota não é baixada) | 4/4 |
 | Comandos das 11 abas + 4 contextuais encontrados no motor | 233/233 (+6 funções pendentes, fora da faixa) |
 | Ida e volta com documento OOXML representativo + variantes DOCX/DOC/RTF/ODT do Word | sem perda de texto; 7 incompatibilidades documentadas |
-| Site: acessar → baixar → conferir SHA-256 → instalar → abrir (prévia local) | 21/22 (falta só HTTPS, que vale para o site publicado) |
+| Site publicado: acessar → baixar sem login → conferir SHA-256 → instalar → abrir (HTTPS) | 25/25 |
 
 Relatório completo, inclusive o que **não** foi validado (leitores de tela, outros sistemas, assinatura de
 código): [docs/RESULTADOS-TESTES.md](docs/RESULTADOS-TESTES.md).

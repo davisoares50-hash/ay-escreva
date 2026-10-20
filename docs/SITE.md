@@ -77,8 +77,17 @@ Com `-Executar`: cria o repositório público (com `-CriarRepositorio`) e envia 
 (HTTPS). Requer o GitHub CLI (`gh`) autenticado na conta dona do repositório; o commit do site usa o endereço
 "noreply" do GitHub, não o e-mail pessoal.
 
-O que falta para publicar: **autorização** para criar o repositório público e publicar; opcionalmente, um
-domínio próprio (o endereço gratuito é `https://davisoares50-hash.github.io/ay-escreva/`) e um certificado de
+**Estado (20/10/2026): 0.2.0 publicada** com autorização do responsável.
+
+| O quê | Endereço |
+|---|---|
+| Site (GitHub Pages, HTTPS obrigatório) | https://davisoares50-hash.github.io/ay-escreva/ |
+| Instalador (GitHub Releases, sem login) | https://github.com/davisoares50-hash/ay-escreva/releases/download/v0.2.0/AYEscreva-0.2.0-teste-windows11-x64.exe |
+| Versão e notas | https://github.com/davisoares50-hash/ay-escreva/releases/tag/v0.2.0 |
+| Repositório | https://github.com/davisoares50-hash/ay-escreva |
+
+Fluxo público testado (acessar, baixar, conferir o SHA-256, instalar, abrir, desinstalar): ver
+[RESULTADOS-TESTES.md §10](RESULTADOS-TESTES.md). Opcionais ainda não feitos: domínio próprio e certificado de
 assinatura de código.
 
 ## Lançar uma nova versão

@@ -17,7 +17,7 @@ Oráculo independente: Microsoft Word 16.0 (instalado na máquina, usado só via
 | Faixa de opções AY (`notebookbar_ayescreva.ui`, 11 abas + 4 contextuais) | sim — `tools/gerar-faixa.mjs` a partir de `ui/abas.json` | sim — 224 botões | sim — §4 (Forma e Visualizar impressão: só conferência visual) |
 | Extensão AY (comandos `ayescreva:`, avisos de perdas e de fontes) | sim — `extensao/ayescreva` | sim — empacotada na distribuição | sim — §4 e §5 |
 | Instalador Windows 11 x64 (Inno Setup 6.7.3) | sim — `installer/ayescreva.iss` | sim — `AYEscreva-0.2.0-teste-windows11-x64.exe` | sim — §3 |
-| Site oficial (prévia local) | sim — `site/`, `tools/gerar-site.mjs` | sim — `out/site` | sim, localmente — §10; **não publicado** |
+| Site oficial | sim — `site/`, `tools/gerar-site.mjs` | sim — publicado em https://davisoares50-hash.github.io/ay-escreva/ | sim — fluxo público 25/25, com HTTPS (§10) |
 | Acessibilidade com leitores de tela | — | — | **não validado** (§12) |
 
 ## 2. Aceite da Etapa 1 — `tests/uno/aceite_etapa1.py`: **40/40**
@@ -157,19 +157,38 @@ Conclusão: é uma falha do motor 26.8.1 com automação UNO **externa** e a fai
 Os testes com UNO externo continuam com a barra clássica em perfil descartável (o que não comprova a faixa); a
 faixa é comprovada pelos testes de dentro do aplicativo. A limitação está documentada em Ajuda › Limitações.
 
-## 10. Site oficial — prévia local e fluxo de download
+## 10. Site oficial e publicação
 
-Prévia gerada por `tools/gerar-site.mjs --modo local` e servida em `http://127.0.0.1:8737/`; conferida no navegador
-(desktop e 375 px de largura, sem rolagem horizontal). Teste automático `tests/site/testar_fluxo.ps1`:
-**21/22**. A única verificação que falha é a de HTTPS, que não se aplica à prévia local.
+Publicado em 20/10/2026, com autorização do responsável, só com recursos gratuitos (repositório público,
+GitHub Releases e GitHub Pages; nenhum serviço pago nem cobrança ativada):
+
+- Site: https://davisoares50-hash.github.io/ay-escreva/
+- Download direto: https://github.com/davisoares50-hash/ay-escreva/releases/download/v0.2.0/AYEscreva-0.2.0-teste-windows11-x64.exe
+- Versão (pré-lançamento): https://github.com/davisoares50-hash/ay-escreva/releases/tag/v0.2.0 — instalador, `SHA256SUMS.txt` e notas com SHA-256,
+  instruções de instalação, limitações conhecidas, licenças e código-fonte
+- Repositório: https://github.com/davisoares50-hash/ay-escreva (licença MPL-2.0 reconhecida pelo GitHub)
+
+Antes de publicar: auditoria dos arquivos e de todo o histórico do Git (sem credenciais, sem documentos de
+teste ou binários, sem dados pessoais). Os commits locais tinham nome e e-mail pessoais nos metadados e foram
+regravados, antes do primeiro envio, com o usuário do GitHub e o endereço "noreply"; o mesmo vale para o commit
+do site.
+
+HTTPS: o GitHub Pages serve o site com certificado válido e `https_enforced = true`; `http://` responde 301
+para `https://`. O instalador é servido pelo GitHub Releases por HTTPS, com `Content-Disposition: attachment`,
+e baixa sem login.
+
+Teste do fluxo no endereço público — `tests/site/testar_fluxo.ps1 -Site https://davisoares50-hash.github.io/ay-escreva/`: **25/25**
+(acessar → "Baixar gratuitamente" → baixar sem login → conferir SHA-256 → instalar → abrir → usar → desinstalar).
 
 | Verificação | Resultado |
 |---|---|
 | página inicial responde | OK — HTTP 200 |
-| endereço usa HTTPS (exigido na publicação; a prévia local usa HTTP) | FALHA — http |
-| botão "Baixar gratuitamente" na página inicial | OK — baixar.html |
-| página Baixar responde | OK — http://127.0.0.1:8737/baixar.html |
-| botão principal de download na página Baixar | OK — downloads/0.2.0/AYEscreva-0.2.0-teste-windows11-x64.exe |
+| endereço usa HTTPS (exigido na publicação; a prévia local usa HTTP) | OK — https |
+| botão "Baixar gratuitamente" na página inicial | OK — https://github.com/davisoares50-hash/ay-escreva/releases/download/v0.2.0/AYEscreva-0.2.0-teste-windows11-x64.exe |
+| o botão da página inicial aponta para o instalador (download direto) | OK — https://github.com/davisoares50-hash/ay-escreva/releases/download/v0.2.0/AYEscreva-0.2.0-teste-windows11-x64.exe |
+| página Baixar responde | OK — https://davisoares50-hash.github.io/ay-escreva/baixar.html |
+| botão principal de download na página Baixar | OK — https://github.com/davisoares50-hash/ay-escreva/releases/download/v0.2.0/AYEscreva-0.2.0-teste-windows11-x64.exe |
+| página inicial e página Baixar levam ao mesmo arquivo | OK |
 | SHA-256 publicado na página Baixar | OK — d2ba364d4fac8f6d24bf4308c02937abffa681be2222ad4f27d89051d58636e6 |
 | link para o SHA256SUMS da versão | OK |
 | aviso de instalador sem assinatura digital na página Baixar | OK |
@@ -179,17 +198,20 @@ Prévia gerada por `tools/gerar-site.mjs --modo local` e servida em `http://127.
 | plataforma macos em desenvolvimento, sem botão de download | OK |
 | plataforma linux em desenvolvimento, sem botão de download | OK |
 | páginas internas visitadas | OK — 9 páginas |
-| download responde: AYEscreva-0.2.0-teste-windows11-x64.exe | OK — HTTP 200, 217994462 bytes (em http://127.0.0.1:8737/baixar.html) |
-| download responde: SHA256SUMS.txt | OK — HTTP 200, 106 bytes (em http://127.0.0.1:8737/baixar.html) |
-| instalador baixado pelo botão principal | OK — AYEscreva-0.2.0-teste-windows11-x64.exe — 207,9 MB em 1 s |
+| download responde: OFL.txt | OK — HTTP 200, 4473 bytes (em https://davisoares50-hash.github.io/ay-escreva/licencas.html) |
+| download responde: AYEscreva-0.2.0-teste-windows11-x64.exe | OK — HTTP 200, 217994462 bytes (em https://davisoares50-hash.github.io/ay-escreva/baixar.html) |
+| download responde: SHA256SUMS.txt | OK — HTTP 200, 106 bytes (em https://davisoares50-hash.github.io/ay-escreva/baixar.html) |
+| instalador baixado pelo botão principal | OK — AYEscreva-0.2.0-teste-windows11-x64.exe — 207,9 MB em 22 s |
 | nome do arquivo identifica a versão de testes para Windows 11 x64 | OK — AYEscreva-0.2.0-teste-windows11-x64.exe |
 | SHA-256 do arquivo baixado = SHA-256 da página | OK — d2ba364d4fac8f6d24bf4308c02937abffa681be2222ad4f27d89051d58636e6 |
 | SHA-256 do arquivo baixado = SHA256SUMS da versão | OK — d2ba364d4fac8f6d24bf4308c02937abffa681be2222ad4f27d89051d58636e6  AYEscreva-0.2.0-teste-windows11-x64.exe |
 | assinatura digital (esperado nesta versão: sem assinatura, como a página avisa) | OK — NotSigned |
 | instalação, abertura, uso e desinstalação do arquivo baixado | OK — 17/17 verificações do teste de instalação |
 
-Publicação: `scripts/publicar-site.ps1` simulado sem enviar nada (gera `out/site-publicacao` com os links do
-GitHub Releases). **O site não foi publicado**: falta a autorização para criar o repositório público e publicar.
+Antes da publicação, o mesmo teste passou na prévia local (`http://127.0.0.1:8737/`), menos a verificação de
+HTTPS, que só se aplica ao site publicado. A página foi conferida no navegador em largura de computador e de
+celular (375 px, sem rolagem horizontal); no celular, os botões "Baixar gratuitamente" levam à página Baixar,
+porque o instalador é para Windows 11.
 
 ## 11. Documentos representativos — ida e volta
 
@@ -264,5 +286,5 @@ Imagens lado a lado (original | cópia | diferença) em `tests/output/visual/*.p
 - Teste de imagem remota cobre só o filtro DOCX e imagem vinculada; outros tipos de recurso externo (OLE/DDE,
   fontes remotas, modelos remotos) não foram testados.
 - Máquina sem Microsoft Office (para ver a substituição de Calibri por Carlito): não testada.
-- Site: testado só na prévia local (HTTP em 127.0.0.1); HTTPS e o download pelo GitHub Releases só poderão ser
-  testados depois da publicação.
+- Site: o fluxo foi testado num único computador (Windows 11), com o navegador embutido e com o PowerShell;
+  não foi testado em outros navegadores nem em outras redes.

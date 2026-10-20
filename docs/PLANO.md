@@ -77,8 +77,9 @@ impressão real pela fila do Windows, exportação PDF e PDF/UA, macros bloquead
       assinatura, demais sistemas "Em desenvolvimento", instruções, versões, limitações, ajuda, privacidade e
       licenças ([SITE.md](SITE.md)). Teste do fluxo acessar → baixar → conferir → instalar → abrir:
       `tests/site/testar_fluxo.ps1`.
-- [ ] Publicação do site e dos instaladores (GitHub Pages + GitHub Releases, gratuitos) — **aguarda autorização
-      do responsável** para criar o repositório público e publicar.
+- [x] Publicação da 0.2.0 (autorizada em 20/10/2026): repositório público, instalador no GitHub Releases
+      (pré-lançamento v0.2.0, com SHA-256, instruções, limitações e licenças) e site no GitHub Pages com HTTPS
+      ([RESULTADOS §10](RESULTADOS-TESTES.md)). Só recursos gratuitos, sem cobrança.
 - [ ] Windows 10 (22H2) limpo: instalar e repetir os testes; só então liberar no site.
 - [ ] MSI para implantação corporativa (WiX, ou o MSI do Nível 2).
 - [ ] Assinatura de código.
@@ -88,10 +89,23 @@ impressão real pela fila do Windows, exportação PDF e PDF/UA, macros bloquead
 
 ## Próximo marco
 
+A publicação da 0.2.0 (versão de testes, só Windows 11 x64) não encerra o projeto. Próxima versão:
+
 **0.3.0 — fechamento da Etapa 2 e acessibilidade da faixa**: recuperação após falha, salvamento seguro e
-desfazer/refazer com testes automatizados; aviso de formato no caminho "fechar → Salvar"; validação com NVDA e
-Narrador e por teclado; recolhimento dos grupos em janelas estreitas; teste em Windows 10 limpo. Em paralelo,
-publicar o site assim que houver autorização.
+desfazer/refazer com testes automatizados; teste de Salvar como / Salvar uma cópia com o aviso de perdas;
+clique automatizado nas abas Forma e Visualizar impressão; validação com NVDA e Narrador e por teclado;
+recolhimento dos grupos em janelas estreitas; teste em Windows 10 limpo.
+
+Ainda pendente depois disso (resumo das etapas acima):
+
+| Área | Pendente |
+|---|---|
+| Funções sem comando (fora da faixa) | marca-texto, borracha, pressão da caneta, revisão gramatical avançada offline, modo de leitura, verificar atualizações |
+| Plataformas | Windows 10, Windows em ARM, macOS, Linux — nenhuma testada; o site as mostra como "Em desenvolvimento" |
+| Distribuição | assinatura de código do instalador; MSI corporativo; domínio próprio (opcional) |
+| Acessibilidade | leitores de tela, só teclado, escalas 125–200 %, temas |
+| Compatibilidade | página em branco automática (I1), refluxo de colunas em DOCX (I3), corpus real maior |
+| Motor (Nível 2) | ícone e AppUserModelID próprios; correção da queda com automação UNO externa |
 
 ## Plataformas
 
