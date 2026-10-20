@@ -315,6 +315,45 @@ class RevisaoMixin:
         self.efeito('Adicionar ao dicionário pessoal grava a palavra e ela deixa de ser apontada', no_dic and some)
         self.no_principal(lambda: rev.gravar_config(Estilo=False))
 
+    # ---------- captura do painel (inspeção visual e documentação) ----------
+    def _geometria(self, painel):
+        """Retângulos na tela do painel e dos seus ancestrais acessíveis (o primeiro que corta a largura é a área visível)."""
+        tam = painel.win.getPosSize()
+        r = {'janela': (tam.X, tam.Y, tam.Width, tam.Height), 'cadeia': []}
+        ac = painel.win.getAccessibleContext()
+        for _ in range(8):
+            if ac is None:
+                break
+            try:
+                loc, t = ac.getLocationOnScreen(), ac.getSize()
+                r['cadeia'].append((ac.getAccessibleRole(), ac.getAccessibleName()[:30], loc.X, loc.Y, t.Width, t.Height))
+            except Exception as e:
+                r['cadeia'].append(('?', str(e)[:60]))
+            pai = ac.getAccessibleParent()
+            ac = pai.getAccessibleContext() if pai else None
+        return r
+
+    def revisao_captura(self):
+        import subprocess
+        rev = self.rev()
+        self.no_principal(lambda: rev.gravar_config(Estilo=True))
+        self.nova_linha(texto=TEXTO_PAINEL)
+        painel = self._painel()
+        self._verificar(painel)
+        self._escolher(painel, lambda a: a['original'] == 'palavrass')
+        time.sleep(1.0)
+        geo = self.no_principal(lambda: self._geometria(painel))
+        visivel = min([c[4] for c in geo['cadeia'] if len(c) == 6] or [0])
+        self.efeito('Painel cabe na largura visível da barra lateral (nenhum botão cortado)', 0 < geo['janela'][2] <= visivel,
+                    f'janela {geo["janela"][2]} px, área visível {visivel} px')
+        raiz =os.path.dirname(os.path.dirname(self.spec['abas']))      # E:AY (a extensão de testes roda de uma cópia no perfil)
+        script = os.path.join(raiz, 'tests', 'captura_janela.ps1')
+        saida = os.path.join(raiz, 'tests', 'output', 'interface', 'painel-assistente.png')
+        r = subprocess.run(['powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', script, '-Saida', saida, '-Esperar', '3'],
+                           capture_output=True, text=True, timeout=120)
+        self.no_principal(lambda: rev.gravar_config(Estilo=False))
+        self.efeito('Captura do painel Assistente AY', os.path.exists(saida), (r.stdout or r.stderr).strip()[-200:])
+
     # ---------- perfil de desempenho ----------
     def revisao_perfil(self):
         """Mede, na thread principal, quanto custa cada parte da análise de um parágrafo (60 parágrafos)."""

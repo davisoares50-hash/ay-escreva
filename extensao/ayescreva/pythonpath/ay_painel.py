@@ -25,7 +25,8 @@ LARGURA_TOTAL = ('titulo_revisao', 'ortografia', 'correcao', 'gramatica', 'estil
 COLUNA_ESQ = ('verificar_selecao', 'aplicar', 'adicionar', 'reverter', 'dicionario')
 COLUNA_DIR = ('verificar_documento', 'ignorar', 'nao_corrigir', 'nao_corrigir_recente', 'autocorrecao')
 CURTO = {'ortografia': 'Ortografia', 'gramatica': 'Gramática', 'estilo': 'Estilo'}
-PS_X, PS_WIDTH = 1, 4
+PS_X, PS_WIDTH, PS_SIZE = 1, 4, 12
+LARGURA_MINIMA = 240
 
 
 class _Ouvinte(unohelper.Base, XActionListener, XItemListener, XWindowListener):
@@ -57,6 +58,10 @@ class Painel(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent):
         prov = ay_revisao.servico(ctx, 'com.sun.star.awt.ContainerWindowProvider')
         peer = parent.queryInterface(uno.getTypeByName('com.sun.star.awt.XWindowPeer'))
         self.win = prov.createContainerWindow(XDL, '', peer, None)
+        self.altura = self.win.getPosSize().Height
+        # A largura do Painel.xdl viraria a largura pedida pela janela na barra lateral: maior que a área visível,
+        # cortaria a coluna da direita. A janela começa na largura mínima e a barra lateral a alarga até a área visível.
+        self.win.setPosSize(0, 0, LARGURA_MINIMA, self.altura, PS_SIZE)
         self.win.setVisible(True)
         self.c = {c.getModel().Name: c for c in self.win.getControls()}
         self.ouvinte = _Ouvinte(self)
@@ -66,7 +71,7 @@ class Painel(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent):
         for nome in CAIXAS + ('ocorrencias', 'recentes'):
             self.c[nome].addItemListener(self.ouvinte)
         self.win.addWindowListener(self.ouvinte)
-        self.altura = self.win.getPosSize().Height
+        self._redimensionar()
         self.analise = None
         self.achados = []
         self.ouvintes_fim = []
@@ -93,7 +98,7 @@ class Painel(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent):
         return ls
 
     def getMinimalWidth(self):
-        return 240
+        return LARGURA_MINIMA
 
     def dispose(self):
         if self.analise:
@@ -240,7 +245,8 @@ class Painel(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent):
         itens = []
         for a in self.achados:
             sug = f' → {a["sugestoes"][0]}' if a['sugestoes'] else ''
-            itens.append(f'{CURTO[a["nivel"]]} · {a["original"][:40]}{sug}')
+            tipo = a['categoria'] if a['nivel'] == 'estilo' else CURTO[a['nivel']]     # "Estilo · repetição"
+            itens.append(f'{tipo} · {a["original"][:40]}{sug}')
         self.c['ocorrencias'].getModel().StringItemList = tuple(itens)
         if self.achados:
             self.c['ocorrencias'].selectItemPos(0, True)

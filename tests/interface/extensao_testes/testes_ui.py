@@ -386,6 +386,7 @@ class Teste(RevisaoMixin):
                                        (self.revisao_protecoes, 0.5), (self.revisao_painel, 0.5)],
                            'revisao_longo': [(self.revisao_longo, 8.0)],
                            'revisao_perfil': [(self.revisao_perfil, 8.0)],
+                           'revisao_captura': [(self.revisao_captura, 6.0)],
                            'revisao_integridade': [(self.revisao_integridade, 6.0)]}
             for nome in somente:
                 passos.extend(mapa_passos[nome])

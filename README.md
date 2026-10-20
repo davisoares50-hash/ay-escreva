@@ -57,8 +57,8 @@ Site oficial e publicação de versões: [docs/SITE.md](docs/SITE.md).
 |---|---|
 | Aceite (várias páginas, formatação, tabela, imagem, salvar/fechar/reabrir ODT e DOCX, PDF e PDF/UA) | 40/40 |
 | Instalador: instalar, abrir, usar com o motor instalado, desinstalar, perfil do LibreOffice intacto | 0.2.0: 18/18 · 0.3.0: 19/19 |
-| Faixa de opções testada pela interface (de dentro do aplicativo; 11 abas + Tabela e Imagem; 7 fases) | 213/213 botões presentes; 151 acionados; 71/71 efeitos conferidos; 0 quedas; 0 conexões externas |
-| Revisão de texto (0.3.0): regras sem o aplicativo · pela interface (digitação real, proteções, desfazer, painel, documento longo, DOCX/ODT) | 31/31 · 30/30 |
+| Faixa de opções testada pela interface (de dentro do aplicativo; 11 abas + Tabela e Imagem; 7 fases) | 213/213 botões presentes; 151 acionados; 73/73 efeitos conferidos; 0 quedas; 0 conexões externas |
+| Revisão de texto (0.3.0): regras sem o aplicativo · pela interface (digitação real, proteções, desfazer, painel, documento longo, DOCX/ODT) | 31/31 · 31/31 |
 | Confiabilidade (0.3.0): desfazer/refazer, TXT, cópia de segurança, falha e interrupção da gravação · recuperação após queda | 19/19 · 7/7 |
 | Avisos de perdas ao salvar em DOCX (botão e "fechar → Salvar") e de fontes substituídas | validados pela interface |
 | Impressão real pela fila do Windows (impressora virtual) | 4/4 |

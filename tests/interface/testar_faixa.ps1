@@ -110,7 +110,7 @@ if (-not $Somente) {
   $odt5 = Join-Path $Trab 'revisao.odt'
   Copy-Item (Join-Path $Raiz 'tests\output\etapa1\teste-etapa1.odt') $odt5
   $r5 = Join-Path $Saida 'faixa-resultado-fase5.json'
-  $quedas += Executar-Fase 'f5' $odt5 @('revisao') $r5
+  $quedas += Executar-Fase 'f5' $odt5 @('revisao', 'revisao_captura') $r5
   # Fase 6: documento longo (3.000 parágrafos, ~90 mil palavras): verificação em segundo plano e cancelamento
   $txt6 = Join-Path $Trab 'longo.txt'
   $frases = @('O relatório apresenta os resultados do trimestre e as metas para o próximo período.',

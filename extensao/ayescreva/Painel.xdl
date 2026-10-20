@@ -26,9 +26,9 @@
   <dlg:text dlg:id="titulo_recentes" dlg:tab-index="19" dlg:left="2" dlg:top="288" dlg:width="156" dlg:height="9" dlg:value="Correções auto~máticas recentes:"/>
   <dlg:menulist dlg:id="recentes" dlg:tab-index="20" dlg:left="2" dlg:top="298" dlg:width="156" dlg:height="40" dlg:help-text="Correções feitas automaticamente nesta sessão."/>
   <dlg:button dlg:id="reverter" dlg:tab-index="21" dlg:left="2" dlg:top="340" dlg:width="76" dlg:height="14" dlg:value="Re~verter" dlg:disabled="true" dlg:help-text="Volta a palavra escolhida ao que você escreveu."/>
-  <dlg:button dlg:id="nao_corrigir_recente" dlg:tab-index="22" dlg:left="82" dlg:top="340" dlg:width="76" dlg:height="14" dlg:value="Não corrigir esta palavra" dlg:disabled="true" dlg:help-text="A correção automática não troca mais a palavra escolhida."/>
+  <dlg:button dlg:id="nao_corrigir_recente" dlg:tab-index="22" dlg:left="82" dlg:top="340" dlg:width="76" dlg:height="14" dlg:value="Não corrigir novamente" dlg:disabled="true" dlg:help-text="A correção automática não troca mais a palavra escolhida nas correções recentes."/>
   <dlg:button dlg:id="dicionario" dlg:tab-index="23" dlg:left="2" dlg:top="358" dlg:width="76" dlg:height="14" dlg:value="Dicionário ~pessoal…" dlg:help-text="Ver e remover palavras do dicionário pessoal e da lista de não corrigir."/>
-  <dlg:button dlg:id="autocorrecao" dlg:tab-index="24" dlg:left="82" dlg:top="358" dlg:width="76" dlg:height="14" dlg:value="Opções de A~utoCorreção…" dlg:help-text="Opções de AutoCorreção do motor (maiúsculas, aspas, símbolos)."/>
+  <dlg:button dlg:id="autocorrecao" dlg:tab-index="24" dlg:left="82" dlg:top="358" dlg:width="76" dlg:height="14" dlg:value="A~utoCorreção…" dlg:help-text="Opções de AutoCorreção do motor (maiúsculas, aspas, símbolos)."/>
   <dlg:text dlg:id="titulo_ia" dlg:tab-index="25" dlg:left="2" dlg:top="378" dlg:width="156" dlg:height="10" dlg:value="Assistente de IA (local)"/>
   <dlg:text dlg:id="ia_estado" dlg:tab-index="26" dlg:left="2" dlg:top="390" dlg:width="156" dlg:height="34" dlg:multiline="true" dlg:value="Ainda não disponível nesta versão de testes (previsto para a 0.5.0). A IA será opcional, local e sem envio de dados; a revisão acima funciona sem ela."/>
  </dlg:bulletinboard>

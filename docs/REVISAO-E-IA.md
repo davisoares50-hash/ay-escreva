@@ -97,6 +97,11 @@ explicação curta do próprio Lightproof.
 - Custos medidos (i5-8500, 60 parágrafos de ~30 palavras): ler e marcar < 1 ms por parágrafo; ortografia 0,2 ms
   com cache (gerar sugestões custa dezenas de ms, por isso elas só são buscadas ao escolher a ocorrência);
   gramática e estilo do Lightproof ≈ 94 ms por parágrafo (≈ 10 parágrafos por segundo, fora da interface).
+- Largura: a janela do painel nasce com a largura mínima (240 px) e a barra lateral a alarga até a área visível;
+  `_redimensionar` reparte a largura entre as duas colunas de botões. Motivo (conferido por captura de tela e pela
+  árvore de acessibilidade, 20/10/2026): com a largura do `Painel.xdl` (320 px), a janela pedia mais que a área
+  visível da barra lateral (275 px) e a coluna da direita ficava cortada. O teste da fase 5 confere que a janela
+  cabe na área visível.
 - Aba **Revisão**: grupo "Assistente AY" com Assistente AY, Verificar documento e Opções de correção.
 - Acessibilidade: rótulos com teclas de acesso, ordem de tabulação, nomes acessíveis nos controles; teste com
   teclado real (robô do toolkit) e leitura da árvore de acessibilidade.

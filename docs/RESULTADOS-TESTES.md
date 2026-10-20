@@ -49,8 +49,8 @@ O mesmo teste roda com o motor **instalado** pelo instalador (§3).
 
 ## 3. Instalador e instalação — `tests/instalacao/testar_instalacao.ps1`
 
-**0.3.0 (local, 20/10/2026): 19/19** — `out\instalador\AYEscreva-0.3.0-teste-windows11-x64.exe` · 208 MB (218.320.542 bytes) ·
-SHA-256 `8651243b17038a02cd1d9aeeca7c5c863a312e6ba4b8d7ecc134eed94d98f509` · sem assinatura digital. Mesmas verificações da 0.2.0, mais: a extensão instalada traz a revisão
+**0.3.0 (local, 20/10/2026): 19/19** — `out\instalador\AYEscreva-0.3.0-teste-windows11-x64.exe` · 208 MB (218.325.835 bytes) ·
+SHA-256 `e280a9139a39d3592b126738607273d6fb613a1fa7a9fa5b17db52f3c0449d5b` · sem assinatura digital. Mesmas verificações da 0.2.0, mais: a extensão instalada traz a revisão
 de texto e o painel Assistente AY (versão da extensão 0.3.0).
 
 **0.2.0 (pública): 18/18** — Arquivo: `out\instalador\AYEscreva-0.2.0-teste-windows11-x64.exe` · 208 MB (217.994.462 bytes) · SHA-256 `d2ba364d4fac8f6d24bf4308c02937abffa681be2222ad4f27d89051d58636e6` · **sem assinatura digital**.
@@ -95,19 +95,20 @@ Diálogos e listas abertos pelos botões são registrados e fechados.
 | Botão presente na aba certa | 213/213 |
 | Acionadas pelo clique (comando disparado conferido; diálogo ou lista registrado e fechado) | 151 |
 | Validadas pelo efeito no documento ou na exibição | 35 |
-| Efeitos conferidos nas 7 fases (inclui abas contextuais, avisos, salvamento e revisão de texto) | 71/71 |
+| Efeitos conferidos nas 7 fases (inclui abas contextuais, avisos, salvamento e revisão de texto) | 73/73 |
 | Diálogos e listas abertos pelos botões e fechados pelo teste | 47 |
 | Erros do teste · quedas do motor · conexões de rede para fora do computador | 0 · 0 · 0 |
-| Duração | fase 1: 11:58:58–12:05:23; fase 2: 12:05:39–12:05:58; fase 3: 12:06:12–12:06:28; fase 4: 12:06:41–12:07:02; fase 5: 12:07:14–12:08:45; fase 6: 12:35:13–12:43:12; fase 7: 12:17:00–12:17:17 (0.3.0, 20/10/2026) |
+| Duração | fase 1: 13:29:00–13:35:25; fase 2: 13:35:39–13:35:57; fase 3: 13:36:12–13:36:28; fase 4: 13:36:41–13:37:02; fase 5: 13:37:14–13:39:03; fase 6: 13:39:15–13:47:27; fase 7: 13:47:43–13:47:59 (0.3.0, 20/10/2026) |
 
 Efeitos conferidos (amostra): Negrito, Itálico, Sublinhado, Tachado, Sobrescrito, Subscrito, Aumentar fonte, Diminuir fonte, Limpar formatação, Centralizar, Alinhar à direita, Justificar, Alinhar à esquerda, Aumentar recuo, Diminuir recuo, Marcadores, Numeração, Marcas de formatação, Quebra de página, Página em branco, Comentário, Nota de rodapé, Nota de fim, Controlar alterações, Régua, Página inteira, 100%, Largura da página, Guia de utilização do AY, Atalhos de teclado, Limitações conhecidas, Recuperação de documentos, Relatório de diagnóstico, Aba contextual Tabela, Inserir linha abaixo, Aba contextual Imagem, Salvar, Aviso de substituição de fontes, Aviso de perdas ao salvar em DOCX, Aviso de formato ao fechar e salvar DOCX. As 62 funções não acionadas genericamente ficam de fora de propósito (fechar, abrir, salvar como, recortar/colar, tela inteira, mala direta, aceitar/rejeitar tudo etc.) ou são listas suspensas; elas aparecem como "não validado" na matriz.
 
 Fases: (1) documento ODT de trabalho — botões das 11 abas, abas contextuais Tabela e Imagem e Salvar em ODT;
 (2) DOCX representativo aberto na inicialização — aviso de fontes e aviso de perdas ao salvar em DOCX pela faixa;
 (3) outro DOCX alterado, fechado pela faixa com "Salvar" na pergunta; (4) Salvar como DOCX pelo seletor de arquivo do
-AY; (5) revisão de texto (digitação real, desfazer, proteções, painel); (6) documento longo (3.000 parágrafos); (7)
-integridade de DOCX/ODT depois de correções com controle de alterações. A fase 6 foi executada de novo depois de
-refinar a métrica de resposta (referência sem verificação; média e 95%); o relatório junta essa execução às demais.
+AY; (5) revisão de texto (digitação real, desfazer, proteções, painel, largura do painel na barra lateral e captura
+de tela em `tests/output/interface/painel-assistente.png`); (6) documento longo (3.000 parágrafos); (7) integridade
+de DOCX/ODT depois de correções com controle de alterações. Todas as fases são de uma única execução, feita depois
+da correção da largura do painel.
 
 Limites deste teste: as abas contextuais **Forma** e **Visualizar impressão** foram conferidas só visualmente
 (capturas em `tests/output/interface/abas/`), sem clique automatizado. Nos comandos de Ajuda que abrem uma página
@@ -167,9 +168,9 @@ proteção, conteúdo da tabela de casos inequívocos e regras de estilo).
 | estilo: texto limpo sem sugestões | OK |
 | estilo: "para" e "propor" não confundem com "pra"/"pro" | OK |
 
-Pela interface, de dentro do aplicativo (fases 5 a 7 de `tests/interface/testar_faixa.ps1`): **30/30**.
+Pela interface, de dentro do aplicativo (fases 5 a 7 de `tests/interface/testar_faixa.ps1`): **31/31**.
 A digitação usa o robô do toolkit (o mesmo caminho do teclado); os botões do painel são acionados com Espaço
-depois de receberem o foco, como alguém que usa só o teclado. Fases: 5 (12:07:14–12:08:45), 6 (12:35:13–12:43:12), 7 (12:17:00–12:17:17).
+depois de receberem o foco, como alguém que usa só o teclado. Fases: 5 (13:37:14–13:39:03), 6 (13:39:15–13:47:27), 7 (13:47:43–13:47:59).
 
 | Verificação | Resultado |
 |---|---|
@@ -188,7 +189,7 @@ depois de receberem o foco, como alguém que usa só o teclado. Fases: 5 (12:07:
 | Painel Assistente AY abre pela aba Revisão (comando "Assistente AY") | OK |
 | Acessibilidade: listas anunciadas pelo próprio rótulo (não pelo título do painel) | OK — ocorrencias="Ocorrências encontradas:"; sugestoes="Sugestão:"; recentes="Correções automáticas recentes:" |
 | Acessibilidade: controles do painel com nome acessível | OK — sem nome: nenhum \| verificar_documento="Verificar documento" papel=44 desc=""; estilo="Estilo: clareza, concisão, formalidade, repetição" papel=4 desc=""; ocorrencias="Ocorrências encontradas:" papel=40 desc=""; sugestoe |
-| Verificar documento pelo teclado: erro de ortografia listado com sugestões | OK — {'cancelado': False, 'achados': 16, 'paragrafos': 58, 'segundos': 8.07}; sugestões: ['palavras', 'palavrasse', 'palavrais'] |
+| Verificar documento pelo teclado: erro de ortografia listado com sugestões | OK — {'cancelado': False, 'achados': 16, 'paragrafos': 58, 'segundos': 7.16}; sugestões: ['palavras', 'palavrasse', 'palavrais'] |
 | Gramática e pontuação: ocorrências com explicação curta | OK — “não”: Iniciar com maiúscula?; “naoo”: Iniciar com maiúscula? |
 | Estilo desligado por padrão: nenhuma sugestão de estilo | OK — 0 sugestão(ões) de estilo |
 | Estilo ligado pelo teclado: concisão, formalidade e pleonasmo sugeridos | OK — Estilo · repetição: “trecho”; Estilo · repetição: “trecho”; Estilo · repetição: “trecho”; Estilo · repetição: “trecho”; Estilo · repetição: “trecho”; Estilo · repetição: “trecho” |
@@ -196,15 +197,16 @@ depois de receberem o foco, como alguém que usa só o teclado. Fases: 5 (12:07:
 | Desfazer volta o texto original | OK |
 | Ignorar tira a palavra das verificações seguintes | OK |
 | Adicionar ao dicionário pessoal grava a palavra e ela deixa de ser apontada | OK |
+| Painel cabe na largura visível da barra lateral (nenhum botão cortado) | OK — janela 275 px, área visível 275 px |
+| Digitar durante a verificação: o texto entra e é corrigido | OK — 'itação. Não ' |
+| Cancelar interrompe a verificação | OK — {'cancelado': True, 'achados': 31, 'paragrafos': 61, 'segundos': 8.75}; 1.19 s até parar |
+| Interface responde durante a verificação (atraso médio < 0,2 s e 95% < 0,4 s) | OK — durante: média 0.069 s, 95% até 0.167 s, pior 0.167 s (18 medições) \| sem verificação: média 0.014 s, 95% até 0.038 s, pior 0.047 s (25 medições) |
+| Documento longo verificado por completo | OK — {'cancelado': False, 'achados': 1500, 'paragrafos': 3000, 'segundos': 461.34}; memória do processo 406 → 601 MB (pico 601 MB) |
 | Com controle de alterações ligado, a correção fica registrada como alteração | OK — 3 → 4 alterações; 'Texto controlado: não ' |
 | DOCX com tabela, imagem, notas, comentário e alterações salvo e reaberto íntegro depois das correções | OK — antes {'tabelas': 1, 'imagens': 1, 'notas': 2, 'notas_fim': 1, 'comentarios': 1, 'alteracoes': 4} \| reaberto {'tabelas': 1, 'imagens': 1, 'notas': 2, 'notas_fim': 1, 'comentarios': 1, 'alteracoes': 4} |
 | ODT com tabela, imagem, notas, comentário e alterações salvo e reaberto íntegro depois das correções | OK — antes {'tabelas': 1, 'imagens': 1, 'notas': 2, 'notas_fim': 1, 'comentarios': 1, 'alteracoes': 4} \| reaberto {'tabelas': 1, 'imagens': 1, 'notas': 2, 'notas_fim': 1, 'comentarios': 1, 'alteracoes': 4} |
-| Digitar durante a verificação: o texto entra e é corrigido | OK — 'itação. Não ' |
-| Cancelar interrompe a verificação | OK — {'cancelado': True, 'achados': 29, 'paragrafos': 58, 'segundos': 8.13}; 1.10 s até parar |
-| Interface responde durante a verificação (atraso médio < 0,2 s e 95% < 0,4 s) | OK — durante: média 0.076 s, 95% até 0.184 s, pior 0.184 s (17 medições) \| sem verificação: média 0.017 s, 95% até 0.032 s, pior 0.046 s (24 medições) |
-| Documento longo verificado por completo | OK — {'cancelado': False, 'achados': 1500, 'paragrafos': 3000, 'segundos': 449.15}; memória do processo 405 → 454 MB (pico 454 MB) |
 
-Documento longo (3.000 parágrafos, ~90 mil palavras): 3000 parágrafos em 449.15 s, 1500 ocorrências; memória do processo 405 → 454 MB (pico 454 MB); atraso da interface durante a verificação: média 0.076 s, pior 0.184 s. A gramática (Lightproof) responde por quase todo o tempo (~95 ms por parágrafo neste computador).
+Documento longo (3.000 parágrafos, ~90 mil palavras): 3000 parágrafos em 461.34 s, 1500 ocorrências; memória do processo 406 → 601 MB (pico 601 MB); atraso da interface durante a verificação: média 0.069 s, pior 0.167 s. A gramática (Lightproof) responde por quase todo o tempo (~95 ms por parágrafo neste computador).
 
 Sem internet: durante todas as fases da interface, nenhuma conexão TCP do motor para fora do computador (0 encontradas). Não há modelo de IA instalado nesta versão; a revisão acima não depende de nenhum.
 
@@ -441,9 +443,10 @@ Imagens lado a lado (original | cópia | diferença) em `tests/output/visual/*.p
 - Revisão de texto: o painel verifica corpo do texto e tabelas; cabeçalhos, rodapés, notas e caixas de texto
   ficam de fora da lista (o sublinhado do motor continua valendo neles). As regras de gramática e estilo podem
   apontar trechos corretos; não há medida de precisão com um corpus real de textos em pt-BR.
-- Desempenho medido só neste computador (i5-8500, 16 GB): ~7,5 min para verificar 3.000 parágrafos em segundo
-  plano; durante a verificação o atraso médio da interface sobe de ~17 ms para ~76 ms. Outros computadores podem
-  ser mais lentos.
+- Desempenho medido só neste computador (i5-8500, 16 GB): ~7,7 min para verificar 3.000 parágrafos em segundo
+  plano; durante a verificação o atraso médio da interface sobe de ~14 ms para ~69 ms, e a memória do processo
+  sobe até ~200 MB (406 → 601 MB nesta execução; 405 → 454 MB numa execução anterior do mesmo teste). Outros
+  computadores podem ser mais lentos.
 - IA local (entrega C) não está implementada nesta versão; nenhuma medida de IA foi feita ainda.
 - Teste de imagem remota cobre só o filtro DOCX e imagem vinculada; outros tipos de recurso externo (OLE/DDE,
   fontes remotas, modelos remotos) não foram testados.
