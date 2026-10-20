@@ -1,6 +1,6 @@
 # Matriz de funcionalidades do AY ESCREVA
 
-> Gerado por `tests/uno/comandos.py` a partir de `ui/abas.json`, do mapa da faixa e do teste pela interface de 2026-10-19T19:45:29, em 2026-10-19. Não editar à mão.
+> Gerado por `tests/uno/comandos.py` a partir de `ui/abas.json`, do mapa da faixa e do teste pela interface de 2026-10-20T11:58:58, em 2026-10-20. Não editar à mão.
 
 **Como ler as colunas**
 
@@ -9,7 +9,7 @@
 - **Funcionamento validado**: *Pela interface* = o teste clicou no botão da faixa, confirmou o comando disparado e conferiu o efeito no documento ou na exibição. *Acionado pela interface* = o clique disparou o comando certo (e o diálogo/lista que abriu foi registrado), mas o efeito não tem verificação automática. *Por API* = a função foi exercitada de ponta a ponta pelos testes de documento, sem clicar no botão.
 - **Prioridade**: P0 = Etapas 1-2, P1 = Etapa 3, P2 = Etapa 4, P3 = avaliar.
 
-**Resumo** (239 funções): comando encontrado 233 · implementadas 233 (botão confirmado pela interface: 210) · validadas pela interface 35 · só acionadas pela interface 113 · validadas por API 49 · pendentes 6
+**Resumo** (241 funções): comando encontrado 236 · implementadas 236 (botão confirmado pela interface: 213) · validadas pela interface 38 · só acionadas pela interface 113 · validadas por API 49 · pendentes 5
 
 
 ## Arquivo
@@ -200,13 +200,15 @@
 
 | Grupo | Função | Comando | Comando encontrado | Funcionalidade implementada | Funcionamento validado | Prioridade | Critério de aceite | Pendências e observações |
 |---|---|---|---|---|---|---|---|---|
+| Assistente AY | Assistente AY | `ayescreva:Assistente` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Pela interface (teste de revisão): Painel Assistente AY abre pela aba Revisão (comando "Assistente AY"); Acessibilidade: listas anunciadas pelo próprio rótulo (não pelo título do painel); Acessibilidade: controles do painel com nome ac · Acionado pela interface (efeito não conferido) | P0 | Abre o painel lateral com revisão de ortografia, gramática e estilo (offline) |  |
+| Assistente AY | Verificar documento | `ayescreva:VerificarDocumento` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Pela interface (teste de revisão): Verificar documento pelo teclado: erro de ortografia listado com sugestões; Cancelar interrompe a verificação; Documento longo verificado por completo · Acionado pela interface (efeito não conferido) | P0 | Lista ocorrências de ortografia, gramática e estilo no painel, em segundo plano, com cancelamento |  |
+| Assistente AY | Correção automática | `ayescreva:CorrecaoAutomatica` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Pela interface (teste de revisão): Correção automática ao digitar (nao, voce, tambem); Ctrl+Z desfaz só a correção (o espaço digitado fica); Proteções: nome próprio, sigla, grafia mista, data, palavra com número e citação não mudam; Co · Acionado pela interface (efeito não conferido) | P0 | Liga/desliga a correção de casos inequívocos ao digitar; Ctrl+Z desfaz cada correção |  |
 | Revisão de texto | Ortografia e gramática | `.uno:SpellingAndGrammarDialog` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu janela não modal "" (fechado pelo teste) (efeito não conferido) | P0 | Dicionário pt-BR offline (VERO) |  |
 | Revisão de texto | Revisão automática | `.uno:SpellOnline` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P0 | Sublinha erros durante a digitação |  |
 | Revisão de texto | Sinônimos | `.uno:ThesaurusDialog` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Dicionário de sinônimos (Português (Brasil))" (fechado pelo teste) (efeito não conferido) | P1 | Dicionário de sinônimos pt-BR |  |
 | Revisão de texto | Contagem de palavras | `.uno:WordCountDialog` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P0 | Palavras e caracteres da seleção e do documento |  |
 | Revisão de texto | Idioma do texto | `.uno:SetLanguageAllTextMenu` | Sim | Sim, por outro controle (clique no idioma, na barra de status) | Não validado | P1 | Define idioma da seleção/documento |  |
 | Revisão de texto | Verificar acessibilidade | `.uno:SidebarDeck.A11yCheckDeck` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P1 | Aponta imagens sem texto alternativo, títulos etc. |  |
-| Revisão de texto | Revisão gramatical offline avançada | — | — | Não — pendente | Não validado | P3 | Avaliar LanguageTool local e Lightproof pt-BR | Avaliação separada: LanguageTool local exige Java e servidor local (300 MB). |
 | Comentários | Novo comentário | `.uno:InsertAnnotation` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) · Por API: ida_e_volta | P0 | Preservado em DOCX com autor e data |  |
 | Comentários | Excluir todos os comentários | `.uno:DeleteAllNotes` | Sim | Sim — botão na faixa (confirmado pela interface) | Não validado | P1 | Remove comentários |  |
 | Comentários | Mostrar comentários | `.uno:ShowAnnotations` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P1 | Mostra/oculta a margem de comentários |  |

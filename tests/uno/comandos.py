@@ -145,7 +145,25 @@ def niveis(r, mapa, faixa):
         val.append('Acionado pela interface' + (f': {det}' if det else '') + ' (efeito não conferido)')
     if EVIDENCIA.get(r['comando'] or ''):
         val.append('Por API: ' + EVIDENCIA[r['comando']])
+    efeitos = _efeitos_revisao(faixa)
+    if cmd in EVIDENCIA_REVISAO and not t.get('validado'):
+        ok = [e for e in efeitos if any(e['funcao'].startswith(p) for p in EVIDENCIA_REVISAO[cmd]) and e['ok']]
+        if ok:
+            val.insert(0, 'Pela interface (teste de revisão): ' + '; '.join(e['funcao'] for e in ok)[:200])
     return encontrado, impl, ' · '.join(val) or 'Não validado'
+
+
+# Funções da entrega A validadas pelos testes de revisão (tests/interface, fases 5 a 7), não pelo clique genérico
+EVIDENCIA_REVISAO = {
+    'ayescreva:Assistente': ('Painel Assistente AY abre', 'Acessibilidade'),
+    'ayescreva:VerificarDocumento': ('Verificar documento pelo teclado', 'Documento longo verificado', 'Cancelar interrompe'),
+    'ayescreva:CorrecaoAutomatica': ('Correção automática ao digitar', 'Correção automática pode ser desligada',
+                                     'Ctrl+Z desfaz só a correção', 'Proteções'),
+}
+
+
+def _efeitos_revisao(faixa):
+    return [e for e in (faixa or {}).get('efeitos', []) if isinstance(e, dict)]
 
 
 def gerar_matriz(res):

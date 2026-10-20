@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <description xmlns="http://openoffice.org/extensions/description/2006" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:d="http://openoffice.org/extensions/description/2006">
   <identifier value="br.ayescreva.extensao"/>
-  <version value="0.2.0"/>
+  <version value="0.3.0"/>
   <display-name>
     <name lang="pt-BR">AY ESCREVA - comandos e avisos</name>
     <name lang="en-US">AY ESCREVA - commands and warnings</name>

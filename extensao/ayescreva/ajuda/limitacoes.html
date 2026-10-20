@@ -13,12 +13,13 @@ h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:32px}li{
 </style>
 </head>
 <body>
-<header><h1>Limitações conhecidas</h1><div>AY ESCREVA 0.2.0 · versão inicial de testes para Windows 11 x64</div></header>
+<header><h1>Limitações conhecidas</h1><div>AY ESCREVA 0.3.0 · versão de testes para Windows 11 x64</div></header>
 <main>
 <h2>Sistemas</h2>
 <ul>
 <li>Validado somente no <strong>Windows 11 x64</strong>. Windows 10, Windows em ARM, macOS e Linux estão em desenvolvimento.</li>
 <li>O instalador ainda não tem assinatura digital: o Windows pode mostrar o aviso de "editor desconhecido".</li>
+<li>Algumas janelas do motor, como a de recuperação de documentos, mostram no título o número de versão do motor (26.8), e não o do AY.</li>
 </ul>
 
 <h2>Compatibilidade com o Word</h2>
@@ -37,9 +38,17 @@ h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:32px}li{
 <li><strong>Exibir:</strong> modo de leitura dedicado (use Tela inteira e Exibição de livro).</li>
 <li><strong>Inserir:</strong> galeria de capas prontas (o botão Capa abre o diálogo de páginas de rosto).</li>
 <li><strong>Design:</strong> galeria visual de conjuntos de estilos (o botão importa estilos de um modelo).</li>
-<li><strong>Revisão:</strong> revisão gramatical avançada offline (há verificação ortográfica pt-BR completa).</li>
+<li><strong>Revisão:</strong> assistente de IA local (previsto para uma próxima versão de testes).</li>
 <li><strong>Ajuda:</strong> verificação de atualizações.</li>
 <li>Em janelas estreitas, os grupos da faixa de opções não se recolhem automaticamente: alguns botões ficam fora da área visível.</li>
+</ul>
+
+<h2>Revisão de texto</h2>
+<ul>
+<li>A correção automática só troca palavras de uma tabela de casos inequívocos (cerca de 88 mil, quase todas acentuação). Formas flexionadas que não estão na tabela, como "estao", ficam só sublinhadas.</li>
+<li>As regras de gramática e estilo vêm de verificadores automáticos e podem apontar trechos corretos; confira antes de aplicar.</li>
+<li>O painel verifica o corpo do texto e as tabelas. Cabeçalhos, rodapés, notas e caixas de texto continuam com o sublinhado, mas não entram na lista do painel; ocorrências encostadas em campos ou notas podem não ser marcadas.</li>
+<li>Em documentos muito longos a verificação completa leva alguns minutos (ela roda enquanto você escreve e pode ser cancelada).</li>
 </ul>
 
 <h2>Acessibilidade</h2>

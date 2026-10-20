@@ -1,7 +1,8 @@
-# Resultados dos testes — versão 0.2.0 (versão inicial de testes para Windows 11 x64)
+# Resultados dos testes — versão 0.3.0 (versão de testes local, em avaliação) · versão pública: 0.2.0
 
-Execução: 19/10/2026 · `scripts/testar.ps1` + `tests/interface/testar_faixa.ps1` + `tests/instalacao/testar_instalacao.ps1`
-+ `tests/site/testar_fluxo.ps1`
+Execução da 0.3.0: 20/10/2026 · `scripts/testar.ps1` + `tests/interface/testar_faixa.ps1` (7 fases) +
+`tests/instalacao/testar_instalacao.ps1`. As seções 2–4 e 6–11 valem para as duas versões, salvo indicação; a
+publicação (§10) e o fluxo do site referem-se à 0.2.0, a versão pública.
 Ambiente: Windows 11 Pro 10.0.26200 x64, Intel Core i5-8500, 16 GB · Motor: LibreOffice 26.8.1.1 (binários oficiais)
 Oráculo independente: Microsoft Word 16.0 (instalado na máquina, usado só via automação COM com macros desativadas)
 
@@ -13,10 +14,14 @@ Oráculo independente: Microsoft Word 16.0 (instalado na máquina, usado só via
 | Distribuição AY (poda de idiomas, fontes privadas, runtime VC++) | sim | sim — 797 MB | sim: o motor inicia e edita (testes abaixo) |
 | Camada de configuração `ayescreva.xcd` | sim | sim | sim: título "AY ESCREVA", realce→`w:highlight`, faixa AY padrão, segurança de macros |
 | Identidade visual | sim — `tools/marca.mjs` | sim | parcial: ícone do lançador, tela de abertura e instalador conferidos; ícone da janela ainda é o da base |
-| Lançador `AYEscreva.exe` (0.2.0) | sim — C# | sim — csc do .NET Framework 4.8.1 | sim: abre o aplicativo instalado com perfil próprio |
-| Faixa de opções AY (`notebookbar_ayescreva.ui`, 11 abas + 4 contextuais) | sim — `tools/gerar-faixa.mjs` a partir de `ui/abas.json` | sim — 224 botões | sim — §4 (Forma e Visualizar impressão: só conferência visual) |
+| Lançador `AYEscreva.exe` (0.3.0) | sim — C# | sim — csc do .NET Framework 4.8.1 | sim: abre o aplicativo instalado com perfil próprio |
+| Faixa de opções AY (`notebookbar_ayescreva.ui`, 11 abas + 4 contextuais) | sim — `tools/gerar-faixa.mjs` a partir de `ui/abas.json` | sim — 227 botões | sim — §4 (Forma e Visualizar impressão: só conferência visual) |
 | Extensão AY (comandos `ayescreva:`, avisos de perdas e de fontes) | sim — `extensao/ayescreva` | sim — empacotada na distribuição | sim — §4 e §5 |
-| Instalador Windows 11 x64 (Inno Setup 6.7.3) | sim — `installer/ayescreva.iss` | sim — `AYEscreva-0.2.0-teste-windows11-x64.exe` | sim — §3 |
+| Instalador Windows 11 x64 (Inno Setup 6.7.3) | sim — `installer/ayescreva.iss` | sim — 0.2.0 (pública) e 0.3.0 (local) | sim — §3 |
+| Revisão de texto: correção automática de casos inequívocos, gramática e pontuação, estilo opcional (0.3.0) | sim — `extensao/ayescreva/pythonpath/`, `dados/correcoes_pt_BR.json` | sim | sim — §5.1 |
+| Painel lateral "Assistente AY" e grupo na aba Revisão (0.3.0) | sim — `ay_painel.py`, `Painel.xdl`, `Sidebar.xcu` | sim | sim — §5.1 (acessibilidade só pela API; leitores de tela não testados) |
+| Confiabilidade: recuperação, salvamento seguro, desfazer/refazer, TXT (0.3.0) | sim — testes `tests/uno/confiabilidade.py`, `recuperacao.py` | — | sim — §5.2 (comportamento do motor, agora com teste) |
+| IA local (entrega C) | **não** | — | — |
 | Site oficial | sim — `site/`, `tools/gerar-site.mjs` | sim — publicado em https://davisoares50-hash.github.io/ay-escreva/ | sim — fluxo público 25/25, com HTTPS (§10) |
 | Acessibilidade com leitores de tela | — | — | **não validado** (§12) |
 
@@ -42,9 +47,13 @@ O mesmo teste roda com o motor **instalado** pelo instalador (§3).
 | Cabeçalho; rodapé com número de página | OK | OK |
 | PDF com o mesmo número de páginas; PDF/UA marcado | OK | OK |
 
-## 3. Instalador e instalação — `tests/instalacao/testar_instalacao.ps1`: **18/18**
+## 3. Instalador e instalação — `tests/instalacao/testar_instalacao.ps1`
 
-Arquivo: `out\instalador\AYEscreva-0.2.0-teste-windows11-x64.exe` · 208 MB (217.994.462 bytes) · SHA-256 `d2ba364d4fac8f6d24bf4308c02937abffa681be2222ad4f27d89051d58636e6` · **sem assinatura digital**.
+**0.3.0 (local, 20/10/2026): 19/19** — `out\instalador\AYEscreva-0.3.0-teste-windows11-x64.exe` · 208 MB (218.320.542 bytes) ·
+SHA-256 `8651243b17038a02cd1d9aeeca7c5c863a312e6ba4b8d7ecc134eed94d98f509` · sem assinatura digital. Mesmas verificações da 0.2.0, mais: a extensão instalada traz a revisão
+de texto e o painel Assistente AY (versão da extensão 0.3.0).
+
+**0.2.0 (pública): 18/18** — Arquivo: `out\instalador\AYEscreva-0.2.0-teste-windows11-x64.exe` · 208 MB (217.994.462 bytes) · SHA-256 `d2ba364d4fac8f6d24bf4308c02937abffa681be2222ad4f27d89051d58636e6` · **sem assinatura digital**.
 
 | Verificação | Resultado |
 |---|---|
@@ -82,20 +91,23 @@ Diálogos e listas abertos pelos botões são registrados e fechados.
 
 | Medida | Resultado |
 |---|---|
-| Funções com botão nas 11 abas e nas contextuais Tabela e Imagem (as testadas) | 210 |
-| Botão presente na aba certa | 210/210 |
-| Acionadas pelo clique (comando disparado conferido; diálogo ou lista registrado e fechado) | 148 |
+| Funções com botão nas 11 abas e nas contextuais Tabela e Imagem (as testadas) | 213 |
+| Botão presente na aba certa | 213/213 |
+| Acionadas pelo clique (comando disparado conferido; diálogo ou lista registrado e fechado) | 151 |
 | Validadas pelo efeito no documento ou na exibição | 35 |
-| Efeitos conferidos (inclui abas contextuais, avisos e salvamento) | 40/40 |
-| Diálogos e listas abertos pelos botões e fechados pelo teste | 45 |
-| Erros do teste · quedas do motor | 0 · 0 |
-| Duração | fase 1: 19:45:29–19:51:40; fase 2: 19:51:54–19:52:12; fase 3: 19:52:27–19:52:43 |
+| Efeitos conferidos nas 7 fases (inclui abas contextuais, avisos, salvamento e revisão de texto) | 71/71 |
+| Diálogos e listas abertos pelos botões e fechados pelo teste | 47 |
+| Erros do teste · quedas do motor · conexões de rede para fora do computador | 0 · 0 · 0 |
+| Duração | fase 1: 11:58:58–12:05:23; fase 2: 12:05:39–12:05:58; fase 3: 12:06:12–12:06:28; fase 4: 12:06:41–12:07:02; fase 5: 12:07:14–12:08:45; fase 6: 12:35:13–12:43:12; fase 7: 12:17:00–12:17:17 (0.3.0, 20/10/2026) |
 
 Efeitos conferidos (amostra): Negrito, Itálico, Sublinhado, Tachado, Sobrescrito, Subscrito, Aumentar fonte, Diminuir fonte, Limpar formatação, Centralizar, Alinhar à direita, Justificar, Alinhar à esquerda, Aumentar recuo, Diminuir recuo, Marcadores, Numeração, Marcas de formatação, Quebra de página, Página em branco, Comentário, Nota de rodapé, Nota de fim, Controlar alterações, Régua, Página inteira, 100%, Largura da página, Guia de utilização do AY, Atalhos de teclado, Limitações conhecidas, Recuperação de documentos, Relatório de diagnóstico, Aba contextual Tabela, Inserir linha abaixo, Aba contextual Imagem, Salvar, Aviso de substituição de fontes, Aviso de perdas ao salvar em DOCX, Aviso de formato ao fechar e salvar DOCX. As 62 funções não acionadas genericamente ficam de fora de propósito (fechar, abrir, salvar como, recortar/colar, tela inteira, mala direta, aceitar/rejeitar tudo etc.) ou são listas suspensas; elas aparecem como "não validado" na matriz.
 
 Fases: (1) documento ODT de trabalho — botões das 11 abas, abas contextuais Tabela e Imagem e Salvar em ODT;
 (2) DOCX representativo aberto na inicialização — aviso de fontes e aviso de perdas ao salvar em DOCX pela faixa;
-(3) outro DOCX alterado, fechado pela faixa com "Salvar" na pergunta.
+(3) outro DOCX alterado, fechado pela faixa com "Salvar" na pergunta; (4) Salvar como DOCX pelo seletor de arquivo do
+AY; (5) revisão de texto (digitação real, desfazer, proteções, painel); (6) documento longo (3.000 parágrafos); (7)
+integridade de DOCX/ODT depois de correções com controle de alterações. A fase 6 foi executada de novo depois de
+refinar a métrica de resposta (referência sem verificação; média e 95%); o relatório junta essa execução às demais.
 
 Limites deste teste: as abas contextuais **Forma** e **Visualizar impressão** foram conferidas só visualmente
 (capturas em `tests/output/interface/abas/`), sem clique automatizado. Nos comandos de Ajuda que abrem uma página
@@ -116,6 +128,139 @@ janela de documento (ex.: Ajuda › Créditos), o teste registra a janela, fecha
 Quando não há perda específica conhecida, o diálogo aparece assim mesmo, dizendo que nenhuma perda específica foi
 encontrada mas que recursos sem equivalente podem ser convertidos. Não há promessa de compatibilidade total.
 
+## 5.1 Revisão de texto e Assistente AY (0.3.0, entrega A)
+
+Regras sem o aplicativo — `tests/revisao/testar_regras.py`: **31/31** (decisão da correção automática com cada
+proteção, conteúdo da tabela de casos inequívocos e regras de estilo).
+
+| Verificação | Resultado |
+|---|---|
+| tabela carregada, com origem e critérios registrados | OK — 88589 correções; {'digitação': 762, 'acentuação': 271, 'acentuação (dicionário)': 87556} |
+| tabela só tem palavras simples em minúsculas (sem abreviações, símbolos ou várias palavras) | OK |
+| abreviações e palavras válidas ficam fora da tabela (vc, tbm, pq, so, ate, e, esta, musica, agua) | OK |
+| correção: acentuação no meio da frase ("nao" → 'não') | OK — 'não' (tabela de casos inequívocos) |
+| correção: acentuação ("voce" → 'você') | OK — 'você' (tabela de casos inequívocos) |
+| correção: acentuação vinda do dicionário ("tambem" → 'também') | OK — 'também' (tabela de casos inequívocos) |
+| correção: erro de digitação inequívoco ("geito" → 'jeito') | OK — 'jeito' (tabela de casos inequívocos) |
+| correção: início de frase mantém a maiúscula ("Nao" → 'Não') | OK — 'Não' (tabela de casos inequívocos) |
+| correção: maiúscula no meio da frase = nome próprio ("Nao" → None) | OK — None (maiúscula no meio da frase (nome próprio)) |
+| correção: sigla ("NAO" → None) | OK — None (sigla) |
+| correção: grafia mista (termo técnico ou marca) ("naO" → None) | OK — None (grafia com maiúsculas no meio (termo técnico ou marca)) |
+| correção: com dígito ("nao2" → None) | OK — None (tem dígito, símbolo ou pontuação (número, data, termo técnico, endereço)) |
+| correção: data ("12/10/2025" → None) | OK — None (tem dígito, símbolo ou pontuação (número, data, termo técnico, endereço)) |
+| correção: número ("3,5" → None) | OK — None (tem dígito, símbolo ou pontuação (número, data, termo técnico, endereço)) |
+| correção: dentro de citação (aspas curvas) ("nao" → None) | OK — None (dentro de citação) |
+| correção: dentro de citação (aspas retas) ("nao" → None) | OK — None (dentro de citação) |
+| correção: depois de uma citação fechada volta a corrigir ("nao" → 'não') | OK — 'não' (tabela de casos inequívocos) |
+| correção: texto marcado em outro idioma ("nao" → None) | OK — None (texto em outro idioma) |
+| correção: "não corrigir novamente" ("nao" → None) | OK — None (marcada "não corrigir novamente") |
+| correção: palavra do dicionário pessoal ("geito" → None) | OK — None (palavra aceita pelo dicionário (inclui o dicionário pessoal)) |
+| correção: estilo de citação ou código ("nao" → None) | OK — None (estilo de citação, código ou texto pré-formatado) |
+| correção: palavra correta não muda ("casa" → None) | OK — None (sem correção inequívoca) |
+| correção: palavra válida ambígua (esta/está) não muda ("esta" → None) | OK — None (sem correção inequívoca) |
+| estilo: formalidade ("pra", "né") | OK |
+| estilo: concisão ("a fim de que", "devido ao fato de que") | OK |
+| estilo: "a fim de que" não gera também "a fim de" no mesmo trecho | OK |
+| estilo: repetição próxima ("análise") | OK |
+| estilo: toda sugestão tem explicação | OK |
+| estilo: frase com mais de 40 palavras | OK |
+| estilo: texto limpo sem sugestões | OK |
+| estilo: "para" e "propor" não confundem com "pra"/"pro" | OK |
+
+Pela interface, de dentro do aplicativo (fases 5 a 7 de `tests/interface/testar_faixa.ps1`): **30/30**.
+A digitação usa o robô do toolkit (o mesmo caminho do teclado); os botões do painel são acionados com Espaço
+depois de receberem o foco, como alguém que usa só o teclado. Fases: 5 (12:07:14–12:08:45), 6 (12:35:13–12:43:12), 7 (12:17:00–12:17:17).
+
+| Verificação | Resultado |
+|---|---|
+| Correção automática ao digitar (nao, voce, tambem) | OK — 'Eu não sei se você vem também. ' |
+| Cursor preservado: o texto seguinte entra depois da palavra corrigida | OK — 'e você vem também. X' |
+| Digitação rápida: todas as palavras corrigidas, nenhuma letra perdida | OK — 'não você também jeito ' |
+| Nada muda enquanto a palavra ainda está sendo digitada | OK — 'naoo' |
+| Ctrl+Z desfaz só a correção (o espaço digitado fica) | OK — 'Ele disse não ' → 'Ele disse nao ' |
+| Ao desfazer, o AY oferece "Não corrigir novamente" (barra de informação) | OK |
+| "Não corrigir novamente" fica gravado e é respeitado | OK — 'Outra vez nao ' |
+| Removida da lista, a palavra volta a ser corrigida | OK — 'De novo não ' |
+| Proteções: nome próprio, sigla, grafia mista, data, palavra com número e citação não mudam | OK — 'Ontem o Voce, a NAO e o naO viram 12/10/2025 e nao2; ele disse “nao sei” e saiu. ' |
+| Texto marcado em inglês não é corrigido | OK — 'I said nao ' |
+| Palavra do dicionário pessoal não é corrigida | OK — 'Tem geito ' |
+| Correção automática pode ser desligada | OK — 'Sem correcao nao ' |
+| Painel Assistente AY abre pela aba Revisão (comando "Assistente AY") | OK |
+| Acessibilidade: listas anunciadas pelo próprio rótulo (não pelo título do painel) | OK — ocorrencias="Ocorrências encontradas:"; sugestoes="Sugestão:"; recentes="Correções automáticas recentes:" |
+| Acessibilidade: controles do painel com nome acessível | OK — sem nome: nenhum \| verificar_documento="Verificar documento" papel=44 desc=""; estilo="Estilo: clareza, concisão, formalidade, repetição" papel=4 desc=""; ocorrencias="Ocorrências encontradas:" papel=40 desc=""; sugestoe |
+| Verificar documento pelo teclado: erro de ortografia listado com sugestões | OK — {'cancelado': False, 'achados': 16, 'paragrafos': 58, 'segundos': 8.07}; sugestões: ['palavras', 'palavrasse', 'palavrais'] |
+| Gramática e pontuação: ocorrências com explicação curta | OK — “não”: Iniciar com maiúscula?; “naoo”: Iniciar com maiúscula? |
+| Estilo desligado por padrão: nenhuma sugestão de estilo | OK — 0 sugestão(ões) de estilo |
+| Estilo ligado pelo teclado: concisão, formalidade e pleonasmo sugeridos | OK — Estilo · repetição: “trecho”; Estilo · repetição: “trecho”; Estilo · repetição: “trecho”; Estilo · repetição: “trecho”; Estilo · repetição: “trecho”; Estilo · repetição: “trecho” |
+| Aplicar troca o trecho pela sugestão no documento | OK — sugestão 'palavras' |
+| Desfazer volta o texto original | OK |
+| Ignorar tira a palavra das verificações seguintes | OK |
+| Adicionar ao dicionário pessoal grava a palavra e ela deixa de ser apontada | OK |
+| Com controle de alterações ligado, a correção fica registrada como alteração | OK — 3 → 4 alterações; 'Texto controlado: não ' |
+| DOCX com tabela, imagem, notas, comentário e alterações salvo e reaberto íntegro depois das correções | OK — antes {'tabelas': 1, 'imagens': 1, 'notas': 2, 'notas_fim': 1, 'comentarios': 1, 'alteracoes': 4} \| reaberto {'tabelas': 1, 'imagens': 1, 'notas': 2, 'notas_fim': 1, 'comentarios': 1, 'alteracoes': 4} |
+| ODT com tabela, imagem, notas, comentário e alterações salvo e reaberto íntegro depois das correções | OK — antes {'tabelas': 1, 'imagens': 1, 'notas': 2, 'notas_fim': 1, 'comentarios': 1, 'alteracoes': 4} \| reaberto {'tabelas': 1, 'imagens': 1, 'notas': 2, 'notas_fim': 1, 'comentarios': 1, 'alteracoes': 4} |
+| Digitar durante a verificação: o texto entra e é corrigido | OK — 'itação. Não ' |
+| Cancelar interrompe a verificação | OK — {'cancelado': True, 'achados': 29, 'paragrafos': 58, 'segundos': 8.13}; 1.10 s até parar |
+| Interface responde durante a verificação (atraso médio < 0,2 s e 95% < 0,4 s) | OK — durante: média 0.076 s, 95% até 0.184 s, pior 0.184 s (17 medições) \| sem verificação: média 0.017 s, 95% até 0.032 s, pior 0.046 s (24 medições) |
+| Documento longo verificado por completo | OK — {'cancelado': False, 'achados': 1500, 'paragrafos': 3000, 'segundos': 449.15}; memória do processo 405 → 454 MB (pico 454 MB) |
+
+Documento longo (3.000 parágrafos, ~90 mil palavras): 3000 parágrafos em 449.15 s, 1500 ocorrências; memória do processo 405 → 454 MB (pico 454 MB); atraso da interface durante a verificação: média 0.076 s, pior 0.184 s. A gramática (Lightproof) responde por quase todo o tempo (~95 ms por parágrafo neste computador).
+
+Sem internet: durante todas as fases da interface, nenhuma conexão TCP do motor para fora do computador (0 encontradas). Não há modelo de IA instalado nesta versão; a revisão acima não depende de nenhum.
+
+## 5.2 Confiabilidade (0.3.0)
+
+`tests/uno/confiabilidade.py`: **19/19**
+
+| Verificação | Resultado |
+|---|---|
+| desfazer/refazer: 5 edições registradas no histórico | OK — Teste nota, Teste imagem, Teste tabela, Teste negrito, Teste texto |
+| desfazer volta o documento a cada estado anterior, até o vazio | OK |
+| refazer reaplica cada edição na ordem | OK — {'texto': True, 'negrito': True, 'tabelas': 1, 'imagens': 1, 'notas': 1} |
+| depois de refazer, salvo em ODT e reaberto igual | OK — {'texto': True, 'negrito': True, 'tabelas': 1, 'imagens': 1, 'notas': 1} |
+| depois de refazer, salvo em DOCX e reaberto igual | OK — {'texto': True, 'negrito': True, 'tabelas': 1, 'imagens': 1, 'notas': 1} |
+| TXT UTF-8: bytes gravados na codificação certa | OK — 141 bytes |
+| TXT UTF-8: reaberto com o mesmo texto | OK — Ação, coração, pão, você, avó, útil, ent |
+| TXT Windows-1252: bytes gravados na codificação certa | OK — 109 bytes |
+| TXT Windows-1252: reaberto com o mesmo texto | OK — Ação, coração, pão, você, avó, útil, ent |
+| TXT Windows-1252 escrito por outro programa abre com acentos certos | OK |
+| cópia de segurança: ao salvar de novo, a versão anterior fica na pasta de backup do perfil | OK — ['seguro.odt.bak'] |
+| arquivo tornado somente leitura por outro processo | OK |
+| salvar com o arquivo protegido falha com erro (não finge que salvou) | OK — com.sun.star.task.ErrorCodeIOException |
+| o arquivo anterior fica intacto depois da falha | OK |
+| o documento continua marcado como modificado (a alteração não se perde) | OK |
+| depois da falha, "Salvar como" grava a alteração sem perdas | OK — Salvar no mesmo arquivo recusado (com.sun.star.task.ErrorCodeIOException) |
+| o processo que grava (soffice.bin) foi encerrado de fato em todas as tentativas | OK — 3 de 4 encerramentos aconteceram com a gravação em andamento |
+| salvamento interrompido à força: arquivo no disco sempre íntegro (versão anterior ou nova) | OK — 0.3 s → versão anterior; 1.0 s → versão anterior; 2.0 s → versão anterior; 3.5 s → versão nova |
+| salvamento interrompido: versão anterior sempre recuperável (arquivo ou cópia de segurança) | OK |
+
+Salvamento interrompido (processo que grava, soffice.bin, encerrado à força durante a gravação de um ODT de ~52 MB):
+
+| Encerrado após | Gravação em andamento no encerramento | Arquivo no disco | Cópia de segurança com a versão anterior |
+|---|---|---|---|
+| 0.48 s | sim | versão anterior (zip íntegro) | ainda não criada |
+| 1.13 s | sim | versão anterior (zip íntegro) | ainda não criada |
+| 3.02 s | sim | versão anterior (zip íntegro) | sim |
+| 3.61 s | não (já tinha terminado) | versão nova (zip íntegro) | sim |
+
+Correção do próprio teste (20/10/2026): a primeira versão encerrava só o lançador `soffice.exe`; o motor
+(`soffice.bin`) continuava gravando, então aquele resultado não provava a interrupção. A versão atual encerra o
+`soffice.bin` no momento escolhido e confirma que ele terminou antes de examinar o arquivo.
+
+`tests/uno/recuperacao.py` — queda com documentos não salvos e recuperação: **7/7**
+
+| Verificação | Resultado |
+|---|---|
+| dois documentos alterados e não salvos | OK |
+| salvamento automático gravou a recuperação dos dois documentos, com o texto não salvo | OK — 70 s; arquivos: ['existente.odt_001.odt', 'untitled_001.odt'] |
+| motor encerrado à força (simulação de queda) | OK |
+| lista de recuperação gravada no perfil | OK |
+| ao abrir de novo, o AY oferece a recuperação | OK — Recuperação de documentos AY ESCREVA 26.8 |
+| documento novo recuperado com o texto não salvo | OK — 2 documento(s) abertos |
+| documento existente recuperado com a alteração não salva | OK |
+
+Salvar como pela interface (seletor de arquivo do AY → DOCX → aviso de perdas): OK — diálogos: ['Salvar como', 'Salvar em DOCX: possíveis perdas']; DOCX gravado=True; cópia ODT=True; documento agora é o DOCX=True.
+
 ## 6. Impressão — `tests/uno/impressao.py`: **4/4**
 
 Impressão real pela fila do Windows na impressora virtual "Microsoft Print to PDF" (o teste aborta antes de
@@ -132,13 +277,13 @@ imprimir se essa impressora não estiver selecionada, para nunca usar uma impres
 | DOCX com imagem vinculada a servidor HTTP local: **0** requisições ao abrir e exportar PDF | OK |
 | (informativo) pedido explícito de "atualizar vínculos": também 0 requisições | bloqueio total hoje; não há como autorizar por documento |
 
-## 8. Comandos da matriz — `tests/uno/comandos.py`: **233/233**
+## 8. Comandos da matriz — `tests/uno/comandos.py`: **236/236**
 
-239 funções mapeadas nas 11 abas + 4 contextuais; 233 têm comando e **todos** foram encontrados no motor em
+241 funções mapeadas nas 11 abas + 4 contextuais; 236 têm comando e **todos** foram encontrados no motor em
 execução (despachante do quadro do Writer, controlador de menu ou extensão AY); os comandos da visualização de
-impressão são conferidos com o documento nessa vista. 6 funções não têm comando e ficam fora da faixa:
-marca-texto, borracha, pressão da caneta, revisão gramatical avançada offline, modo de leitura e verificar
-atualizações. A matriz completa, com as colunas **comando encontrado / funcionalidade implementada /
+impressão são conferidos com o documento nessa vista. 5 funções não têm comando e ficam fora da faixa:
+marca-texto, borracha, pressão da caneta, modo de leitura e verificar atualizações (a revisão gramatical offline
+passou a ser feita pelo Lightproof pt-BR, ligado pelo AY). A matriz completa, com as colunas **comando encontrado / funcionalidade implementada /
 funcionamento validado**, está em [MATRIZ-FUNCIONALIDADES.md](MATRIZ-FUNCIONALIDADES.md).
 
 ## 9. Investigação: queda do motor com a faixa por abas
@@ -156,6 +301,15 @@ Antes de mudar a interface, a falha dos testes com a faixa por abas foi investig
 Conclusão: é uma falha do motor 26.8.1 com automação UNO **externa** e a faixa por abas na tela, não da camada AY.
 Os testes com UNO externo continuam com a barra clássica em perfil descartável (o que não comprova a faixa); a
 faixa é comprovada pelos testes de dentro do aplicativo. A limitação está documentada em Ajuda › Limitações.
+
+**Achado da 0.3.0 (travamento com threads Python):** uma thread Python que edita ou lê o documento enquanto a thread
+principal executa código Python (listeners da extensão AY) pode travar o motor; a interface deixa de responder.
+Reproduzido de propósito num protótipo (edição logo depois de abrir o documento: a thread principal parou de
+atender) e uma vez na bateria completa (fase 4, edição feita pela thread do teste). Consequências:
+- no produto, nenhuma thread Python do AY toca o documento: a análise do painel só lê e marca o documento na
+  thread principal; a thread de trabalho recebe apenas texto ([REVISAO-E-IA.md §4](REVISAO-E-IA.md));
+- nos testes, todo acesso ao documento passou a ser feito na thread principal (`no_principal`), e o executor da
+  bateria desiste de uma fase assim que o motor dela termina, em vez de esperar o tempo-limite.
 
 ## 10. Site oficial e publicação
 
@@ -279,10 +433,18 @@ Imagens lado a lado (original | cópia | diferença) em `tests/output/visual/*.p
   NVDA e Narrador.
 - Os controles do diálogo de perdas do AY não aparecem por nome para o UITest (o teste usa Enter real); a leitura
   desse diálogo por leitor de tela não foi conferida.
-- Salvar como e Salvar uma cópia com o diálogo de perdas do AY: código implementado, sem teste automatizado pela
-  interface (o teste não opera o seletor de arquivo).
+- "Salvar uma cópia" com o diálogo de perdas: usa o mesmo código de "Salvar como" (testado pela interface), mas
+  não tem teste próprio.
 - Instalador sem assinatura de código: o SmartScreen pode avisar "editor desconhecido".
-- Recuperação após falha, salvamento seguro com falha simulada e desfazer/refazer: sem teste automatizado ainda.
+- Painel Assistente AY: nomes acessíveis e operação por teclado conferidos pela API de acessibilidade do motor;
+  a leitura do painel por NVDA ou Narrador **não** foi testada.
+- Revisão de texto: o painel verifica corpo do texto e tabelas; cabeçalhos, rodapés, notas e caixas de texto
+  ficam de fora da lista (o sublinhado do motor continua valendo neles). As regras de gramática e estilo podem
+  apontar trechos corretos; não há medida de precisão com um corpus real de textos em pt-BR.
+- Desempenho medido só neste computador (i5-8500, 16 GB): ~7,5 min para verificar 3.000 parágrafos em segundo
+  plano; durante a verificação o atraso médio da interface sobe de ~17 ms para ~76 ms. Outros computadores podem
+  ser mais lentos.
+- IA local (entrega C) não está implementada nesta versão; nenhuma medida de IA foi feita ainda.
 - Teste de imagem remota cobre só o filtro DOCX e imagem vinculada; outros tipos de recurso externo (OLE/DDE,
   fontes remotas, modelos remotos) não foram testados.
 - Máquina sem Microsoft Office (para ver a substituição de Calibri por Carlito): não testada.

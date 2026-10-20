@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dlg:window PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "dialog.dtd">
+<!-- Painel lateral "Assistente AY". Posições em unidades de diálogo; o painel ajusta larguras ao redimensionar.
+     SPDX-License-Identifier: MPL-2.0 -->
+<dlg:window xmlns:dlg="http://openoffice.org/2000/dialog" xmlns:script="http://openoffice.org/2000/script" dlg:id="AssistenteAY" dlg:left="0" dlg:top="0" dlg:width="160" dlg:height="426" dlg:closeable="false" dlg:moveable="false" dlg:withtitlebar="false">
+ <dlg:bulletinboard>
+  <dlg:text dlg:id="titulo_revisao" dlg:tab-index="0" dlg:left="2" dlg:top="2" dlg:width="156" dlg:height="10" dlg:value="Revisão do texto (funciona sem internet)"/>
+  <dlg:checkbox dlg:id="ortografia" dlg:tab-index="1" dlg:left="2" dlg:top="14" dlg:width="156" dlg:height="10" dlg:value="~Ortografia: sublinhar erros ao digitar" dlg:help-text="Liga ou desliga o sublinhado vermelho de erros de ortografia." dlg:checked="true"/>
+  <dlg:checkbox dlg:id="correcao" dlg:tab-index="2" dlg:left="2" dlg:top="26" dlg:width="156" dlg:height="10" dlg:value="Corrigir automa~ticamente casos inequívocos" dlg:help-text="Troca erros sem ambiguidade (ex.: nao por não) quando a palavra termina. Ctrl+Z desfaz." dlg:checked="true"/>
+  <dlg:checkbox dlg:id="gramatica" dlg:tab-index="3" dlg:left="2" dlg:top="38" dlg:width="156" dlg:height="10" dlg:value="~Gramática e pontuação" dlg:help-text="Crase, concordância, pontuação, espaços e outras regras, com explicação." dlg:checked="true"/>
+  <dlg:checkbox dlg:id="estilo" dlg:tab-index="4" dlg:left="2" dlg:top="50" dlg:width="156" dlg:height="10" dlg:value="~Estilo: clareza, concisão, formalidade, repetição" dlg:help-text="Sugestões opcionais; nunca são aplicadas sozinhas." dlg:checked="false"/>
+  <dlg:button dlg:id="verificar_selecao" dlg:tab-index="5" dlg:left="2" dlg:top="64" dlg:width="76" dlg:height="14" dlg:value="Verificar ~seleção" dlg:help-text="Verifica os parágrafos da seleção atual."/>
+  <dlg:button dlg:id="verificar_documento" dlg:tab-index="6" dlg:left="82" dlg:top="64" dlg:width="76" dlg:height="14" dlg:value="Verificar ~documento" dlg:help-text="Verifica o documento inteiro em segundo plano, sem travar a digitação."/>
+  <dlg:progressmeter dlg:id="progresso" dlg:tab-index="7" dlg:left="2" dlg:top="83" dlg:width="110" dlg:height="8" dlg:value="0" dlg:value-max="100"/>
+  <dlg:button dlg:id="cancelar" dlg:tab-index="8" dlg:left="116" dlg:top="80" dlg:width="42" dlg:height="14" dlg:value="~Cancelar" dlg:disabled="true" dlg:help-text="Interrompe a verificação em andamento."/>
+  <dlg:text dlg:id="situacao" dlg:tab-index="9" dlg:left="2" dlg:top="96" dlg:width="156" dlg:height="18" dlg:value="Nenhuma verificação feita ainda." dlg:multiline="true"/>
+  <dlg:text dlg:id="rotulo_lista" dlg:tab-index="10" dlg:left="2" dlg:top="116" dlg:width="156" dlg:height="9" dlg:value="Oco~rrências encontradas:"/>
+  <dlg:menulist dlg:id="ocorrencias" dlg:tab-index="11" dlg:left="2" dlg:top="126" dlg:width="156" dlg:height="70" dlg:help-text="Lista de ocorrências. Ao escolher uma, o trecho é selecionado no documento."/>
+  <dlg:text dlg:id="detalhe" dlg:tab-index="12" dlg:left="2" dlg:top="198" dlg:width="156" dlg:height="36" dlg:value="" dlg:multiline="true"/>
+  <dlg:text dlg:id="rotulo_sugestao" dlg:tab-index="13" dlg:left="2" dlg:top="238" dlg:width="34" dlg:height="9" dlg:value="Sugestão:"/>
+  <dlg:menulist dlg:id="sugestoes" dlg:tab-index="14" dlg:left="38" dlg:top="236" dlg:width="120" dlg:height="12" dlg:spin="true" dlg:help-text="Escolha a sugestão a aplicar."/>
+  <dlg:button dlg:id="aplicar" dlg:tab-index="15" dlg:left="2" dlg:top="252" dlg:width="76" dlg:height="14" dlg:value="~Aplicar" dlg:disabled="true" dlg:help-text="Troca o trecho pela sugestão escolhida. Ctrl+Z desfaz."/>
+  <dlg:button dlg:id="ignorar" dlg:tab-index="16" dlg:left="82" dlg:top="252" dlg:width="76" dlg:height="14" dlg:value="~Ignorar" dlg:disabled="true" dlg:help-text="Ignora esta ocorrência nesta sessão."/>
+  <dlg:button dlg:id="adicionar" dlg:tab-index="17" dlg:left="2" dlg:top="268" dlg:width="76" dlg:height="14" dlg:value="Adicionar ao dicionário" dlg:disabled="true" dlg:help-text="Adiciona a palavra ao dicionário pessoal (fica gravado no seu perfil)."/>
+  <dlg:button dlg:id="nao_corrigir" dlg:tab-index="18" dlg:left="82" dlg:top="268" dlg:width="76" dlg:height="14" dlg:value="~Não corrigir novamente" dlg:disabled="true" dlg:help-text="A correção automática não troca mais esta palavra."/>
+  <dlg:text dlg:id="titulo_recentes" dlg:tab-index="19" dlg:left="2" dlg:top="288" dlg:width="156" dlg:height="9" dlg:value="Correções auto~máticas recentes:"/>
+  <dlg:menulist dlg:id="recentes" dlg:tab-index="20" dlg:left="2" dlg:top="298" dlg:width="156" dlg:height="40" dlg:help-text="Correções feitas automaticamente nesta sessão."/>
+  <dlg:button dlg:id="reverter" dlg:tab-index="21" dlg:left="2" dlg:top="340" dlg:width="76" dlg:height="14" dlg:value="Re~verter" dlg:disabled="true" dlg:help-text="Volta a palavra escolhida ao que você escreveu."/>
+  <dlg:button dlg:id="nao_corrigir_recente" dlg:tab-index="22" dlg:left="82" dlg:top="340" dlg:width="76" dlg:height="14" dlg:value="Não corrigir esta palavra" dlg:disabled="true" dlg:help-text="A correção automática não troca mais a palavra escolhida."/>
+  <dlg:button dlg:id="dicionario" dlg:tab-index="23" dlg:left="2" dlg:top="358" dlg:width="76" dlg:height="14" dlg:value="Dicionário ~pessoal…" dlg:help-text="Ver e remover palavras do dicionário pessoal e da lista de não corrigir."/>
+  <dlg:button dlg:id="autocorrecao" dlg:tab-index="24" dlg:left="82" dlg:top="358" dlg:width="76" dlg:height="14" dlg:value="Opções de A~utoCorreção…" dlg:help-text="Opções de AutoCorreção do motor (maiúsculas, aspas, símbolos)."/>
+  <dlg:text dlg:id="titulo_ia" dlg:tab-index="25" dlg:left="2" dlg:top="378" dlg:width="156" dlg:height="10" dlg:value="Assistente de IA (local)"/>
+  <dlg:text dlg:id="ia_estado" dlg:tab-index="26" dlg:left="2" dlg:top="390" dlg:width="156" dlg:height="34" dlg:multiline="true" dlg:value="Ainda não disponível nesta versão de testes (previsto para a 0.5.0). A IA será opcional, local e sem envio de dados; a revisão acima funciona sem ela."/>
+ </dlg:bulletinboard>
+</dlg:window>

@@ -25,6 +25,14 @@ principal do motor. A faixa `notebookbar_ayescreva.ui` é gerada por `tools/gera
 - Se o Nível 2 modificar código, os binários passam a ser do AY. A assinatura da TDF deixa de valer para esses
   arquivos e eles devem ser assinados pelo projeto.
 
+## Dados derivados da base (revisão de texto)
+
+`extensao/ayescreva/dados/correcoes_pt_BR.json` é gerado por `tools/gerar_correcoes.py` a partir de dois
+componentes livres distribuídos com o motor: a lista de AutoCorreção pt-BR do LibreOffice (`acor_pt-BR.dat`,
+MPL-2.0) e o dicionário VERO pt-BR (extensão `dict-pt-BR` 3.3.0, LGPLv3 / MPL). O arquivo traz a origem e os
+critérios de seleção; continua sob as licenças dessas fontes. O verificador Lightproof pt-BR (MPL 1.1 / GPLv3+ /
+LGPLv3+) é usado como vem no motor, sem modificação.
+
 ## Identidade visual do AY
 
 O logotipo, o ícone e as imagens são gerados por `tools/marca.mjs`. As letras são contornos da fonte **Rubik**

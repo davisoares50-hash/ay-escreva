@@ -4,19 +4,23 @@
 Componentes:
   br.ayescreva.Comandos  - protocolo "ayescreva:" para os comandos próprios da faixa de opções
                            (PaginaEmBranco, Recuperacao, Guia, Atalhos, Limitacoes, Diagnostico,
-                           DetalhesFontes, DetalhesFormato)
+                           DetalhesFontes, Assistente, VerificarDocumento, CorrecaoAutomatica, NaoCorrigir)
   br.ayescreva.Inicio    - tarefa executada ao iniciar: acompanha os documentos abertos para
-                           (1) avisar fontes substituídas e (2) interceptar Salvar / Salvar como /
+                           (1) avisar fontes substituídas, (2) interceptar Salvar / Salvar como /
                            Salvar uma cópia, informando possíveis perdas ANTES de gravar fora do ODT
-                           e oferecendo salvar também uma cópia em ODT.
+                           e oferecendo salvar também uma cópia em ODT, e (3) ligar a revisão de texto
+                           (correção automática ao digitar e níveis de gramática/estilo).
+  br.ayescreva.Paineis   - painel lateral "Assistente AY" (pythonpath/ay_painel.py).
 
 Nada aqui acessa a rede nem lê conteúdo de documentos para fora do computador.
 SPDX-License-Identifier: MPL-2.0
 """
 import os
 import platform
+import sys
 import time
 import traceback
+from urllib.parse import unquote
 
 import uno
 import unohelper
@@ -29,6 +33,12 @@ from com.sun.star.lang import XEventListener, XInitialization, XServiceInfo
 from com.sun.star.task import XJob
 
 ID_EXTENSAO = 'br.ayescreva.extensao'
+_PYTHONPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pythonpath')
+if _PYTHONPATH not in sys.path:
+    sys.path.insert(0, _PYTHONPATH)
+import ay_painel  # noqa: E402
+import ay_revisao  # noqa: E402
+from ay_revisao import Revisao  # noqa: E402
 CLSID_MATH = '078b7aba-54fc-457f-8551-6147e776a997'
 CLSID_GRAFICO = '12dcae26-281f-416f-a234-c3086127382e'
 
@@ -601,10 +611,12 @@ class OuvinteDocumentos(unohelper.Base, XDocumentEventListener):
                 ctrl = ev.ViewController or doc.getCurrentController()
                 if ctrl:
                     preparar_quadro(self.ctx, ctrl.getFrame())
+                    Revisao.obter(self.ctx).preparar_controlador(ctrl)
             if ev.EventName == 'OnLoad':
                 avisar_fontes(self.ctx, doc)
             if ev.EventName == 'OnUnload':
                 _esquecer(doc)
+                Revisao.obter(self.ctx).esquecer_documento(doc)
         except Exception:
             _log('evento: ' + traceback.format_exc())
 
@@ -640,6 +652,9 @@ class Inicio(unohelper.Base, XJob, XServiceInfo):
 
     def execute(self, args):
         try:
+            ay_revisao.registrar = _log
+            revisao = Revisao.obter(self.ctx)
+            revisao.aplicar_niveis()
             difusor = self.ctx.getValueByName('/singletons/com.sun.star.frame.theGlobalEventBroadcaster')
             difusor.addDocumentEventListener(OuvinteDocumentos(self.ctx))
             desktop = _servico(self.ctx, 'com.sun.star.frame.Desktop')
@@ -648,6 +663,7 @@ class Inicio(unohelper.Base, XJob, XServiceInfo):
                 c = comps.nextElement()
                 if c.supportsService('com.sun.star.text.TextDocument') and c.getCurrentController():
                     preparar_quadro(self.ctx, c.getCurrentController().getFrame())
+                    revisao.preparar_controlador(c.getCurrentController())
             _log('extensão iniciada')
         except Exception:
             _log('inicio: ' + traceback.format_exc())
@@ -667,7 +683,8 @@ class Inicio(unohelper.Base, XJob, XServiceInfo):
 # Comandos "ayescreva:"
 # ---------------------------------------------------------------------------------------------
 class Comandos(unohelper.Base, XDispatchProvider, XDispatch, XInitialization, XServiceInfo):
-    ACOES = ('PaginaEmBranco', 'Recuperacao', 'Guia', 'Atalhos', 'Limitacoes', 'Diagnostico', 'DetalhesFontes')
+    ACOES = ('PaginaEmBranco', 'Recuperacao', 'Guia', 'Atalhos', 'Limitacoes', 'Diagnostico', 'DetalhesFontes',
+             'Assistente', 'VerificarDocumento', 'CorrecaoAutomatica', 'NaoCorrigir')
 
     def __init__(self, ctx, *args):
         self.ctx = ctx
@@ -677,25 +694,43 @@ class Comandos(unohelper.Base, XDispatchProvider, XDispatch, XInitialization, XS
         if args:
             self.frame = args[0]
 
+    @staticmethod
+    def _acao(url):
+        """Nome da ação e argumentos: o analisador de URL deixa "?a=b" dentro do caminho em protocolos próprios."""
+        resto = url.Complete[len('ayescreva:'):] if url.Complete.startswith('ayescreva:') else ''
+        nome, _, query = resto.partition('?')
+        args = dict(p.split('=', 1) for p in query.split('&') if '=' in p)
+        return nome, {k: unquote(v) for k, v in args.items()}
+
     def queryDispatch(self, url, alvo, flags):
-        return self if url.Protocol == 'ayescreva:' and url.Path in self.ACOES else None
+        return self if self._acao(url)[0] in self.ACOES else None
 
     def queryDispatches(self, pedidos):
         return tuple(self.queryDispatch(p.FeatureURL, p.FrameName, p.SearchFlags) for p in pedidos)
 
     def addStatusListener(self, ouvinte, url):
+        if self._acao(url)[0] == 'CorrecaoAutomatica':
+            # Botão de alternância: o estado acompanha a configuração (painel, faixa)
+            revisao = Revisao.obter(self.ctx)
+            revisao.ouvintes_estado.append((ouvinte, url, self))
+            revisao.notificar_estado()
+            return
         ev = FeatureStateEvent()
         ev.Source, ev.FeatureURL, ev.IsEnabled, ev.Requery = self, url, True, False
         ouvinte.statusChanged(ev)
 
     def removeStatusListener(self, ouvinte, url):
-        pass
+        revisao = Revisao.obter(self.ctx)
+        revisao.ouvintes_estado = [t for t in revisao.ouvintes_estado if t[0] != ouvinte]
 
     def dispatch(self, url, args):
         try:
-            getattr(self, '_' + url.Path)()
+            nome, args_url = self._acao(url)
+            if nome == 'NaoCorrigir':
+                return self._NaoCorrigir(args_url)
+            getattr(self, '_' + nome)()
         except Exception:
-            _log('comando ' + url.Path + ': ' + traceback.format_exc())
+            _log('comando ' + url.Complete + ': ' + traceback.format_exc())
             _mensagem(self.ctx, self.frame, 'AY ESCREVA', 'Não foi possível executar este comando. Detalhes foram gravados em ayescreva-extensao.log na pasta temporária.', 'aviso')
 
     def _executar(self, cmd):
@@ -768,6 +803,35 @@ class Comandos(unohelper.Base, XDispatchProvider, XDispatch, XInitialization, XS
             f.write('\n'.join(linhas) + '\n')
         _abrir_no_sistema(self.ctx, destino)
 
+    def _Assistente(self):
+        self._executar(ay_painel.COMANDO_DECK)
+
+    def _VerificarDocumento(self):
+        revisao = Revisao.obter(self.ctx)
+        painel = revisao.painel_do_quadro(self.frame)
+        if painel is not None:
+            painel.iniciar_analise(False)
+        else:
+            revisao.pedir(self.frame, 'documento')          # o painel começa assim que abrir
+            self._executar(ay_painel.COMANDO_DECK)
+
+    def _CorrecaoAutomatica(self):
+        revisao = Revisao.obter(self.ctx)
+        revisao.gravar_config(CorrecaoAutomatica=not revisao.config['CorrecaoAutomatica'])
+
+    def _NaoCorrigir(self, args_url):
+        palavra = args_url.get('palavra', '')
+        if palavra:
+            Revisao.obter(self.ctx).nao_corrigir(palavra)
+        try:
+            ctrl = self.frame.getController()
+            if ctrl.hasInfobar('ay-desfeita'):
+                ctrl.removeInfobar('ay-desfeita')
+            _infobar(ctrl.getModel(), 'ay-nao-corrigir', 'Pronto:', f'a correção automática não vai mais trocar “{palavra}”. '
+                     'Para desfazer, use Assistente AY › Dicionário pessoal.')
+        except Exception:
+            _log('não corrigir: ' + traceback.format_exc())
+
     def _DetalhesFontes(self):
         doc = self.frame.getController().getModel()
         ausentes = fontes_ausentes(self.ctx, doc)
@@ -790,3 +854,4 @@ class Comandos(unohelper.Base, XDispatchProvider, XDispatch, XInitialization, XS
 g_ImplementationHelper = unohelper.ImplementationHelper()
 g_ImplementationHelper.addImplementation(Comandos, 'br.ayescreva.Comandos', ('com.sun.star.frame.ProtocolHandler',))
 g_ImplementationHelper.addImplementation(Inicio, 'br.ayescreva.Inicio', ('com.sun.star.task.Job',))
+g_ImplementationHelper.addImplementation(ay_painel.Fabrica, 'br.ayescreva.Paineis', ('com.sun.star.ui.UIElementFactory',))

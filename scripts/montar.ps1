@@ -150,9 +150,37 @@ Etapa 'Faixa de opções AY (gerada de ui\abas.json)'
   (Join-Path $Saida 'share\config\images_colibre.zip') '-' (Join-Path $Raiz 'out\faixa\mapa.json')
 if ($LASTEXITCODE) { throw 'Geração da faixa falhou' }
 
+Etapa 'AutoCorreção pt-BR: só regras de símbolos (troca de palavras passa ao corretor do AY, com proteções)'
+# A lista da base troca palavras ao digitar sem proteger nomes, siglas ou citações e inclui abreviações
+# ("vc" → "você"). As palavras viram a tabela filtrada do AY (tools\gerar_correcoes.py); aqui ficam só as entradas
+# com dígitos, símbolos ou pontuação: (C) → ©, --> → →, ... → …, 1/2 → ½.
+$acor = Join-Path $Saida 'share\autocorr\acor_pt-BR.dat'
+Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
+$zipAcor = [IO.Compression.ZipFile]::Open($acor, 'Update')
+try {
+  $entrada = $zipAcor.GetEntry('DocumentList.xml')
+  $leitor = New-Object IO.StreamReader($entrada.Open(), [Text.Encoding]::UTF8)
+  $xmlAcor = [xml]$leitor.ReadToEnd(); $leitor.Close()
+  $ns = New-Object Xml.XmlNamespaceManager($xmlAcor.NameTable); $ns.AddNamespace('bl', 'http://openoffice.org/2001/block-list')
+  $antes = 0; $mantidas = 0
+  foreach ($b in @($xmlAcor.SelectNodes('//bl:block', $ns))) {
+    $antes++
+    $nomeAcor = $b.GetAttribute('abbreviated-name', 'http://openoffice.org/2001/block-list')
+    if ($nomeAcor -match "^[\p{L}\s'-]+$") { [void]$b.ParentNode.RemoveChild($b) } else { $mantidas++ }
+  }
+  $entrada.Delete()
+  $nova = $zipAcor.CreateEntry('DocumentList.xml')
+  $escritor = New-Object IO.StreamWriter($nova.Open(), (New-Object Text.UTF8Encoding($false)))
+  $escritor.Write($xmlAcor.OuterXml); $escritor.Close()
+} finally { $zipAcor.Dispose() }
+Write-Host "acor_pt-BR.dat: $mantidas de $antes entradas mantidas (símbolos)"
+
 Etapa 'Extensão AY (comandos, avisos de perdas e de fontes, ajuda offline)'
 $ext = Join-Path $Saida 'share\extensions\ayescreva'
-Robo (Join-Path $Raiz 'extensao\ayescreva') $ext @()
+Robo (Join-Path $Raiz 'extensao\ayescreva') $ext @('/XD', '__pycache__')
+# Ícone do painel lateral "Assistente AY" (gerado por tools\marca.mjs)
+New-Item -ItemType Directory -Force (Join-Path $ext 'icones') | Out-Null
+Copy-Item (Join-Path $Marca 'icone-24.png') (Join-Path $ext 'icones\assistente.png') -Force
 # Página de atalhos gerada da configuração REAL do motor montado (nunca lista atalho inexistente)
 & node.exe (Join-Path $Raiz 'tools\gerar-atalhos.mjs') (Join-Path $Saida 'share\registry') (Join-Path $ext 'ajuda\atalhos.html')
 if ($LASTEXITCODE) { throw 'Geração da página de atalhos falhou' }
@@ -194,7 +222,7 @@ if ($LASTEXITCODE) { throw 'Compilação do lançador falhou' }
 # ---------------------------------------------------------------------------
 Etapa 'Manifesto da distribuição'
 $manifesto = [ordered]@{
-  produto = 'AY ESCREVA'; versao = $VersaoAY; canal = 'versão inicial de testes'; plataformaValidada = 'Windows 11 x64'
+  produto = 'AY ESCREVA'; versao = $VersaoAY; canal = 'versão de testes'; plataformaValidada = 'Windows 11 x64'
   base = [ordered]@{ produto = $Lock.produto; versao = $Lock.versaoCompleta; buildid = $Lock.buildid; codigoFonte = $Lock.codigoFonte }
   montadoEm = (Get-Date).ToString('s')
 }

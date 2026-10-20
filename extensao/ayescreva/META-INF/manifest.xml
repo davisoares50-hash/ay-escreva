@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest:manifest xmlns:manifest="http://openoffice.org/2001/manifest">
   <manifest:file-entry manifest:media-type="application/vnd.sun.star.uno-component;type=Python" manifest:full-path="ayescreva.py"/>
+  <manifest:file-entry manifest:media-type="application/vnd.sun.star.configuration-schema" manifest:full-path="Configuracao.xcs"/>
   <manifest:file-entry manifest:media-type="application/vnd.sun.star.configuration-data" manifest:full-path="ProtocolHandler.xcu"/>
   <manifest:file-entry manifest:media-type="application/vnd.sun.star.configuration-data" manifest:full-path="Jobs.xcu"/>
   <manifest:file-entry manifest:media-type="application/vnd.sun.star.configuration-data" manifest:full-path="Comandos.xcu"/>
+  <manifest:file-entry manifest:media-type="application/vnd.sun.star.configuration-data" manifest:full-path="Sidebar.xcu"/>
+  <manifest:file-entry manifest:media-type="application/vnd.sun.star.configuration-data" manifest:full-path="Factories.xcu"/>
 </manifest:manifest>

@@ -24,9 +24,11 @@ import os
 import threading
 import time
 import traceback
+import zipfile
 
 import uno
 import unohelper
+from testes_revisao import RevisaoMixin
 from com.sun.star.awt import XCallback
 from com.sun.star.beans import PropertyValue
 from com.sun.star.task import XJob
@@ -110,7 +112,7 @@ class Executor(unohelper.Base, XJob):
         return None
 
 
-class Teste:
+class Teste(RevisaoMixin):
     def __init__(self, ctx, spec, modelo):
         self.ctx = ctx
         self.doc = modelo
@@ -186,9 +188,7 @@ class Teste:
                 # Janela não modal (painel, navegador, galeria): devolve o foco à janela do documento
                 self.res['avisos'].append(f'janela não modal "{titulo}" com o foco; foco devolvido ao documento')
                 try:
-                    self.frame.activate()
-                    self.frame.getContainerWindow().setFocus()
-                    self.frame.getComponentWindow().setFocus()
+                    self.focar_documento()
                 except Exception:
                     pass
             time.sleep(0.5)
@@ -349,18 +349,23 @@ class Teste:
     # ---------- preparação --------------------------------------------------------------------
     def preparar(self):
         _log('preparar')
-        self.ctrl = self.doc.getCurrentController()
-        self.frame = self.ctrl.getFrame()
+        self.ctrl = self.no_principal(lambda: self.doc.getCurrentController())
+        self.frame = self.no_principal(lambda: self.ctrl.getFrame())
         self.esperar(2.0)
-        self.res['documento'] = self.doc.getURL()
+        self.res['documento'] = self.no_principal(lambda: self.doc.getURL())
 
-    def selecionar_texto(self, trecho):
+    def _selecionar(self, trecho):
         busca = self.doc.createSearchDescriptor()
         busca.SearchString = trecho
         r = self.doc.findFirst(busca)
         if r is not None:
             self.ctrl.select(r)
         return r
+
+    def selecionar_texto(self, trecho):
+        # Documento sempre acessado na thread principal: uma thread Python editando/lendo o documento enquanto a
+        # principal roda código Python (extensão AY) pode travar o motor (docs/REVISAO-E-IA.md §4)
+        return self.no_principal(lambda: self._selecionar(trecho))
 
     def plano(self):
         passos = []
@@ -373,7 +378,15 @@ class Teste:
                            # Fase 2: o DOCX é o documento aberto na inicialização (uma só janela, foco garantido)
                            'docx_inicial': [(self.verificar_aviso_fontes, 3.0), (self.efeito_salvar_docx, 1.0)],
                            # Fechar um DOCX alterado e escolher Salvar na pergunta (caminho que não passa pelo botão)
-                           'fechar_docx': [(self.efeito_fechar_docx, 1.0)]}
+                           'fechar_docx': [(self.efeito_fechar_docx, 1.0)],
+                           # Salvar como pela faixa: seletor de arquivo do AY + aviso de perdas
+                           'salvar_como_docx': [(self.efeito_salvar_como_docx, 6.0)],
+                           # Revisão de texto (entrega A): digitação real, desfazer, proteções e painel
+                           'revisao': [(self.revisao_digitacao, 6.0), (self.revisao_desfazer, 0.5),
+                                       (self.revisao_protecoes, 0.5), (self.revisao_painel, 0.5)],
+                           'revisao_longo': [(self.revisao_longo, 8.0)],
+                           'revisao_perfil': [(self.revisao_perfil, 8.0)],
+                           'revisao_integridade': [(self.revisao_integridade, 6.0)]}
             for nome in somente:
                 passos.extend(mapa_passos[nome])
             return passos
@@ -463,23 +476,28 @@ class Teste:
                 self.registrar(ch, 'validado', detalhe)
 
     def preparar_texto(self):
-        t = self.doc.Text
-        t.setString('')
-        cur = t.createTextCursor()
-        t.insertString(cur, 'alfa beta gama delta épsilon zeta eta teta iota capa lambda mi', False)
-        t.insertControlCharacter(cur, 0, False)
-        t.insertString(cur, 'Segundo parágrafo para os testes da faixa.', False)
-        self.selecionar_texto('alfa')
+        def f():
+            t = self.doc.Text
+            t.setString('')
+            cur = t.createTextCursor()
+            t.insertString(cur, 'alfa beta gama delta épsilon zeta eta teta iota capa lambda mi', False)
+            t.insertControlCharacter(cur, 0, False)
+            t.insertString(cur, 'Segundo parágrafo para os testes da faixa.', False)
+            self._selecionar('alfa')
+        self.no_principal(f)
 
     def efeito_selecao(self, cmd, trecho, prop, cond, registrar=True):
         b = self.botao(cmd)
         self.selecionar_texto(trecho)
         disparado = self.clicar(b)
         self.esperar(0.8)
-        v = self.selecionar_texto(trecho).getPropertyValue(prop)
+        v = self.no_principal(lambda: self._selecionar(trecho).getPropertyValue(prop))
         self.resultado(b, cond(v), f'{prop}={getattr(v, "value", v)} depois do clique', disparado, registrar)
 
     def contar(self, oque):
+        return self.no_principal(lambda: self._contar(oque))
+
+    def _contar(self, oque):
         if oque == 'paginas':
             return self.ctrl.getPropertyValue('PageCount')
         if oque == 'comentarios':
@@ -493,8 +511,7 @@ class Teste:
 
     def efeito_contagem(self, cmd, oque, delta, aba=None):
         b = self.botao(cmd, aba)
-        self.selecionar_texto('lambda')
-        self.ctrl.getViewCursor().collapseToEnd()
+        self.no_principal(lambda: (self._selecionar('lambda'), self.ctrl.getViewCursor().collapseToEnd()))
         antes = self.contar(oque)
         disparado = self.clicar(b)
         self.esperar(1.5)
@@ -506,23 +523,26 @@ class Teste:
         b = self.botao(cmd)
         disparado = self.clicar(b)
         self.esperar(0.8)
-        v = self.doc.getPropertyValue(prop)
+        v = self.no_principal(lambda: self.doc.getPropertyValue(prop))
         self.resultado(b, cond(v), f'{prop}={v}', disparado, registrar)
 
     def efeito_vista(self, cmd, prop, registrar=True):
         b = self.botao(cmd)
-        antes = self.ctrl.getViewSettings().getPropertyValue(prop)
+        antes = self.no_principal(lambda: self.ctrl.getViewSettings().getPropertyValue(prop))
         disparado = self.clicar(b)
         self.esperar(0.8)
-        depois = self.ctrl.getViewSettings().getPropertyValue(prop)
+        depois = self.no_principal(lambda: self.ctrl.getViewSettings().getPropertyValue(prop))
         self.resultado(b, antes != depois, f'{prop}: {antes} → {depois}', disparado, registrar)
 
     def efeito_zoom(self, cmd, cond):
         b = self.botao(cmd)
         disparado = self.clicar(b)
         self.esperar(0.8)
-        vs = self.ctrl.getViewSettings()
-        self.resultado(b, cond(vs), f'ZoomType={vs.ZoomType} ZoomValue={vs.ZoomValue}', disparado)
+        zt, zv = self.no_principal(lambda: (self.ctrl.getViewSettings().ZoomType, self.ctrl.getViewSettings().ZoomValue))
+
+        class _VS:
+            ZoomType, ZoomValue = zt, zv
+        self.resultado(b, cond(_VS), f'ZoomType={zt} ZoomValue={zv}', disparado)
 
     def _log_ay(self):
         try:
@@ -563,8 +583,7 @@ class Teste:
             titulo = _estado(j).get('Text', '') if j is not None else ''
             self.res['dialogos'].append({'funcao': ch, 'titulo': titulo, 'tipo': 'janela não modal'})
             # Aciona o mesmo comando outra vez (alterna a janela) para fechá-la
-            desp = self.smgr.createInstanceWithContext('com.sun.star.frame.DispatchHelper', self.ctx)
-            desp.executeDispatch(self.frame, b['comando'], '', 0, ())
+            self.despachar(b['comando'])
             time.sleep(0.8)
         self.vigiar(ch)
         if disparado == b['comando']:
@@ -585,17 +604,20 @@ class Teste:
     def fechar_outras_janelas(self, ch=None):
         """Fecha janelas de documento abertas por um comando (novo documento, licença, etiquetas...) e devolve o
         foco ao documento do teste; sem isso, os cliques seguintes iriam para a faixa da outra janela."""
-        quadros = self.desktop.getFrames()
-        outros = [quadros.getByIndex(i) for i in range(quadros.getCount())]
-        outros = [f for f in outros if f != self.frame]
+        def listar():
+            quadros = self.desktop.getFrames()
+            todos = [quadros.getByIndex(i) for i in range(quadros.getCount())]
+            fora = [f for f in todos if f != self.frame]
+            nomes = []
+            for f in fora:
+                try:
+                    nomes.append(f.getTitle())
+                except Exception:
+                    nomes.append('')
+            return fora, nomes
+        outros, titulos = self.no_principal(listar)
         if not outros:
             return []
-        titulos = []
-        for f in outros:
-            try:
-                titulos.append(f.getTitle())
-            except Exception:
-                titulos.append('')
 
         def fechar():
             for f in outros:
@@ -619,11 +641,14 @@ class Teste:
         return titulos
 
     def contexto_tabela(self):
-        t = self.doc.createInstance('com.sun.star.text.TextTable')
-        t.initialize(2, 2)
-        self.doc.Text.insertTextContent(self.doc.Text.getEnd(), t, False)
-        # Cursor de texto dentro da célula A1 (como o usuário clicando na tabela)
-        self.ctrl.getViewCursor().gotoRange(t.getCellByName('A1').getText().getStart(), False)
+        def inserir():
+            t = self.doc.createInstance('com.sun.star.text.TextTable')
+            t.initialize(2, 2)
+            self.doc.Text.insertTextContent(self.doc.Text.getEnd(), t, False)
+            # Cursor de texto dentro da célula A1 (como o usuário clicando na tabela)
+            self.ctrl.getViewCursor().gotoRange(t.getCellByName('A1').getText().getStart(), False)
+            return t
+        t = self.no_principal(inserir)
         self.esperar(1.5)
         ok = self.pagina_visivel('tabela') or self._selecionar_e_ver('tabela')
         self.res['efeitos'].append({'funcao': 'Aba contextual Tabela', 'ok': bool(ok), 'detalhe': 'aparece com o cursor numa tabela'})
@@ -631,11 +656,11 @@ class Teste:
             for b in [x for x in self.mapa['botoes'] if x['aba'] == 'tabela']:
                 self.registrar(self.chave(b), 'presente', 'aba contextual visível com o cursor na tabela')
             bi = self.botao('.uno:InsertRowsAfter', 'tabela')
-            linhas = t.Rows.Count
+            linhas = self.no_principal(lambda: t.Rows.Count)
             disparado = self.clicar(bi)
             self.esperar(2.0)
-            _log(f'tabela: linhas {linhas} -> {t.Rows.Count}; cursor na tabela={self.ctrl.getViewCursor().TextTable is not None}')
-            self.resultado(bi, t.Rows.Count == linhas + 1, f'linhas: {linhas} → {t.Rows.Count}', disparado)
+            depois = self.no_principal(lambda: t.Rows.Count)
+            self.resultado(bi, depois == linhas + 1, f'linhas: {linhas} → {depois}', disparado)
         self.selecionar_texto('alfa')
 
     def _selecionar_e_ver(self, id_aba):
@@ -646,12 +671,14 @@ class Teste:
             return False
 
     def contexto_imagem(self):
-        prov = self.smgr.createInstanceWithContext('com.sun.star.graphic.GraphicProvider', self.ctx)
-        g = prov.queryGraphic(_props(URL=uno.systemPathToFileUrl(self.spec['imagem'])))
-        img = self.doc.createInstance('com.sun.star.text.TextGraphicObject')
-        img.Graphic = g
-        self.doc.Text.insertTextContent(self.doc.Text.getEnd(), img, False)
-        self.ctrl.select(img)
+        def inserir():
+            prov = self.smgr.createInstanceWithContext('com.sun.star.graphic.GraphicProvider', self.ctx)
+            g = prov.queryGraphic(_props(URL=uno.systemPathToFileUrl(self.spec['imagem'])))
+            img = self.doc.createInstance('com.sun.star.text.TextGraphicObject')
+            img.Graphic = g
+            self.doc.Text.insertTextContent(self.doc.Text.getEnd(), img, False)
+            self.ctrl.select(img)
+        self.no_principal(inserir)
         self.esperar(1.5)
         ok = self.pagina_visivel('imagem') or self._selecionar_e_ver('imagem')
         self.res['efeitos'].append({'funcao': 'Aba contextual Imagem', 'ok': bool(ok), 'detalhe': 'aparece com uma imagem selecionada'})
@@ -662,14 +689,14 @@ class Teste:
 
     def efeito_salvar_odt(self):
         b = self.botao('.uno:Save')
-        caminho = uno.fileUrlToSystemPath(self.doc.getURL())
-        self.doc.Text.getEnd().setString(' (alterado pelo teste da faixa)')
+        caminho = self.no_principal(lambda: uno.fileUrlToSystemPath(self.doc.getURL()))
+        self.no_principal(lambda: self.doc.Text.getEnd().setString(' (alterado pelo teste da faixa)'))
         antes = os.path.getmtime(caminho)
         self.esperar(1.1)
         disparado = self.clicar(b)
         self.esperar(2.5)
-        _log(f'salvar odt: url={self.doc.getURL()} mtime {antes} -> {os.path.getmtime(caminho)}; modificado={self.doc.isModified()}; somenteLeitura={self.doc.isReadonly()}')
-        ok = os.path.getmtime(caminho) > antes and not self.doc.isModified()
+        modificado = self.no_principal(lambda: self.doc.isModified())
+        ok = os.path.getmtime(caminho) > antes and not modificado
         self.resultado(b, ok, 'ODT gravado pelo botão Salvar, sem aviso (formato nativo)', disparado)
 
     def abrir_docx(self):
@@ -693,17 +720,17 @@ class Teste:
         _log(f'janela em foco após abrir o DOCX: {titulo!r}')
 
     def verificar_aviso_fontes(self):
-        ok = bool(self.ctrl.hasInfobar('ay-fontes'))
+        ok = bool(self.no_principal(lambda: self.ctrl.hasInfobar('ay-fontes')))
         self.res['efeitos'].append({'funcao': 'Aviso de substituição de fontes', 'ok': ok, 'detalhe': 'faixa "Fontes substituídas" exibida ao abrir o DOCX'})
 
     def efeito_salvar_docx(self):
         b = self.botao('.uno:Save')
-        caminho = uno.fileUrlToSystemPath(self.doc.getURL())
+        caminho = self.no_principal(lambda: uno.fileUrlToSystemPath(self.doc.getURL()))
         copia_odt = caminho.rsplit('.', 1)[0] + '.odt'
         if os.path.exists(copia_odt):
             os.remove(copia_odt)
         antes = os.path.getmtime(caminho)
-        self.doc.Text.getEnd().setString(' (alterado)')
+        self.no_principal(lambda: self.doc.Text.getEnd().setString(' (alterado)'))
         self.esperar(1.1)
         visto = {}
 
@@ -721,12 +748,57 @@ class Teste:
         self.res['efeitos'].append({'funcao': 'Aviso de perdas ao salvar em DOCX', 'ok': bool(ok), 'comandoDisparado': disparado,
                                     'detalhe': f"diálogo \"{visto.get('titulo')}\"; DOCX gravado={gravou}; cópia ODT={os.path.exists(copia_odt)}"})
 
+    def efeito_salvar_como_docx(self):
+        """Arquivo › Salvar como: escolhe DOCX no seletor de arquivo do AY, digita o nome, salva e responde ao
+        aviso de perdas; confere o DOCX gravado, a cópia em ODT e que o documento passou a ser o DOCX."""
+        b = self.botao('.uno:SaveAs')
+        pasta = os.path.dirname(self.no_principal(lambda: uno.fileUrlToSystemPath(self.doc.getURL())))
+        base = os.path.join(pasta, 'salvo-como')
+        for ext in ('.docx', '.odt'):
+            if os.path.exists(base + ext):
+                os.remove(base + ext)
+        self.no_principal(lambda: self.doc.Text.getEnd().setString(' (antes de Salvar como)'))
+        vistos = []
+        _log('salvar como: clique')
+        self.clicar(b)
+        seletor = False
+        limite = time.time() + 10
+        while time.time() < limite:
+            j, tipo = self.janela_extra()
+            if j is not None and tipo == 'dialogo' and 'file_name' in set(j.getChildren()):
+                time.sleep(0.5)
+                vistos.append(_estado(j).get('Text', ''))
+                self.res['dialogos'].append({'funcao': 'Arquivo › Salvar como', 'titulo': vistos[-1], 'tipo': 'dialogo'})
+                j.getChild('file_type').executeAction('SELECT', (_pv('POS', '1'),))      # DOCX (2ª entrada)
+                time.sleep(0.3)
+                nome = j.getChild('file_name')
+                nome.executeAction('TYPE', (_pv('KEYCODE', 'CTRL+A'),))
+                nome.executeAction('TYPE', (_pv('KEYCODE', 'BACKSPACE'),))
+                nome.executeAction('TYPE', (_pv('TEXT', base),))
+                time.sleep(0.3)
+                j.getChild('open').executeAction('CLICK', ())
+                seletor = True
+                _log(f'salvar como: seletor "{vistos[-1]}" respondido')
+                break
+            time.sleep(0.3)
+
+        def anotar(j):
+            vistos.append(_estado(j).get('Text', ''))
+        perdas = self.responder_dialogo('Arquivo › Salvar como (DOCX)', 8.0, 'formato', anotar) if seletor else False
+        self.esperar(5.0)
+        gravou = os.path.exists(base + '.docx') and zipfile.is_zipfile(base + '.docx')
+        copia = os.path.exists(base + '.odt')
+        agora = self.no_principal(lambda: self.doc.getURL()).lower().endswith('salvo-como.docx')
+        ok = seletor and perdas and gravou and copia and agora
+        self.res['efeitos'].append({'funcao': 'Salvar como DOCX pela faixa (seletor + aviso de perdas)', 'ok': bool(ok),
+                                    'detalhe': f'diálogos: {vistos}; DOCX gravado={gravou}; cópia ODT={copia}; documento agora é o DOCX={agora}'})
+
     def efeito_fechar_docx(self):
         """Fecha o DOCX alterado pela faixa e escolhe Salvar na pergunta; registra qual aviso de formato aparece."""
         b = self.botao('.uno:CloseDoc')
-        caminho = uno.fileUrlToSystemPath(self.doc.getURL())
+        caminho = self.no_principal(lambda: uno.fileUrlToSystemPath(self.doc.getURL()))
         antes = os.path.getmtime(caminho)
-        self.doc.Text.getEnd().setString(' (alterado antes de fechar)')
+        self.no_principal(lambda: self.doc.Text.getEnd().setString(' (alterado antes de fechar)'))
         self.esperar(1.1)
         vistos = []
 
@@ -744,7 +816,7 @@ class Teste:
         gravou = os.path.getmtime(caminho) > antes
         aviso = vistos[1] if len(vistos) > 1 else ''
         try:
-            self.doc.getURL()
+            self.no_principal(lambda: self.doc.getURL())
             fechou = False
         except Exception:
             fechou = True       # modelo descartado: a janela fechou depois de salvar

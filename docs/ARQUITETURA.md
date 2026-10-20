@@ -85,6 +85,7 @@ O que muda em relação à base, sem tocar no código C++:
 | Interface por abas | faixa própria `notebookbar_ayescreva.ui`, gerada de `ui/abas.json` por `tools/gerar-faixa.mjs`, na ordem pedida; modo "AY ESCREVA" registrado em `ToolbarMode` e padrão | `ayescreva.xcd`, `ui/abas.json`, `tools/gerar-faixa.mjs` |
 | Compatibilidade Word | realce exportado como realce do Word, não sombreamento | `ayescreva.xcd` |
 | Comandos que faltam na base | extensão UNO própria (Python), protocolo `ayescreva:`: página em branco, recuperação de documentos, guia, atalhos, limitações e diagnóstico | `extensao/ayescreva/` |
+| Revisão de texto (0.3.0) | três níveis independentes: ortografia (Hunspell do motor + correção automática do AY só em casos inequívocos, com proteções e desfazer), gramática e pontuação (Lightproof pt-BR do motor, categorias ligadas pelo AY) e estilo opcional (Lightproof + regras do AY); painel lateral "Assistente AY" criado pela extensão; detalhes em [REVISAO-E-IA.md](REVISAO-E-IA.md) | `extensao/ayescreva/pythonpath/ay_*.py`, `Painel.xdl`, `Sidebar.xcu`, `dados/correcoes_pt_BR.json` |
 | Avisos de perda e de fontes | a extensão intercepta Salvar, Salvar como e Salvar uma cópia (`XDispatchProviderInterceptor`) e, em formato não nativo, lista as perdas possíveis no documento e oferece ODT ou cópia em ODT; ao abrir, mostra uma barra de informação com as fontes substituídas | `extensao/ayescreva/ayescreva.py` |
 
 Atualização da base: trocar a versão em `base/base.lock.json` (URL + SHA-256), rodar `scripts/montar.ps1` e

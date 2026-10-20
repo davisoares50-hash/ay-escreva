@@ -1208,6 +1208,36 @@
       "mnemonico": "S",
       "grupos": [
         {
+          "rotulo": "Assistente AY",
+          "itens": [
+            {
+              "funcao": "Assistente AY",
+              "comando": null,
+              "comandoAY": "ayescreva:Assistente",
+              "grande": true,
+              "icone": "cmd/lc_sidebar.png",
+              "prioridade": "P0",
+              "criterio": "Abre o painel lateral com revisão de ortografia, gramática e estilo (offline)"
+            },
+            {
+              "funcao": "Verificar documento",
+              "comando": null,
+              "comandoAY": "ayescreva:VerificarDocumento",
+              "icone": "cmd/lc_spelling.png",
+              "prioridade": "P0",
+              "criterio": "Lista ocorrências de ortografia, gramática e estilo no painel, em segundo plano, com cancelamento"
+            },
+            {
+              "funcao": "Correção automática",
+              "comando": null,
+              "comandoAY": "ayescreva:CorrecaoAutomatica",
+              "icone": "cmd/lc_autocorrectdlg.png",
+              "prioridade": "P0",
+              "criterio": "Liga/desliga a correção de casos inequívocos ao digitar; Ctrl+Z desfaz cada correção"
+            }
+          ]
+        },
+        {
           "rotulo": "Revisão de texto",
           "itens": [
             {
@@ -1249,13 +1279,6 @@
               "comando": ".uno:SidebarDeck.A11yCheckDeck",
               "prioridade": "P1",
               "criterio": "Aponta imagens sem texto alternativo, títulos etc."
-            },
-            {
-              "funcao": "Revisão gramatical offline avançada",
-              "comando": null,
-              "prioridade": "P3",
-              "criterio": "Avaliar LanguageTool local e Lightproof pt-BR",
-              "lacuna": "Avaliação separada: LanguageTool local exige Java e servidor local (~300 MB)."
             }
           ]
         },

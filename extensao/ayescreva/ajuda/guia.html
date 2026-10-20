@@ -19,7 +19,7 @@ a{color:var(--verde)}
 </head>
 <body>
 <header><h1>Guia do AY ESCREVA</h1><p>Versão inicial de testes para Windows 11 x64 · funciona sem internet</p></header>
-<nav><a href="#comecar">Começar</a><a href="#faixa">Faixa de opções</a><a href="#salvar">Salvar e formatos</a><a href="#pdf">PDF e impressão</a><a href="#seguranca">Segurança</a><a href="#recuperar">Recuperar</a><a href="#teclado">Teclado e acessibilidade</a><a href="atalhos.html">Atalhos</a><a href="limitacoes.html">Limitações</a></nav>
+<nav><a href="#comecar">Começar</a><a href="#faixa">Faixa de opções</a><a href="#revisao">Revisão e Assistente AY</a><a href="#salvar">Salvar e formatos</a><a href="#pdf">PDF e impressão</a><a href="#seguranca">Segurança</a><a href="#recuperar">Recuperar</a><a href="#teclado">Teclado e acessibilidade</a><a href="atalhos.html">Atalhos</a><a href="limitacoes.html">Limitações</a></nav>
 <main>
 
 <h2 id="comecar">Começar</h2>
@@ -42,11 +42,22 @@ a{color:var(--verde)}
 <tr><td>Layout</td><td>Margens, orientação, tamanho do papel, colunas, quebras, hifenização, numeração de linhas, parágrafo e organização de objetos.</td></tr>
 <tr><td>Referências</td><td>Sumário e índices (sumário, bibliografia, ilustrações, remissivo), notas de rodapé e de fim, citações, legendas, referência cruzada e campos.</td></tr>
 <tr><td>Correspondência</td><td>Envelopes, etiquetas e mala direta (destinatários de planilha ou CSV, campos, prévia e geração dos documentos).</td></tr>
-<tr><td>Revisão</td><td>Ortografia em português do Brasil, sinônimos, contagem de palavras, verificação de acessibilidade, comentários, controle de alterações (aceitar, rejeitar) e comparação de documentos.</td></tr>
+<tr><td>Revisão</td><td><a href="#revisao">Assistente AY</a> (ortografia, gramática e estilo, com correção automática configurável), ortografia em português do Brasil, sinônimos, contagem de palavras, verificação de acessibilidade, comentários, controle de alterações (aceitar, rejeitar) e comparação de documentos.</td></tr>
 <tr><td>Exibir</td><td>Layout de impressão, web, tela inteira, zoom, uma ou várias páginas, régua, navegador, barra lateral, nova janela e tema claro/escuro.</td></tr>
 <tr><td>Ajuda</td><td>Este guia, atalhos, ajuda detalhada do motor, limitações conhecidas, sobre, licenças e diagnóstico.</td></tr>
 </table>
 <p>Abas extras aparecem sozinhas quando fazem sentido: <em>Tabela</em> (cursor numa tabela), <em>Imagem</em>, <em>Forma</em> e <em>Visualizar impressão</em>. O botão <strong>≡</strong>, à direita, abre o menu completo.</p>
+
+<h2 id="revisao">Revisão de texto e Assistente AY</h2>
+<p>Tudo funciona <strong>sem internet</strong> e sem enviar nada para fora do computador. Abra o painel em <strong>Revisão › Assistente AY</strong>. Há três níveis, que você liga e desliga separadamente:</p>
+<table>
+<tr><th>Nível</th><th>O que faz</th></tr>
+<tr><td><strong>Ortografia</strong></td><td>Sublinha em vermelho as palavras que não estão no dicionário pt-BR. A <strong>correção automática</strong> troca, quando a palavra termina (espaço, Enter ou pontuação), só erros sem ambiguidade, como <em>nao → não</em> e <em>tambem → também</em>. Ela <strong>não</strong> mexe em nomes próprios (maiúscula no meio da frase), siglas, palavras com números, datas, endereços, texto entre aspas, texto marcado em outro idioma nem palavras do seu dicionário pessoal. <kbd>Ctrl</kbd>+<kbd>Z</kbd> desfaz a correção; o AY então pergunta se deve deixar de corrigir aquela palavra.</td></tr>
+<tr><td><strong>Gramática e pontuação</strong></td><td>Sublinha em azul problemas como crase, concordância, "há/a", "mal/mau", porquês, espaços e pontuação, com uma explicação curta (clique com o botão direito no trecho ou veja no painel).</td></tr>
+<tr><td><strong>Estilo</strong> (opcional)</td><td>Sugere frases mais claras e concisas, aponta marcas de oralidade, repetições e parágrafos longos. Nada é aplicado sozinho.</td></tr>
+</table>
+<p><strong>Verificar documento</strong> lista as ocorrências no painel enquanto você continua escrevendo; <strong>Cancelar</strong> interrompe. Para cada ocorrência: <strong>Aplicar</strong> (com a sugestão escolhida), <strong>Ignorar</strong>, <strong>Adicionar ao dicionário</strong> ou <strong>Não corrigir novamente</strong>. O botão <strong>Dicionário pessoal…</strong> mostra e remove palavras guardadas.</p>
+<p class="caixa">O assistente de IA local ainda não está nesta versão de testes. Quando vier, será opcional, rodará no próprio computador e mostrará o original e a proposta antes de mudar o texto.</p>
 
 <h2 id="salvar">Salvar e formatos</h2>
 <div class="caixa"><strong>ODT</strong> guarda tudo o que o AY faz. Ao salvar em <strong>DOCX, DOC, RTF ou TXT</strong>, o AY verifica o documento e, se encontrar algo que pode se perder nesse formato, mostra a lista <em>antes</em> de gravar, com três opções: salvar no formato escolhido, salvar em ODT, ou salvar no formato escolhido e guardar também uma cópia completa em ODT.</div>

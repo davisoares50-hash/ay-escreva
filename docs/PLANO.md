@@ -2,7 +2,7 @@
 
 Legenda: ✅ concluído e validado · 🟡 em andamento / parcial · ⬜ não iniciado
 
-Entrega atual: **0.2.0, versão inicial de testes para Windows 11 x64** (validada somente nesse sistema).
+Versão pública: **0.2.0, versão inicial de testes para Windows 11 x64** (validada somente nesse sistema). Em desenvolvimento: **0.3.0** (confiabilidade + entrega A).
 
 ## Etapa 1 — Base técnica compilável e prova de edição real ✅
 
@@ -29,13 +29,15 @@ impressão real pela fila do Windows, exportação PDF e PDF/UA, macros bloquead
 - [x] Aviso de **fontes substituídas** ao abrir (barra de informação com a lista). Validado pela interface.
 - [x] Ao fechar um documento alterado e escolher "Salvar" na pergunta, aparece o mesmo aviso de perdas e a janela
       fecha depois de salvar. Validado pela interface ([RESULTADOS §5](RESULTADOS-TESTES.md)).
-- [ ] Salvar como / Salvar uma cópia com o aviso de perdas: teste automatizado pela interface (seletor de arquivo).
-- [ ] Teste de **recuperação após falha**: encerrar o processo com documento modificado e conferir a oferta de
-      recuperação na reabertura.
-- [ ] Teste de **salvamento seguro**: falha simulada no meio da gravação não pode corromper o arquivo anterior;
-      conferir a cópia em `%APPDATA%\AYEscreva\1\user\backup`.
-- [ ] Desfazer/refazer: teste automatizado de uma sequência de edições.
-- [ ] TXT: ida e volta com codificação UTF-8 e Windows-1252.
+- [x] Salvar como com o aviso de perdas: teste pela interface (seletor de arquivo do AY → DOCX → aviso → DOCX e
+      cópia ODT). "Salvar uma cópia" usa o mesmo caminho de código, sem teste próprio.
+- [x] **Recuperação após falha**: queda forçada com dois documentos alterados; o salvamento automático real gravou a
+      recuperação, a janela de recuperação apareceu e os dois voltaram com as alterações (`tests/uno/recuperacao.py`).
+- [x] **Salvamento seguro**: cópia de segurança da versão anterior; falha de gravação (arquivo protegido) não
+      altera o arquivo e não perde a alteração; o processo que grava (soffice.bin) encerrado à força 4 vezes, 3
+      delas no meio da gravação de um ODT de 52 MB — o arquivo ficou sempre íntegro (`tests/uno/confiabilidade.py`).
+- [x] Desfazer/refazer: 5 edições (texto, negrito, tabela, imagem, nota) desfeitas e refeitas, salvas em ODT e DOCX.
+- [x] TXT: ida e volta em UTF-8 e Windows-1252, inclusive arquivo Windows-1252 escrito por outro programa.
 - [ ] Ampliar o corpus: documentos reais anonimizados (ABNT, contratos, ofícios), DOCX produzidos por Word 2007,
       2010, 2016/365 e Google Docs.
 
@@ -66,7 +68,8 @@ impressão real pela fila do Windows, exportação PDF e PDF/UA, macros bloquead
 - [ ] Modelos AY: Normal (fonte, espaçamentos), capas, conjuntos de estilos, ABNT (trabalhos acadêmicos).
 - [ ] DESENHAR: predefinições de caneta e marca-texto; avaliar borracha por arrasto e pressão (Nível 2).
 - [ ] Mala direta: teste com CSV e planilha; envelopes e etiquetas Pimaco.
-- [ ] Revisão gramatical offline: avaliar LanguageTool local (Java, servidor em `localhost`) × Lightproof pt-BR.
+- [x] Revisão gramatical offline: decidido usar o Lightproof pt-BR já incluído no motor, com categorias ligadas
+      por nível pelo AY ([REVISAO-E-IA.md §3](REVISAO-E-IA.md)); LanguageTool (Java) fica como avaliação futura.
 - [ ] Autorização por documento para conteúdo externo (hoje bloqueado sempre).
 - [ ] Nível 2 (fork de código): ícones de janela e AppUserModelID próprios, MSI próprio, correção da página em
       branco automática (I1) como opção de compatibilidade, correção da queda com automação UNO externa.
@@ -87,14 +90,41 @@ impressão real pela fila do Windows, exportação PDF e PDF/UA, macros bloquead
 - [ ] Atualização opcional do AY: consulta só quando o usuário pede, sem enviar conteúdo.
 - [ ] Bateria de compatibilidade em CI (GitHub Actions `windows-latest`) com o corpus da Etapa 2.
 
+## Assistência de escrita, modelos e atualizações (pedido de 20/10/2026)
+
+Visão: escrever normalmente, abrir documentos do Word, corrigir erros, melhorar a redação e aplicar um modelo de
+formatação sem configurar cada detalhe — com as mesmas abas, assistência na aba **Revisão** e no painel lateral
+**Assistente AY**, offline primeiro e IA local opcional. Decisões técnicas e fontes em
+[REVISAO-E-IA.md](REVISAO-E-IA.md). Cada entrega gera um instalador de testes; a versão pública (0.2.0) continua
+disponível até a avaliação da seguinte.
+
+| Entrega | Versão | Conteúdo | Situação |
+|---|---|---|---|
+| Confiabilidade | 0.3.0 | recuperação após falha, salvamento seguro, desfazer/refazer, TXT UTF-8/Windows-1252, Salvar como com aviso de perdas pela interface | ✅ testes automatizados (versão de testes local) |
+| **A** | 0.3.0 | correção ortográfica configurável (detecção + correção automática de casos inequívocos com proteções, desfazer, "não corrigir novamente"), dicionário pessoal, gramática e pontuação (Lightproof com explicação), estilo opcional, painel **Assistente AY** e grupo na aba Revisão | ✅ implementada e testada (versão de testes local, ainda não publicada) |
+| **B** | 0.4.0 | assistente "Formatar trabalho acadêmico" (TCC, artigo, projeto, relatório, modelo da instituição) com regras registradas por norma/edição/origem/data, prévia e relatório de conformidade; galeria de modelos (ofício, memorando, relatório, currículo, carta, ata, proposta, personalizado); salvar como modelo | ⬜ |
+| **C** | 0.5.0 | IA local opcional (llama.cpp + modelo com licença permissiva, escolhido por testes em pt-BR): revisar trecho, clareza, formalidade, simplificar, resumir, títulos, explicar, inconsistências; original × proposta; aplicação reversível como alteração controlada | ⬜ |
+| **D** | 0.6.0 | análise de documentos longos em segundo plano, referências estruturadas (sem inventar dados), importação de documento de referência para extrair estilos, mais modelos | ⬜ |
+| **E** | 0.7.0 | "Verificar atualizações" (Ajuda): consulta iniciada pelo usuário, canais estável/testes, manifesto assinado, SHA-256, instalação só com confirmação; sem infraestrutura de assinatura, instalação manual pelo site | ⬜ |
+
+Testes exigidos ao longo das entregas: português brasileiro com nomes próprios e termos técnicos; preservação
+de números, citações e referências; desfazer/refazer depois de correções e formatação; DOCX e ODT com tabelas,
+imagens, notas e alterações controladas; documentos longos e cancelamento; funcionamento sem internet e sem
+modelo; memória, tempo de resposta e digitação durante a IA; acessibilidade do painel; integridade depois de
+salvar e reabrir.
+
 ## Próximo marco
 
 A publicação da 0.2.0 (versão de testes, só Windows 11 x64) não encerra o projeto. Próxima versão:
 
-**0.3.0 — fechamento da Etapa 2 e acessibilidade da faixa**: recuperação após falha, salvamento seguro e
-desfazer/refazer com testes automatizados; teste de Salvar como / Salvar uma cópia com o aviso de perdas;
-clique automatizado nas abas Forma e Visualizar impressão; validação com NVDA e Narrador e por teclado;
-recolhimento dos grupos em janelas estreitas; teste em Windows 10 limpo.
+**0.3.0 — confiabilidade + entrega A: pronta como versão de testes local, aguardando avaliação** (a 0.2.0
+continua sendo a versão pública). Depois da avaliação: publicar a 0.3.0 como nova versão de testes.
+
+**0.4.0 — entrega B**: primeiro, conferir no catálogo oficial da ABNT a edição vigente de cada norma e registrar
+origem e data; depois, o assistente "Formatar trabalho acadêmico" (perfis TCC, artigo, projeto, relatório e
+modelo da instituição) com identificação dos elementos existentes, prévia, relatório de conformidade e galeria de
+modelos. Continuam previstos em paralelo: clique automatizado nas abas Forma e Visualizar impressão; validação com
+NVDA e Narrador; recolhimento dos grupos em janelas estreitas; teste em Windows 10 limpo.
 
 Ainda pendente depois disso (resumo das etapas acima):
 

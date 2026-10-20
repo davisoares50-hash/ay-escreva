@@ -28,6 +28,21 @@
       <node oor:name="ayescreva:DetalhesFontes" oor:op="replace">
         <prop oor:name="Label"><value xml:lang="pt-BR">Detalhes das fontes substituídas</value><value xml:lang="en-US">Substituted Fonts</value></prop>
       </node>
+      <node oor:name="ayescreva:Assistente" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Assistente AY</value><value xml:lang="en-US">AY Assistant</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Abre o painel de revisão do texto (ortografia, gramática, estilo)</value><value xml:lang="en-US">Open the writing review panel</value></prop>
+      </node>
+      <node oor:name="ayescreva:VerificarDocumento" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Verificar documento</value><value xml:lang="en-US">Check Document</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Lista erros de ortografia, gramática e (se ligado) estilo no painel Assistente AY</value><value xml:lang="en-US">List spelling, grammar and style issues in the AY Assistant panel</value></prop>
+      </node>
+      <node oor:name="ayescreva:CorrecaoAutomatica" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Correção automática</value><value xml:lang="en-US">Automatic Correction</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Liga ou desliga a correção, ao digitar, de erros sem ambiguidade (Ctrl+Z desfaz cada correção)</value><value xml:lang="en-US">Toggle correction of unambiguous typos while typing</value></prop>
+      </node>
+      <node oor:name="ayescreva:NaoCorrigir" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Não corrigir novamente</value><value xml:lang="en-US">Do Not Correct Again</value></prop>
+      </node>
     </node>
   </node>
 </oor:component-data>

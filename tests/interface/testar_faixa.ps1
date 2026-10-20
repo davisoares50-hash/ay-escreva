@@ -11,7 +11,8 @@
             ao salvar em DOCX (com cópia em ODT).
     Fase 3: outro DOCX alterado, fechado pela faixa com "Salvar" na pergunta — aviso de perdas, gravação e
             fechamento da janela.
-  O relatório final (tests\output\interface\faixa-resultado.json) junta as três fases.
+    Fase 4: Arquivo › Salvar como DOCX pelo seletor de arquivo do AY — aviso de perdas, DOCX e cópia em ODT.
+  O relatório final (tests\output\interface\faixa-resultado.json) junta as quatro fases.
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File tests\interface\testar_faixa.ps1
   powershell -ExecutionPolicy Bypass -File tests\interface\testar_faixa.ps1 -Somente texto,tabela   # depuração
@@ -60,13 +61,22 @@ function Executar-Fase([string]$nome, [string]$documento, [string[]]$passos, [st
   $dados | ConvertTo-Json | Set-Content -Encoding UTF8 $spec
   $env:AY_TESTE_UI_SPEC = $spec
   $env:AY_SIMULAR_ABERTURA = '1'
+  $env:AY_DEPURAR_REVISAO = '1'
   $inicio = Get-Date
   Start-Process (Join-Path $Dist 'program\soffice.exe') -ArgumentList "-env:UserInstallation=$url", '--norestore', '--nologo', "`"$documento`"" | Out-Null
   $fim = (Get-Date).AddSeconds($Limite)
-  while ((Get-Date) -lt $fim -and -not (Test-Path $resultado)) { Start-Sleep -Seconds 2 }
+  while ((Get-Date) -lt $fim -and -not (Test-Path $resultado)) {
+    Start-Sleep -Seconds 2
+    # Funcionamento offline: nenhuma conexão TCP do motor para fora do computador durante a fase
+    $pids = @(Get-Process soffice.bin -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -ge $inicio.AddSeconds(-2) } | ForEach-Object Id)
+    if (-not $pids.Count -and ((Get-Date) - $inicio).TotalSeconds -gt 30) { break }    # o motor da fase terminou ou caiu
+    foreach ($c in @(Get-NetTCPConnection -ErrorAction SilentlyContinue | Where-Object { $pids -contains $_.OwningProcess })) {
+      if ($c.RemoteAddress -notin @('127.0.0.1', '::1', '0.0.0.0', '::')) { $script:Externas["$nome $($c.RemoteAddress):$($c.RemotePort)"] = $true }
+    }
+  }
   Start-Sleep -Seconds 5
   Get-Process soffice.bin -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -ge $inicio.AddSeconds(-2) } | ForEach-Object { if (-not $_.WaitForExit(20000)) { $_.Kill() } }
-  Remove-Item Env:\AY_TESTE_UI_SPEC, Env:\AY_SIMULAR_ABERTURA
+  Remove-Item Env:\AY_TESTE_UI_SPEC, Env:\AY_SIMULAR_ABERTURA, Env:\AY_DEPURAR_REVISAO
   $quedas = @(Get-WinEvent -FilterHashtable @{ LogName = 'Application'; ProviderName = 'Application Error'; StartTime = $inicio } -ErrorAction SilentlyContinue | Where-Object { $_.Message -like '*soffice*' })
   Remove-Item -Recurse -Force $perfil -ErrorAction SilentlyContinue
   if (-not (Test-Path $resultado)) { throw "Fase ${nome}: sem relatório em $Limite s (quedas registradas: $($quedas.Count))" }
@@ -74,6 +84,7 @@ function Executar-Fase([string]$nome, [string]$documento, [string[]]$passos, [st
 }
 
 Remove-Item "$env:TEMP\ayescreva-extensao.log" -ErrorAction SilentlyContinue
+$script:Externas = @{}
 $odt = Join-Path $Trab 'faixa-teste.odt'
 Copy-Item (Join-Path $Raiz 'tests\output\etapa1\teste-etapa1.odt') $odt
 $docx = Join-Path $Trab 'compatibilidade.docx'
@@ -90,16 +101,43 @@ if (-not $Somente) {
   Copy-Item (Join-Path $Raiz 'tests\fixtures\compatibilidade-ooxml.docx') $docx3
   $r3 = Join-Path $Saida 'faixa-resultado-fase3.json'
   $quedas += Executar-Fase 'f3' $docx3 @('fechar_docx') $r3
-  # Junta os efeitos das fases 2 e 3 no relatório principal
+  # Fase 4: Salvar como DOCX pela faixa (seletor de arquivo do AY + aviso de perdas)
+  $odt4 = Join-Path $Trab 'salvar-como.odt'
+  Copy-Item (Join-Path $Raiz 'tests\output\etapa1\teste-etapa1.odt') $odt4
+  $r4 = Join-Path $Saida 'faixa-resultado-fase4.json'
+  $quedas += Executar-Fase 'f4' $odt4 @('salvar_como_docx') $r4
+  # Fase 5: revisão de texto (entrega A) — digitação real, desfazer, proteções e painel Assistente AY
+  $odt5 = Join-Path $Trab 'revisao.odt'
+  Copy-Item (Join-Path $Raiz 'tests\output\etapa1\teste-etapa1.odt') $odt5
+  $r5 = Join-Path $Saida 'faixa-resultado-fase5.json'
+  $quedas += Executar-Fase 'f5' $odt5 @('revisao') $r5
+  # Fase 6: documento longo (3.000 parágrafos, ~90 mil palavras): verificação em segundo plano e cancelamento
+  $txt6 = Join-Path $Trab 'longo.txt'
+  $frases = @('O relatório apresenta os resultados do trimestre e as metas para o próximo período.',
+    'A equipe revisou os dados com cuidado, mas encontrou palavrass com erro de digitação.',
+    'Os números de 12/10/2025 mostram crescimento de 3,5% em relação ao ano anterior.',
+    'Segundo a diretora Ana Souza, a ONU publicou o documento “Relatório Mundial” em 2024.')
+  $linhas = for ($i = 1; $i -le 3000; $i++) { "$i. $($frases[$i % 4]) $($frases[($i + 1) % 4])" }
+  [IO.File]::WriteAllLines($txt6, $linhas, (New-Object Text.UTF8Encoding($true)))
+  $r6 = Join-Path $Saida 'faixa-resultado-fase6.json'
+  $quedas += Executar-Fase 'f6' $txt6 @('revisao_longo') $r6
+  # Fase 7: integridade — DOCX com tabela, imagem, notas, comentário e alterações, corrigido e salvo em DOCX/ODT
+  $docx7 = Join-Path $Trab 'integridade-origem.docx'
+  Copy-Item (Join-Path $Raiz 'tests\fixtures\compatibilidade-ooxml.docx') $docx7
+  $r7 = Join-Path $Saida 'faixa-resultado-fase7.json'
+  $quedas += Executar-Fase 'f7' $docx7 @('revisao_integridade') $r7
+  # Junta os efeitos das fases 2 a 7 no relatório principal
   $a = Get-Content $resultado -Raw -Encoding UTF8 | ConvertFrom-Json
-  foreach ($par in @(@('fase2', $r2), @('fase3', $r3))) {
+  foreach ($par in @(@('fase2', $r2), @('fase3', $r3), @('fase4', $r4), @('fase5', $r5), @('fase6', $r6), @('fase7', $r7))) {
     $b = Get-Content $par[1] -Raw -Encoding UTF8 | ConvertFrom-Json
     $a.efeitos = @($a.efeitos) + @($b.efeitos)
     $a.dialogos = @($a.dialogos) + @($b.dialogos)
     $a.avisos = @($a.avisos) + @($b.avisos)
     $a.erros = @($a.erros) + @($b.erros)
     $a | Add-Member -NotePropertyName $par[0] -NotePropertyValue @{ inicio = $b.inicio; fim = $b.fim } -Force
+    if ($b.medidas) { $a | Add-Member -NotePropertyName ('medidas_' + $par[0]) -NotePropertyValue $b.medidas -Force }
   }
+  $a | Add-Member -NotePropertyName conexoes_externas -NotePropertyValue @($script:Externas.Keys) -Force
   $a | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 $resultado
 }
 
@@ -110,4 +148,5 @@ $ef = @($r.efeitos)
 "Efeitos conferidos: {0}/{1} | diálogos abertos e fechados: {2} | avisos: {3} | erros: {4} | quedas: {5}" -f @($ef | Where-Object ok).Count, $ef.Count, @($r.dialogos).Count, @($r.avisos).Count, @($r.erros).Count, $quedas
 foreach ($e in $ef | Where-Object { -not $_.ok }) { "  EFEITO NÃO CONFIRMADO: $($e.funcao) — $($e.detalhe)" }
 foreach ($e in @($r.erros) | Select-Object -First 5) { "  ERRO: $e" }
-if (@($ef | Where-Object { -not $_.ok }).Count -or @($r.erros).Count -or $quedas) { exit 1 }
+"Conexões de rede para fora do computador durante os testes: {0}{1}" -f $script:Externas.Count, $(if ($script:Externas.Count) { " (" + (@($script:Externas.Keys) -join ", ") + ")" } else { "" })
+if (@($ef | Where-Object { -not $_.ok }).Count -or @($r.erros).Count -or $quedas -or $script:Externas.Count) { exit 1 }

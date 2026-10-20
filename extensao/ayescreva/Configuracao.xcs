@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configuração do AY ESCREVA (perfil do usuário). SPDX-License-Identifier: MPL-2.0 -->
+<oor:component-schema xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema" oor:name="Configuracao" oor:package="br.ayescreva" xml:lang="pt-BR">
+  <component>
+    <group oor:name="Revisao">
+      <prop oor:name="CorrecaoAutomatica" oor:type="xs:boolean">
+        <info><desc>Corrige ao digitar só casos inequívocos (tabela dados/correcoes_pt_BR.json), com proteções.</desc></info>
+        <value>true</value>
+      </prop>
+      <prop oor:name="Gramatica" oor:type="xs:boolean">
+        <info><desc>Categorias de gramática e pontuação do Lightproof pt-BR.</desc></info>
+        <value>true</value>
+      </prop>
+      <prop oor:name="Estilo" oor:type="xs:boolean">
+        <info><desc>Sugestões de estilo (Lightproof: pleonasmos, gerundismo, cacofonia; regras do AY). Opcional.</desc></info>
+        <value>false</value>
+      </prop>
+      <prop oor:name="NaoCorrigir" oor:type="oor:string-list">
+        <info><desc>Palavras que a correção automática não deve trocar ("Não corrigir novamente").</desc></info>
+        <value/>
+      </prop>
+    </group>
+  </component>
+</oor:component-schema>

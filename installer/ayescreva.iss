@@ -24,12 +24,12 @@
 AppId={{4555F5FD-202B-4A8C-A427-E4CB4FDA6816}
 AppName=AY ESCREVA
 AppVersion={#Versao}
-AppVerName=AY ESCREVA {#Versao} (versão inicial de testes)
+AppVerName=AY ESCREVA {#Versao} (versão de testes)
 AppPublisher=Projeto AY ESCREVA
 AppCopyright=Projeto AY ESCREVA - MPL-2.0
 VersionInfoVersion={#Versao}
 VersionInfoProductName=AY ESCREVA
-VersionInfoDescription=Instalador do AY ESCREVA {#Versao} - versao inicial de testes para Windows 11 x64
+VersionInfoDescription=Instalador do AY ESCREVA {#Versao} - versao de testes para Windows 11 x64
 DefaultDirName={autopf}\AY ESCREVA
 DefaultGroupName=AY ESCREVA
 DisableProgramGroupPage=yes
@@ -63,7 +63,7 @@ RestartApplications=no
 Name: "ptbr"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
 
 [Messages]
-ptbr.WelcomeLabel2=Este assistente vai instalar o AY ESCREVA {#Versao} no seu computador.%n%nEsta é uma VERSÃO INICIAL DE TESTES, validada somente no Windows 11 x64. Algumas ferramentas ainda estão em desenvolvimento; a lista está em "Limitações conhecidas", no menu Ajuda e no site.%n%nO AY ESCREVA é gratuito, funciona sem internet e não exige conta.
+ptbr.WelcomeLabel2=Este assistente vai instalar o AY ESCREVA {#Versao} no seu computador.%n%nEsta é uma VERSÃO DE TESTES, validada somente no Windows 11 x64. Algumas ferramentas ainda estão em desenvolvimento; a lista está em "Limitações conhecidas", no menu Ajuda e no site.%n%nO AY ESCREVA é gratuito, funciona sem internet e não exige conta.
 
 [Tasks]
 Name: "desktopicon"; Description: "Criar atalho na área de trabalho"; GroupDescription: "Atalhos:"

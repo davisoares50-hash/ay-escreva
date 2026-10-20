@@ -6,7 +6,10 @@
   1. aceite_etapa1   criar documento de várias páginas, formatar, tabela, imagem, salvar (ODT/DOCX),
                      fechar, reabrir, conferir e exportar PDF e PDF/UA
   2. impressao       imprime pela fila do Windows somente na impressora virtual "Microsoft Print to PDF"
-  3. seguranca       macro no evento "ao abrir" não executa (com controle positivo) e imagem remota não é baixada
+     revisao_regras  regras da revisão sem o aplicativo: decisão da correção automática e proteções, tabela, estilo
+  3. confiabilidade  desfazer/refazer, TXT UTF-8/Windows-1252, cópia de segurança, falha ao salvar, salvamento
+                     interrompido à força; recuperacao: queda com documentos não salvos e recuperação (≈3 min)
+     seguranca       macro no evento "ao abrir" não executa (com controle positivo) e imagem remota não é baixada
   4. fixtures        gera o DOCX representativo escrito diretamente em OOXML
   5. interface       (só com -ComInterface; ≈25 min) testes pela faixa de opções, de dentro do aplicativo
                      (tests\interface\testar_faixa.ps1); alimenta a coluna "Funcionamento validado" da matriz
@@ -56,6 +59,9 @@ if (-not $SemImpressao) {
     & $Py (Join-Path $Raiz 'tests\uno\impressao.py') (Join-Path $Saida 'etapa1\teste-etapa1.docx') (Join-Path $Saida 'impressao\teste-etapa1-impresso.pdf')
   }
 }
+Etapa 'revisao_regras' { & $Py (Join-Path $Raiz 'tests\revisao\testar_regras.py') }
+Etapa 'confiabilidade' { & $Py (Join-Path $Raiz 'tests\uno\confiabilidade.py') }
+Etapa 'recuperacao' { & $Py (Join-Path $Raiz 'tests\uno\recuperacao.py') }
 Etapa 'seguranca' { Remove-Item (Join-Path $Saida 'seguranca\.~lock.*') -Force -ErrorAction SilentlyContinue; & $Py (Join-Path $Raiz 'tests\uno\seguranca.py') }
 Etapa 'fixtures' { & $Py (Join-Path $Fx 'gerar_docx.py') $Fx (Join-Path $Raiz 'out\marca\icone-128.png') }
 if ($ComInterface) {
