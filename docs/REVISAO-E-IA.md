@@ -168,7 +168,15 @@ Desenho (0.4.0):
 - **O texto não muda:** nenhuma palavra é inserida, apagada ou trocada; títulos com número digitado mantêm o
   número (a numeração automática fica desligada nesses títulos); maiúsculas dos títulos são só de exibição.
   Exceção declarada: ao inserir o sumário automático, o AY cria um parágrafo vazio para ele.
-- **Cópia:** opção "trabalhar numa cópia" (marcada por padrão) abre uma cópia sem título e formata a cópia.
+- **Sempre numa cópia (decisão de 21/10/2026):** no motor, ligar o cabeçalho com o número de página apaga o
+  histórico de desfazer inteiro, e isso não tem conserto pela API. Por isso a formatação só é feita numa cópia sem
+  título (`copia_sem_titulo`, que inclui as alterações não salvas); o documento aberto, suas alterações não salvas e
+  seu histórico não mudam, e `aplicar()` recusa um documento com histórico (`HistoricoEmRisco`). Na cópia, a
+  formatação inteira é uma ação de desfazer e refazer.
+- **Recomeço da contagem de páginas em estilo:** o recomeço posto direto no parágrafo se perde no Refazer (testado);
+  posto num estilo de parágrafo ("… — recomeça em 1"), volta certo. Os filtros do Word só gravam o recomeço direto:
+  ao salvar em DOCX/DOC/RTF, o AY copia o recomeço para o parágrafo com o desfazer travado, grava e desfaz a cópia
+  (`recomecos_para_docx`); o histórico e o estado "modificado" ficam como deviam.
 - **Modelo da instituição:** troca parâmetros (fonte, recuo, alinhamento, margens, destaques, ponto depois do
   indicativo) e registra o manual (título, edição, endereço ou arquivo). Quando a instituição diverge da norma, o
   relatório mostra as duas.
@@ -177,13 +185,15 @@ Desenho (0.4.0):
   reservado do Word; o campo "JumpEdit" do motor some ao salvar em DOCX, conferido por teste). "Salvar como modelo"
   grava um `.ott` na pasta de modelos do perfil. Modelo (aparência e estrutura) e formato do arquivo (ODT ou DOCX
   ao salvar) aparecem separados na galeria.
-- **Achados do motor (testes de 20/10/2026):** ligar o cabeçalho ou mudar um estilo de página existente pela API
-  apaga todo o histórico de desfazer; criar um estilo de página novo com as propriedades já definidas não apaga.
-  Recomeçar a numeração de páginas com paridade trocada faz o motor inserir uma página em branco automática (não
-  vai para o PDF; o DOCX guarda só o recomeço). O refazer não restaura o recomeço da numeração. Ao dividir um
-  parágrafo, o objeto UNO antigo fica com a parte nova. Nas versões novas, `ListFormat` vale sobre prefixo e sufixo
-  da numeração. O AY trata cada um (ver `ay_academico.py`) e o relatório de conformidade aponta o que não dá para
-  evitar.
+- **Achados do motor (testes de 20 e 21/10/2026):** ligar o cabeçalho ou mudar um estilo de página existente pela
+  API apaga todo o histórico de desfazer; criar um estilo de página novo com as propriedades já definidas não apaga.
+  Recomeçar a numeração com paridade trocada faz o motor inserir uma página em branco automática (não vai para o PDF
+  padrão nem para a impressão só de frente; o DOCX guarda só o recomeço). O Refazer não restaura o recomeço direto no
+  parágrafo nem o estilo-pai de um estilo criado (os valores postos no estilo antes de inseri-lo voltam). Atribuir um
+  estilo que define alinhamento tira o alinhamento direto do parágrafo. Ao dividir um parágrafo, o objeto UNO antigo
+  fica com a parte nova. Nas versões novas, `ListFormat` vale sobre prefixo e sufixo da numeração. O AY trata cada um
+  (ver `ay_academico.py`); `tests/uno/academico.py` confere a sequência formatar → desfazer → refazer → salvar →
+  reabrir → PDF → impressão.
 
 ## 7. Atualizações (entrega E) — como garantir a autenticidade
 

@@ -1,30 +1,50 @@
 ﻿<#
 .SYNOPSIS
-  Captura em PNG uma janela de diálogo do AY ESCREVA pelo título exato (PrintWindow), para conferência visual.
+  Captura em PNG uma janela do AY ESCREVA cujo título contém o texto indicado (PrintWindow), para conferência visual.
 .EXAMPLE
-  powershell -File tests\captura_dialogo.ps1 -Titulo 'Formatar trabalho acadêmico' -Saida tests\output\interface\formatar.png
+  powershell -File tests\captura_dialogo.ps1 -Titulo 'Formatar trabalho' -Saida tests\output\interface\formatar.png
 #>
 param([Parameter(Mandatory)][string]$Titulo, [Parameter(Mandatory)][string]$Saida, [int]$Esperar = 10)
 Add-Type -AssemblyName System.Drawing
 Add-Type @'
 using System;
+using System.Text;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 public static class Dlg {
   [StructLayout(LayoutKind.Sequential)] public struct RECT { public int L, T, R, B; }
-  [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern IntPtr FindWindowW(string cls, string titulo);
+  public delegate bool EnumProc(IntPtr h, IntPtr p);
+  [DllImport("user32.dll")] public static extern bool EnumWindows(EnumProc f, IntPtr p);
+  [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetWindowTextW(IntPtr h, StringBuilder s, int n);
+  [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
   [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr hdc, uint flags);
   [DllImport("user32.dll")] public static extern bool SetProcessDPIAware();
+  public static List<string> Titulos = new List<string>();
+  public static IntPtr Achar(string parte) {
+    IntPtr achado = IntPtr.Zero;
+    Titulos.Clear();
+    EnumWindows(delegate (IntPtr h, IntPtr p) {
+      if (!IsWindowVisible(h)) return true;
+      var sb = new StringBuilder(512);
+      GetWindowTextW(h, sb, 512);
+      string t = sb.ToString();
+      if (t.Length > 0) Titulos.Add(t);
+      if (achado == IntPtr.Zero && t.IndexOf(parte, StringComparison.OrdinalIgnoreCase) >= 0) achado = h;
+      return true;
+    }, IntPtr.Zero);
+    return achado;
+  }
 }
 '@
 [void][Dlg]::SetProcessDPIAware()
 $fim = (Get-Date).AddSeconds($Esperar)
 $h = [IntPtr]::Zero
 while ((Get-Date) -lt $fim -and $h -eq [IntPtr]::Zero) {
-  $h = [Dlg]::FindWindowW($null, $Titulo)
+  $h = [Dlg]::Achar($Titulo)
   if ($h -eq [IntPtr]::Zero) { Start-Sleep -Milliseconds 300 }
 }
-if ($h -eq [IntPtr]::Zero) { throw "Janela '$Titulo' não encontrada" }
+if ($h -eq [IntPtr]::Zero) { throw ("Janela com '$Titulo' no título não encontrada. Visíveis: " + ([Dlg]::Titulos -join ' | ')) }
 Start-Sleep -Milliseconds 800
 $r = New-Object Dlg+RECT
 [void][Dlg]::GetWindowRect($h, [ref]$r)

@@ -157,9 +157,21 @@ def origem(regra, perfil):
         if regra.get('diverge_da_norma'):
             t += f' do usuário, diferente da norma ({rotulo_norma(regra["norma"])})'
         return t + (f'. {regra["nota"]}' if regra.get('nota') else '')
-    t = 'Norma: ' + rotulo_norma(regra['norma'])
-    if regra.get('fontes'):
-        t += ', conforme ' + ', '.join(normas()['fontes'][f]['nome'].split('.')[0] for f in regra['fontes'])
+    return origem_norma(regra['norma'], regra.get('fontes'))
+
+
+def origem_norma(nid, fontes):
+    """Norma, edição conferida e fonte secundária de onde a regra foi tirada (o texto oficial não foi consultado)."""
+    n = normas()['normas'].get(nid, {})
+    t = 'Norma: ' + rotulo_norma(nid)
+    if n.get('conferido_em'):
+        t += f' (edição conferida no catálogo da ABNT em {_data_br(normas()["verificado_em"])})'
+    if nid == 'MRPR':
+        return t + '; texto oficial gratuito, consultado'
+    if fontes:
+        t += '; texto oficial não consultado; regra tirada de ' + ', '.join(normas()['fontes'][f].get('curto') or normas()['fontes'][f]['nome'] for f in fontes)
+    else:
+        t += '; texto oficial não consultado e sem guia público consultado para este ponto'
     return t
 
 
@@ -423,15 +435,40 @@ def _familia(doc, nome):
     return doc.getStyleFamilies().getByName(nome)
 
 
-def _estilo_par(doc, nome, pai='Standard', criar=True):
+PROPS_COPIA = ('CharFontName', 'CharFontStyleName', 'CharFontFamily', 'CharFontPitch', 'CharHeight', 'CharWeight', 'CharPosture',
+               'CharCaseMap', 'CharColor', 'CharUnderline', 'ParaAdjust', 'ParaLastLineAdjust', 'ParaFirstLineIndent', 'ParaLeftMargin',
+               'ParaRightMargin', 'ParaTopMargin', 'ParaBottomMargin', 'ParaLineSpacing', 'OutlineLevel', 'BreakType',
+               'ParaKeepTogether', 'ParaSplit', 'ParaOrphans', 'ParaWidows')
+
+
+def _estilo_par(doc, nome, pai='Standard', valores=None, criar=True):
+    """Estilo de parágrafo do AY. Os valores (os do pai mais os da regra) vão no próprio estilo antes de inseri-lo: o
+    Refazer do motor recria o estilo com os valores da criação, mas sem o estilo-pai (testado)."""
     fam = _familia(doc, 'ParagraphStyles')
     if fam.hasByName(nome):
         return fam.getByName(nome)
     if not criar:
         return None
+    todos = {}
+    if fam.hasByName(pai):
+        base = fam.getByName(pai)
+        for k in PROPS_COPIA:
+            try:
+                todos[k] = base.getPropertyValue(k)
+            except Exception:
+                pass
+    todos.update(valores or {})
     s = doc.createInstance('com.sun.star.style.ParagraphStyle')
+    for k, v in todos.items():
+        try:
+            s.setPropertyValue(k, v)
+        except Exception:
+            pass
     fam.insertByName(nome, s)
-    s.setParentStyle(pai)
+    try:
+        fam.getByName(nome).setParentStyle(pai)          # só para a árvore de estilos: os valores já estão no estilo
+    except Exception:
+        pass
     return fam.getByName(nome)
 
 
@@ -527,7 +564,7 @@ def _igual(a, b):
 
 def _mostrar(nome, v):
     if hasattr(v, 'Mode'):
-        return f'entrelinhas {v.Height / 100:.2g}'.replace('.', ',') if v.Mode == 0 else f'entrelinhas fixas {v.Height / 1000:.2f} cm'
+        return f'{v.Height / 100:.2g}'.replace('.', ',') if v.Mode == 0 else f'fixas de {v.Height / 1000:.2f} cm'.replace('.', ',')
     if hasattr(v, 'value'):
         return {'ITALIC': 'itálico', 'NONE': 'sem itálico'}.get(v.value, v.value)
     if nome == 'CharWeight':
@@ -535,7 +572,9 @@ def _mostrar(nome, v):
     if nome == 'CharCaseMap':
         return 'maiúsculas' if v == 1 else 'como digitado'
     if nome in ('ParaAdjust', 'ParaLastLineAdjust'):
-        return NOME_ALINHAMENTO.get(v, str(v))
+        return NOME_ALINHAMENTO.get({5: ESQ, 6: DIR}.get(v, v), str(v))       # 5 e 6: início e fim (vindos do DOCX)
+    if nome == 'OutlineLevel':
+        return 'fora do sumário' if not v else f'nível {v}'
     if nome == 'CharHeight':
         return f'{v:g} pt'
     if nome.startswith('Para') and isinstance(v, int):
@@ -548,7 +587,8 @@ def _mostrar(nome, v):
 NOMES_PROP = {'CharFontName': 'fonte', 'CharHeight': 'tamanho', 'ParaLineSpacing': 'entrelinhas', 'ParaAdjust': 'alinhamento',
               'ParaFirstLineIndent': 'recuo da 1ª linha', 'ParaLeftMargin': 'recuo à esquerda', 'ParaTopMargin': 'espaço antes',
               'ParaBottomMargin': 'espaço depois', 'CharWeight': 'negrito', 'CharPosture': 'itálico', 'CharCaseMap': 'maiúsculas',
-              'CharColor': 'cor', 'OutlineLevel': 'nível no sumário'}
+              'CharColor': 'cor', 'OutlineLevel': 'nível no sumário', 'ParaRightMargin': 'recuo à direita'}
+NOMES_PAGINA = {'Standard': 'Padrão', 'Default Page Style': 'Padrão', 'First Page': 'Primeira página', 'Converted1': 'Seção 1 (do Word)'}
 NOMES_ESTILO = {'Standard': 'Padrão', 'Text body': 'Corpo do texto', 'Body Text': 'Corpo do texto', 'Quotations': 'Citação',
                 'Footnote': 'Nota de rodapé', 'Caption': 'Legenda', 'Header': 'Cabeçalho (número de página)',
                 'Contents Heading': 'Título do sumário'}
@@ -602,7 +642,7 @@ def planejar(doc, perfil, numeracao=None, inserir_sumario=True):
         s = fam.getByName(n)
         atual = (f'{s.Width / 1000:.1f} × {s.Height / 1000:.1f} cm; margens sup. {s.TopMargin / 1000:.2f}, esq. '
                  f'{s.LeftMargin / 1000:.2f}, inf. {s.BottomMargin / 1000:.2f}, dir. {s.RightMargin / 1000:.2f} cm').replace('.', ',')
-        plano.add('Página', f'Estilo de página "{n}": {atual}', 'margens')
+        plano.add('Página', f'Estilo de página "{NOMES_PAGINA.get(n, n)}" (fica sem uso): {atual}', 'margens')
     m = p['margens_cm']
     plano.add('Página', (f'Novos estilos "{PAGINA_PRE}" (sem número) e "{PAGINA_TEXTO}" (número no canto superior '
                          f'{"direito; no verso, esquerdo" if p["frente_e_verso"] else "direito"}): A4, margens superior '
@@ -886,12 +926,102 @@ def _primeiro_na_pagina(doc, a, n):
     return None
 
 
-def _recomecar(el, estilo, numero):
-    try:
-        el.obj.setPropertyValues(('PageDescName', 'PageNumberOffset'), (estilo, numero))
-    except Exception:
-        el.obj.setPropertyValue('PageDescName', estilo)
-        el.obj.setPropertyValue('PageNumberOffset', numero)
+SUFIXO_RECOMECO = ' — recomeça em '
+
+
+def _recomecar(doc, el, estilo_pagina, numero):
+    """Recomeço da contagem guardado num estilo de parágrafo derivado do estilo atual do parágrafo.
+
+    No motor, o recomeço posto direto no parágrafo se perde no Refazer (testado); atribuir um estilo é desfeito e
+    refeito corretamente. O DOCX só grava o recomeço direto: ver recomecos_para_docx()."""
+    fam = _familia(doc, 'ParagraphStyles')
+    base = _prop(el.obj, 'ParaStyleName', '') or 'Standard'
+    if SUFIXO_RECOMECO in base:
+        base = fam.getByName(base).getParentStyle() or 'Standard'
+    nome = f'{nome_estilo(base)}{SUFIXO_RECOMECO}{numero}'
+    if not fam.hasByName(nome):
+        _estilo_par(doc, nome, pai=base, valores={'PageDescName': estilo_pagina, 'PageNumberOffset': numero})
+    else:
+        s = fam.getByName(nome)
+        s.setPropertyValue('PageDescName', estilo_pagina)
+        s.setPropertyValue('PageNumberOffset', numero)
+    # ao receber um estilo que define alinhamento, recuo etc., o motor tira essa formatação direta do parágrafo:
+    # guarda e devolve (a folha de rosto continua centralizada)
+    diretos = {}
+    for k in PROPS_COPIA:
+        if _estado_direto(el.obj, k):
+            diretos[k] = el.obj.getPropertyValue(k)
+    el.obj.setPropertyValue('ParaStyleName', nome)
+    for k, v in diretos.items():
+        if k in ('BreakType',):
+            continue
+        try:
+            el.obj.setPropertyValue(k, v)
+        except Exception:
+            pass
+    if _estado_direto(el.obj, 'PageDescName'):
+        el.obj.setPropertyToDefault('PageDescName')
+
+
+class HistoricoEmRisco(Exception):
+    """O documento tem histórico de desfazer e o motor o apagaria ao criar o cabeçalho: formate uma cópia."""
+
+
+class recomecos_para_docx:
+    """Durante a gravação em DOCX (ou DOC/RTF): copia para o próprio parágrafo o recomeço da contagem que o AY guarda
+    em estilo (os filtros do Word só gravam o recomeço direto) e o retira depois. As duas operações ficam fora do
+    histórico de desfazer (gerenciador travado). 'proprio': a gravação é do próprio documento (Salvar, Salvar como), que
+    fica "não modificado"; senão (Salvar uma cópia, exportar) o estado "modificado" volta ao que era."""
+
+    def __init__(self, doc, proprio=True):
+        self.doc = doc
+        self.proprio = proprio
+        self.feitos = []
+        self.modificado = False
+
+    def __enter__(self):
+        doc = self.doc
+        try:
+            fam = _familia(doc, 'ParagraphStyles')
+            com_recomeco = {n for n in fam.getElementNames() if SUFIXO_RECOMECO in n}
+        except Exception:
+            return self
+        if not com_recomeco:
+            return self
+        self.modificado = doc.isModified()
+        um = doc.getUndoManager()
+        um.lock()
+        try:
+            e = doc.getText().createEnumeration()
+            while e.hasMoreElements():
+                par = e.nextElement()
+                if not par.supportsService('com.sun.star.text.Paragraph') or par.ParaStyleName not in com_recomeco:
+                    continue
+                if _estado_direto(par, 'PageDescName'):
+                    continue
+                s = fam.getByName(par.ParaStyleName)
+                par.setPropertyValues(('PageDescName', 'PageNumberOffset'), (s.PageDescName, s.PageNumberOffset))
+                self.feitos.append(par)
+        except Exception:
+            um.unlock()
+            raise
+        return self
+
+    def __exit__(self, tipo, valor, tb):
+        if not self.feitos:
+            return False
+        doc = self.doc
+        try:
+            for par in self.feitos:
+                try:
+                    par.setPropertyToDefault('PageDescName')
+                except Exception:
+                    pass
+        finally:
+            doc.getUndoManager().unlock()
+            # gravou o próprio documento: "não modificado"; cópia, exportação ou falha: o estado de antes
+            doc.setModified(False if (tipo is None and self.proprio) else self.modificado)
+        return False
 
 
 def _numero_exibido(doc, a, alvo):
@@ -913,16 +1043,19 @@ def _numero_exibido(doc, a, alvo):
 
 
 def aplicar(doc, plano, titulo_desfazer=None):
-    """Aplica o plano numa única ação de desfazer. Devolve um resumo do que foi feito."""
+    """Aplica o plano numa única ação de desfazer. Devolve um resumo do que foi feito.
+
+    Recusa documentos com histórico de desfazer ou refazer: ligar o cabeçalho com o número de página apaga o histórico
+    no motor. O uso previsto é a cópia sem título de copia_sem_titulo(), que nasce sem histórico."""
     a, perfil = plano.analise, plano.perfil
     p = perfil['parametros']
     um = doc.getUndoManager()
+    if um.isUndoPossible() or um.isRedoPossible():
+        raise HistoricoEmRisco('o documento tem histórico de desfazer; formate uma cópia sem título (copia_sem_titulo)')
     titulo_desfazer = titulo_desfazer or f'Formatar trabalho acadêmico ({perfil["nome"]})'
     feito = {'estilos': 0, 'paragrafos': 0, 'sumario_inserido': False, 'pagina_inicial_exibida': None, 'segundos': 0.0}
     t0 = time.time()
-    havia_historico = um.isUndoPossible()
-    paginas = _preparar_paginas(doc, plano)
-    feito['historico_apagado'] = havia_historico and not um.isUndoPossible()
+    paginas = _preparar_paginas(doc, plano)          # fora do desfazer (cabeçalho ligado apagaria o histórico)
     um.enterUndoContext(titulo_desfazer)
     doc.lockControllers()
     try:
@@ -931,7 +1064,7 @@ def aplicar(doc, plano, titulo_desfazer=None):
         corpo = _corpo_nome(doc)
         pais = {ESTILO_PRE: 'Heading', ESTILO_POS: 'Heading', ESTILO_REF: 'Standard', ESTILO_FONTE: 'Caption', ESTILO_OBJETO: 'Standard'}
         for nome, vals in valores_estilos(doc, p).items():
-            s = _estilo_par(doc, nome, pai=pais.get(nome, 'Standard'))
+            s = _estilo_par(doc, nome, pai=pais.get(nome, 'Standard'), valores=vals)
             for k, v in vals.items():
                 try:
                     s.setPropertyValue(k, v)
@@ -1088,14 +1221,14 @@ def aplicar(doc, plano, titulo_desfazer=None):
             if p['capa_fora_da_contagem']:
                 rosto = _primeiro_na_pagina(doc, a, 2)
                 if rosto is not None:
-                    _recomecar(rosto, PAGINA_PRE if rosto.zona == 'pre' else _prop(rosto.obj, 'PageDescName', '') or PAGINA_TEXTO, 1)
+                    _recomecar(doc, rosto, PAGINA_PRE if rosto.zona == 'pre' else _prop(rosto.obj, 'PageDescName', '') or PAGINA_TEXTO, 1)
                     recomecos.append((rosto, 1))
             if p['ficha_fora_da_contagem']:
                 base = recomecos[-1][0] if recomecos else (a.elementos[0] if a.elementos else None)
                 pg = _pagina_fisica(doc, base) if base is not None else None
                 apos = _primeiro_na_pagina(doc, a, pg + 2) if pg else None
                 if apos is not None:
-                    _recomecar(apos, PAGINA_PRE if apos.zona == 'pre' else _prop(apos.obj, 'PageDescName', '') or PAGINA_TEXTO, 2)
+                    _recomecar(doc, apos, PAGINA_PRE if apos.zona == 'pre' else _prop(apos.obj, 'PageDescName', '') or PAGINA_TEXTO, 2)
                     recomecos.append((apos, 2))
             if recomecos and not p['frente_e_verso']:
                 try:
@@ -1498,12 +1631,19 @@ def conferir(doc, perfil, analise=None):
         achou = any(any(t == g or t.startswith(g + ':') for t in titulos_doc) for g in grupo)
         if not achou and 'PALAVRAS-CHAVE' in grupo:
             achou = any(_norm(el.texto).startswith('PALAVRAS-CHAVE') for el in els if el.tipo != 'tabela')
-        itens.append(Item('estrutura', f'Elemento: {grupo[0].capitalize()}', OK if achou else FALHA,
-                          'encontrado' if achou else f'não encontrei o título {" ou ".join(grupo)}', 'norma',
-                          'Norma: ' + rotulo_norma(perfil['norma']) + (', conforme ' + ', '.join(normas()['fontes'][f]['nome'].split('.')[0]
-                                                                          for f in perfil['fontes_estrutura']) if perfil['fontes_estrutura'] else '')))
+        if perfil['fontes_estrutura']:
+            camada, org = 'norma', origem_norma(perfil['norma'], perfil['fontes_estrutura'])
+        else:
+            camada, org = 'preferencia', (f'Preferência: estrutura usual; os elementos exigidos pela {rotulo_norma(perfil["norma"])} '
+                                          'não foram conferidos (nenhum guia público consultado descreve esta edição)')
+        situacao = OK if achou else FALHA
+        if camada == 'preferencia' and situacao == FALHA:
+            situacao = AVISO
+        itens.append(Item('estrutura', f'Elemento: {grupo[0].capitalize()}', situacao,
+                          'encontrado' if achou else f'não encontrei o título {" ou ".join(grupo)}', camada, org))
     for nv in perfil['estrutura']['nao_verificaveis']:
-        itens.append(Item('estrutura', f'Elemento: {nv}', NAO_VERIFICAVEL, 'confira manualmente', 'norma', 'Norma: ' + rotulo_norma(perfil['norma'])))
+        itens.append(Item('estrutura', f'Elemento: {nv}', NAO_VERIFICAVEL, 'o AY não confere este elemento: confira você', 'norma',
+                          origem_norma(perfil['norma'], perfil['fontes_estrutura'])))
     # preferências sem conferência automática
     for rid in ('fonte_menor_tamanho', 'recuo_paragrafo', 'alinhamento', 'destaques_escolhidos'):
         r = R[rid]
@@ -1532,10 +1672,47 @@ def detalhe_item(it, perfil):
     return '\n'.join(partes)
 
 
-def cabecalho_relatorio(perfil):
-    return (f'Perfil: {perfil["nome"]} ({rotulo_norma(perfil["norma"])}). Normas conferidas no catálogo da ABNT em '
-            f'{_data_br(normas()["verificado_em"])}. O texto das normas é vendido pela ABNT: as regras vêm de guias públicos '
-            'de bibliotecas (ver Ajuda). Confira com a norma oficial e com o manual da sua instituição.')
+CATEGORIAS = (('verificada', 'Regras da norma conferidas pelo AY'),
+              ('instituicao', 'Exigências da instituição (modelo informado por você)'),
+              ('preferencia', 'Preferências (a norma não define ou o perfil usa como preferência)'),
+              ('nao_avaliado', 'Não avaliados pelo AY: confira você'),
+              ('nao_se_aplica', 'Não se aplicam a este documento'))
+
+
+def categoria(it):
+    if it.situacao == NAO_SE_APLICA:
+        return 'nao_se_aplica'
+    if it.situacao == NAO_VERIFICAVEL:
+        return 'nao_avaliado'
+    if it.camada == 'instituicao':
+        return 'instituicao'
+    if it.camada == 'preferencia' or it.situacao == 'preferência':
+        return 'preferencia'
+    return 'verificada'
+
+
+def agrupar(itens):
+    return [(cid, rot, [it for it in itens if categoria(it) == cid]) for cid, rot in CATEGORIAS]
+
+
+def resumo_categorias(itens):
+    partes = []
+    for cid, rot, lista in agrupar(itens):
+        if not lista:
+            continue
+        c = resumo_itens(lista)
+        partes.append(f'{rot.split(" (")[0].split(":")[0]}: ' + ', '.join(f'{n} {k}' for k, n in c.items()))
+    return '; '.join(partes)
+
+
+def cabecalho_relatorio(perfil, itens=None):
+    conferidas = sum(1 for it in (itens or []) if categoria(it) in ('verificada', 'instituicao'))
+    nao_av = sum(1 for it in (itens or []) if categoria(it) == 'nao_avaliado')
+    return (f'Perfil: {perfil["nome"]} ({rotulo_norma(perfil["norma"])}). Este relatório NÃO atesta conformidade completa com a ABNT: '
+            f'o AY confere {conferidas} regra(s) automaticamente e não avalia {nao_av} item(ns). As edições das normas foram '
+            f'conferidas no catálogo oficial da ABNT em {_data_br(normas()["verificado_em"])}; o texto das normas (vendido pela ABNT) '
+            'não foi consultado: cada regra indica o guia público de onde foi tirada. Confira com a norma oficial e com o manual '
+            'da sua instituição.')
 
 
 def _data_br(iso):
@@ -1557,17 +1734,21 @@ def documento_relatorio(desktop, itens, perfil, nome_documento='', extra=()):
     if nome_documento:
         par(f'Documento: {nome_documento}')
     par(f'Gerado em {time.strftime("%d/%m/%Y %H:%M")} pelo AY ESCREVA.')
-    par(cabecalho_relatorio(perfil))
-    c = resumo_itens(itens)
-    par('Resumo: ' + ', '.join(f'{n} {k}' for k, n in c.items()) + '.')
-    tab = rel.createInstance('com.sun.star.text.TextTable')
-    tab.initialize(len(itens) + 1, 5)
-    texto.insertTextContent(cur, tab, False)
-    for col, t in enumerate(('Regra', 'Situação', 'Camada', 'Origem', 'Detalhe')):
-        tab.getCellByPosition(col, 0).setString(t)
-    for lin, it in enumerate(itens, 1):
-        for col, t in enumerate((it.titulo, it.situacao, CAMADAS.get(it.camada, it.camada), it.origem, it.detalhe)):
-            tab.getCellByPosition(col, lin).setString(t or '')
+    par(cabecalho_relatorio(perfil, itens))
+    par('Resumo: ' + resumo_categorias(itens) + '.')
+    for cid, rot, lista in agrupar(itens):
+        if not lista:
+            continue
+        par(rot, 'Heading 2')
+        tab = rel.createInstance('com.sun.star.text.TextTable')
+        tab.initialize(len(lista) + 1, 4)
+        texto.insertTextContent(cur, tab, False)
+        for col, t in enumerate(('Regra', 'Situação', 'Origem', 'Detalhe')):
+            tab.getCellByPosition(col, 0).setString(t)
+        for lin, it in enumerate(lista, 1):
+            for col, t in enumerate((it.titulo, it.situacao, it.origem, it.detalhe)):
+                tab.getCellByPosition(col, lin).setString(t or '')
+        cur.gotoEnd(False)
     rel.setModified(False)
     return rel
 

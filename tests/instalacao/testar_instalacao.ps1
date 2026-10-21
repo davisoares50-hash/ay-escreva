@@ -92,11 +92,13 @@ Verificar 'instalador terminou com código 0' ($p.ExitCode -eq 0) "código $($p.
 Verificar 'programa instalado em %LOCALAPPDATA%\Programs\AY ESCREVA' (Test-Path (Join-Path $PastaApp 'AYEscreva.exe'))
 Verificar 'motor instalado' (Test-Path (Join-Path $PastaApp 'program\soffice.exe'))
 $extInst = Join-Path $PastaApp 'share\extensions\ayescreva'
-$pecas = @('pythonpath\ay_revisao.py', 'pythonpath\ay_correcao.py', 'pythonpath\ay_painel.py', 'dados\correcoes_pt_BR.json', 'Painel.xdl', 'Sidebar.xcu', 'Configuracao.xcs')
+$pecas = @('pythonpath\ay_revisao.py', 'pythonpath\ay_correcao.py', 'pythonpath\ay_painel.py', 'dados\correcoes_pt_BR.json', 'Painel.xdl', 'Sidebar.xcu', 'Configuracao.xcs',
+           'pythonpath\ay_academico.py', 'pythonpath\ay_formatar.py', 'pythonpath\ay_modelos.py', 'pythonpath\ay_galeria.py', 'pythonpath\ay_dialogos.py',
+           'dados\normas.json', 'dados\perfis_formatacao.json')
 $faltam = @($pecas | Where-Object { -not (Test-Path (Join-Path $extInst $_)) })
 if (Test-Path (Join-Path $extInst 'description.xml')) {
   $versaoExt = ([xml](Get-Content (Join-Path $extInst 'description.xml') -Raw -Encoding UTF8)).description.version.value
-  Verificar 'extensão AY instalada com a revisão de texto e o painel Assistente AY' ($faltam.Count -eq 0) ("versão da extensão $versaoExt" + $(if ($faltam.Count) { '; faltam: ' + ($faltam -join ', ') } else { '' }))
+  Verificar 'extensão AY instalada com revisão de texto, Assistente AY, formatação acadêmica e galeria de modelos' ($faltam.Count -eq 0) ("versão da extensão $versaoExt" + $(if ($faltam.Count) { '; faltam: ' + ($faltam -join ', ') } else { '' }))
 }
 $tam = (Get-ChildItem $PastaApp -Recurse -File | Measure-Object Length -Sum).Sum / 1MB
 Verificar 'tamanho instalado' ($tam -gt 500) ('{0:N0} MB' -f $tam)

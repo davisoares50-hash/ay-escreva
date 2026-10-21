@@ -58,16 +58,27 @@ class AcademicoMixin:
         raiz = os.path.dirname(os.path.dirname(self.spec['abas']))
         saida = os.path.join(raiz, 'tests', 'output', 'interface', nome + '.png')
         try:
-            subprocess.run(['powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', os.path.join(raiz, 'tests', 'captura_dialogo.ps1'),
-                            '-Titulo', titulo, '-Saida', saida], capture_output=True, text=True, timeout=60)
-        except Exception:
-            pass
+            r = subprocess.run(['powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', os.path.join(raiz, 'tests', 'captura_dialogo.ps1'),
+                                '-Titulo', titulo, '-Saida', saida], capture_output=True, text=True, timeout=60)
+            self._log_rev(f'captura {nome}: ' + (r.stdout or r.stderr).strip()[-300:])
+        except Exception as e:
+            self._log_rev(f'captura {nome}: {e}')
         return os.path.exists(saida)
 
     def _estado_doc(self, doc):
         def f():
-            return doc.isModified(), hashlib.sha256(doc.getText().getString().encode('utf-8')).hexdigest(), doc.getURL()
+            um = doc.getUndoManager()
+            return (doc.isModified(), hashlib.sha256(doc.getText().getString().encode('utf-8')).hexdigest(), doc.getURL(),
+                    um.getAllUndoActionTitles(), um.getAllRedoActionTitles())
         return self.no_principal(f)
+
+    def ctrl_y(self):
+        robo = self._robo()
+        ev = uno.createUnoStruct('com.sun.star.awt.KeyEvent')
+        ev.Source, ev.KeyCode, ev.KeyChar, ev.Modifiers = self.frame.getContainerWindow(), 536, chr(25), 2
+        robo.keyPress(ev)
+        robo.keyRelease(ev)
+        time.sleep(0.8)
 
     def _componente_atual(self):
         return self.no_principal(lambda: self.desktop.getCurrentComponent())
@@ -75,6 +86,10 @@ class AcademicoMixin:
     # ---------- Formatar trabalho acadêmico ----------
     def academico_formatar(self):
         original = self.doc
+        # uma alteração digitada e não salva: o original tem histórico de desfazer que não pode se perder
+        self.no_principal(lambda: self.ctrl.getViewCursor().gotoEnd(False))
+        self.focar_documento()
+        self.digitar(' Frase digitada antes de formatar.')
         antes = self._estado_doc(original)
         self._abrir_async('ayescreva:FormatarTrabalho')
         d = self._esperar_dialogo('formatar')
@@ -82,18 +97,18 @@ class AcademicoMixin:
         if d is None:
             return
         sem, nomes = self._nomes_acessiveis(d)
-        self._capturar('Formatar trabalho acadêmico', 'dialogo-formatar')
+        self._capturar('Formatar trabalho', 'dialogo-formatar')
         self.efeito('Acessibilidade: controles do diálogo Formatar com nome acessível', not sem,
-                    'sem nome: ' + (', '.join(sem) or 'nenhum') + ' | perfil="' + nomes.get('perfil', '') + '" copia="' + nomes.get('copia', '') + '"')
+                    'sem nome: ' + (', '.join(sem) or 'nenhum') + ' | perfil="' + nomes.get('perfil', '') + '"')
         perfis = self.no_principal(lambda: d.c('perfil').getItemCount())
-        self.no_principal(lambda: setattr(d.m('copia'), 'State', 1))
-        self.efeito('Diálogo mostra os cinco perfis (TCC, projeto, artigo, relatório, instituição) e a cópia marcada',
-                    perfis == 5 and self.no_principal(lambda: d.m('copia').State) == 1, f'{perfis} perfis')
+        nota = self.no_principal(lambda: d.m('nota_copia').Label)
+        self.efeito('Diálogo mostra os cinco perfis e informa que a formatação é sempre feita numa cópia (sem opção no original)',
+                    perfis == 5 and 'cópia sem título' in nota and 'copia' not in d.dm.getElementNames(), f'{perfis} perfis')
         self.acionar_teclado(d.c('previa'))
         pv = self._esperar_dialogo('previa', 60)
         n_mud = self.no_principal(lambda: d_mud(pv)) if pv else 0
         if pv:
-            self._capturar('Prévia — o que vai mudar', 'dialogo-previa')
+            self._capturar('o que vai mudar', 'dialogo-previa')
         self.efeito('Prévia pelo teclado: lista do que vai mudar, sem alterar o documento',
                     pv is not None and n_mud >= 10 and self._estado_doc(original) == antes, f'{n_mud} mudanças')
         if pv is None:
@@ -107,14 +122,14 @@ class AcademicoMixin:
         rel = self._esperar_dialogo('relatorio', 120)
         linhas = self.no_principal(lambda: tuple(rel.m('itens').StringItemList)) if rel else ()
         topo = self.no_principal(lambda: rel.m('cabecalho').Label) if rel else ''
-        conformes = [x for x in linhas if x.startswith('✓')]
-        falhas = [x for x in linhas if x.startswith('✗')]
+        conformes = [x for x in linhas if x.strip().startswith('✓')]
+        falhas = [x for x in linhas if x.strip().startswith('✗')]
         self.efeito('Aplicar numa cópia: relatório de conformidade aparece com as regras conferidas',
-                    rel is not None and len(linhas) >= 15 and any('Margens' in x for x in conformes) and 'cópia sem título' in topo,
+                    rel is not None and len(linhas) >= 15 and any('Margens' in x for x in conformes) and 'cópia sem título' in topo.lower(),
                     f'{len(conformes)} conformes, {len(falhas)} não conformes: {"; ".join(falhas)[:200]}')
         if rel is not None:
             sem, _ = self._nomes_acessiveis(rel)
-            self._capturar('Relatório de conformidade', 'dialogo-relatorio')
+            self._capturar('de conformidade', 'dialogo-relatorio')
             self.efeito('Acessibilidade: controles do relatório com nome acessível', not sem, 'sem nome: ' + (', '.join(sem) or 'nenhum'))
             self.acionar_teclado(rel.c('fechar'))
         self._sem_dialogos()
@@ -125,8 +140,17 @@ class AcademicoMixin:
             primeiro = copia.getText().createEnumeration().nextElement()
             return copia.getURL(), primeiro.PageStyleName, copia.getDocumentIndexes().getCount(), copia.getUndoManager().isUndoPossible()
         url, estilo, indices, desfazivel = self.no_principal(info_copia)
-        self.efeito('Original intacto (texto, arquivo e "modificado") e a cópia sem título formatada',
-                    depois == antes and url == '' and estilo == 'AY Pré-textual' and indices >= 1, f'cópia: estilo {estilo}, índices {indices}')
+        self.efeito('Original intacto (texto com a frase não salva, arquivo, "modificado" e histórico de desfazer) e a cópia sem título formatada',
+                    depois == antes and antes[0] and len(antes[3]) >= 1 and url == '' and estilo == 'AY Pré-textual' and indices >= 1,
+                    f'histórico do original: {antes[3][:2]}; cópia: estilo {estilo}, índices {indices}')
+
+        def sumario_intro():
+            idx = copia.getDocumentIndexes()
+            if idx.getCount() == 0:
+                return None
+            linhas = idx.getByIndex(0).getAnchor().getString().splitlines()
+            return next((l for l in linhas if l.startswith('1 INTRODUÇÃO')), None)
+        intro = self.no_principal(sumario_intro)
         # Ctrl+Z na cópia desfaz a formatação inteira (uma ação)
         janela_copia = self.no_principal(lambda: copia.getCurrentController().getFrame())
         quadro_original = self.frame
@@ -139,11 +163,113 @@ class AcademicoMixin:
                                                             copia.getDocumentIndexes().getCount()))
             self.efeito('Ctrl+Z pelo teclado na cópia desfaz a formatação inteira', desfazivel and estilo2 != 'AY Pré-textual' and indices2 == 0,
                         f'estilo da 1ª página {estilo2}; índices {indices2}')
+            self.ctrl_y()
+            time.sleep(1.0)
+            estilo3 = self.no_principal(lambda: copia.getText().createEnumeration().nextElement().PageStyleName)
+            intro3 = self.no_principal(sumario_intro)
+            self.efeito('Ctrl+Y pelo teclado refaz a formatação inteira, com a mesma numeração no sumário',
+                        estilo3 == 'AY Pré-textual' and intro is not None and intro3 == intro, f'antes: {intro!r}; refeito: {intro3!r}')
         finally:
             self.frame = quadro_original
             self.no_principal(lambda: (copia.setModified(False), copia.close(True)))
             time.sleep(0.5)
             self.focar_documento()
+
+    # ---------- teclado: foco, tabulação e teclas de acesso ----------
+    def _teclado_dialogo(self, d, primeiro, segundo, rotulo):
+        """Foco inicial no primeiro controle, Tab vai ao seguinte (rótulos são pulados), Shift+Tab volta; teclas de acesso únicas."""
+        FOCADO = uno.getConstantByName('com.sun.star.accessibility.AccessibleStateType.FOCUSED')
+
+        def tem_foco(ac, nivel=0):
+            # estados acessíveis: conjunto de bits (versões novas do motor) ou objeto com contains()
+            st = ac.getAccessibleStateSet()
+            foco = bool(st & FOCADO) if isinstance(st, int) else st.contains(FOCADO)
+            if foco:
+                return True
+            if nivel < 3:          # lista suspensa: o foco fica na parte de dentro (campo ou lista)
+                for k in range(min(ac.getAccessibleChildCount(), 8)):
+                    if tem_foco(ac.getAccessibleChild(k).getAccessibleContext(), nivel + 1):
+                        return True
+            return False
+
+        def focado():
+            for n in d.dm.getElementNames():
+                try:
+                    ctl = d.c(n)
+                    if ctl.getPeer() is not None and (ctl.hasFocus() or tem_foco(ctl.getAccessibleContext())):
+                        return n
+                except Exception:
+                    pass
+            return None
+
+        def mnemonicos():
+            vistos, repetidos = {}, []
+            for n in d.dm.getElementNames():
+                m = d.dm.getByName(n)
+                rot = getattr(m, 'Label', '') if hasattr(m, 'Label') else ''
+                if '~' in (rot or ''):
+                    letra = rot[rot.index('~') + 1].lower()
+                    if letra in vistos:
+                        repetidos.append(f'{letra}: {vistos[letra]} / {n}')
+                    vistos[letra] = n
+            return repetidos
+        inicial = self.no_principal(focado)
+        robo = self._robo()
+
+        def tab(shift=False):
+            ev = uno.createUnoStruct('com.sun.star.awt.KeyEvent')
+            ev.Source = d.dlg.getPeer()
+            ev.KeyCode, ev.KeyChar, ev.Modifiers = 1282, chr(9), 1 if shift else 0
+            robo.keyPress(ev)
+            robo.keyRelease(ev)
+            time.sleep(0.4)
+        tab()
+        depois_tab = self.no_principal(focado)
+        tab(shift=True)
+        volta = self.no_principal(focado)
+        rep = self.no_principal(mnemonicos)
+        self.efeito(f'Teclado em "{rotulo}": foco inicial em {primeiro}, Tab vai a {segundo}, Shift+Tab volta; teclas de acesso sem repetição',
+                    inicial == primeiro and depois_tab == segundo and volta == primeiro and not rep,
+                    f'inicial {inicial}, Tab {depois_tab}, Shift+Tab {volta}; repetidas: {rep}')
+
+    # ---------- modelo da instituição ----------
+    def academico_instituicao(self):
+        self._abrir_async('ayescreva:FormatarTrabalho')
+        d = self._esperar_dialogo('formatar')
+        if d is None:
+            self.efeito('Modelo da instituição: diálogo Formatar abre', False)
+            return
+        self._teclado_dialogo(d, 'perfil', 'fonte', 'Formatar trabalho acadêmico')
+        self.acionar_teclado(d.c('instituicao'))
+        i = self._esperar_dialogo('instituicao')
+        self.efeito('Modelo da instituição abre pelo botão do diálogo Formatar', i is not None)
+        if i is None:
+            return
+        self._capturar('Modelo da institui', 'dialogo-instituicao')
+        sem, _ = self._nomes_acessiveis(i)
+        self._teclado_dialogo(i, 'nome', 'man_titulo', 'Modelo da instituição')
+
+        def preencher():
+            i.c('nome').setText('Universidade do Teste')
+            i.c('fonte').setText('Arial')
+            i.m('ponto').State = 1
+            # o ouvinte de digitação atualiza a prévia; a caixa de marcação, ao mudar o estado pelo modelo, não avisa
+            i.c('tamanho').setText('11')
+        self.no_principal(preencher)
+        time.sleep(0.6)
+        self.acionar_teclado(i.c('ponto'))          # Espaço desmarca e o ouvinte atualiza a prévia
+        self.acionar_teclado(i.c('ponto'))          # e marca de novo
+        dif = self.no_principal(lambda: tuple(i.m('diferencas').StringItemList))
+        texto = ' | '.join(dif)
+        self.efeito('Modelo da instituição: prévia mostra cada mudança, o valor do perfil base e a divergência da norma; controles com nome acessível',
+                    'Fonte: Arial (perfil base: Times New Roman)' in texto and 'diverge da norma (NBR 6024:2012)' in texto
+                    and 'Tamanho da letra: 11 pt' in texto and not sem, texto[:300] + (f'; sem nome: {sem}' if sem else ''))
+        self.acionar_teclado(i.c('cancelar'))
+        d2 = self._esperar_dialogo('formatar')
+        if d2 is not None:
+            self.acionar_teclado(d2.c('fechar'))
+        self._sem_dialogos()
+        self.focar_documento()
 
     # ---------- galeria de modelos ----------
     def academico_galeria(self):

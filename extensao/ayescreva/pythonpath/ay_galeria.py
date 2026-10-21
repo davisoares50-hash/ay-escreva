@@ -46,12 +46,12 @@ def _dialogo(ctx, frame):
     pessoais = M.pessoais(ctx)
     entradas = [('modelo', m) for m in M.MODELOS] + [('pessoal', p) for p in pessoais]
     nomes = [m['nome'] for m in M.MODELOS] + [f'Personalizado: {n}' for n, _ in pessoais]
-    d = D.Dialogo(ctx, 'Galeria de modelos', 360, 250, nome='galeria')
+    d = D.Dialogo(ctx, 'Galeria de modelos', 420, 246, nome='galeria')
     d.rotulo('r_lista', 6, 4, 140, '~Modelos:')
     d.add('ListBox', 'lista', 6, 18, 140, 186, StringItemList=tuple(nomes), Border=1)
-    d.rotulo('r_desc', 152, 4, 202, '~Sobre o modelo:')
-    d.add('Edit', 'descricao', 152, 18, 202, 110, MultiLine=True, ReadOnly=True, VScroll=True, Border=1)
-    d.add('FixedText', 'formato', 152, 132, 202, 72, MultiLine=True, Label=FORMATO)
+    d.rotulo('r_desc', 152, 4, 262, '~Sobre o modelo:')
+    d.add('Edit', 'descricao', 152, 18, 262, 120, MultiLine=True, ReadOnly=True, VScroll=True, Border=1)
+    d.add('FixedText', 'formato', 152, 142, 262, 62, MultiLine=True, Label=FORMATO)
 
     def atual():
         i = d.c('lista').getSelectedItemPos()
@@ -80,11 +80,11 @@ def _dialogo(ctx, frame):
         if e is not None and e[0] == 'pessoal':
             d.fechar(('remover', e[1][1]))
 
-    d.botao('criar', 6, 230, 90, '~Criar documento', criar, padrao=True)
-    d.botao('salvar', 100, 230, 116, 'Salvar documento ~atual como modelo…', lambda: d.fechar(('salvar', None)))
-    d.botao('pasta', 220, 210, 80, 'Abrir ~pasta', lambda: d.fechar(('pasta', None)))
-    d.botao('remover', 220, 230, 80, 'Re~mover pessoal', remover)
-    d.botao('fechar', 304, 230, 50, '~Fechar', lambda: d.fechar(None))
+    d.botao('criar', 6, 226, 84, '~Criar documento', criar, padrao=True)
+    d.botao('salvar', 94, 226, 146, 'Salvar documento ~atual como modelo…', lambda: d.fechar(('salvar', None)))
+    d.botao('pasta', 244, 226, 60, 'Abrir ~pasta', lambda: d.fechar(('pasta', None)))
+    d.botao('remover', 308, 226, 62, 'Remover pessoa~l', remover)
+    d.botao('fechar', 374, 226, 40, '~Fechar', lambda: d.fechar(None))
     d.ao_mudar('lista', mostrar)
 
     def iniciar():

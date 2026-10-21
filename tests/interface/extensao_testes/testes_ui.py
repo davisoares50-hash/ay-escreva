@@ -390,7 +390,8 @@ class Teste(RevisaoMixin, AcademicoMixin):
                            'revisao_captura': [(self.revisao_captura, 6.0)],
                            'revisao_integridade': [(self.revisao_integridade, 6.0)],
                            # Entrega B: formatar trabalho acadêmico (cópia, prévia, relatório, desfazer) e galeria de modelos
-                           'academico': [(self.academico_formatar, 6.0), (self.academico_galeria, 0.5), (self.academico_salvar_modelo, 0.5)]}
+                           'academico': [(self.academico_formatar, 6.0), (self.academico_instituicao, 0.5), (self.academico_galeria, 0.5),
+                                         (self.academico_salvar_modelo, 0.5)]}
             for nome in somente:
                 passos.extend(mapa_passos[nome])
             return passos

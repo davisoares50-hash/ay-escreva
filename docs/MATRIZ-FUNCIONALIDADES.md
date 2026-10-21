@@ -1,6 +1,6 @@
 # Matriz de funcionalidades do AY ESCREVA
 
-> Gerado por `tests/uno/comandos.py` a partir de `ui/abas.json`, do mapa da faixa e do teste pela interface de 2026-10-20T13:29:00, em 2026-10-20. Não editar à mão.
+> Gerado por `tests/uno/comandos.py` a partir de `ui/abas.json`, do mapa da faixa e do teste pela interface de 2026-10-21T07:51:48, em 2026-10-21. Não editar à mão.
 
 **Como ler as colunas**
 
@@ -9,7 +9,7 @@
 - **Funcionamento validado**: *Pela interface* = o teste clicou no botão da faixa, confirmou o comando disparado e conferiu o efeito no documento ou na exibição. *Acionado pela interface* = o clique disparou o comando certo (e o diálogo/lista que abriu foi registrado), mas o efeito não tem verificação automática. *Por API* = a função foi exercitada de ponta a ponta pelos testes de documento, sem clicar no botão.
 - **Prioridade**: P0 = Etapas 1-2, P1 = Etapa 3, P2 = Etapa 4, P3 = avaliar.
 
-**Resumo** (241 funções): comando encontrado 236 · implementadas 236 (botão confirmado pela interface: 213) · validadas pela interface 38 · só acionadas pela interface 113 · validadas por API 49 · pendentes 5
+**Resumo** (245 funções): comando encontrado 240 · implementadas 240 (botão confirmado pela interface: 217) · validadas pela interface 38 · só acionadas pela interface 117 · validadas por API 49 · pendentes 5
 
 
 ## Arquivo
@@ -17,7 +17,9 @@
 | Grupo | Função | Comando | Comando encontrado | Funcionalidade implementada | Funcionamento validado | Prioridade | Critério de aceite | Pendências e observações |
 |---|---|---|---|---|---|---|---|---|
 | Novo | Novo documento | `.uno:AddDirect` | Sim | Sim — botão na faixa (confirmado pela interface) | Por API: aceite_etapa1 | P0 | Abre documento de texto em branco |  |
+| Novo | Galeria de modelos | `ayescreva:Galeria` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Galeria de modelos" (fechado pelo teste) (efeito não conferido) | P1 | Cria documento novo a partir de um modelo do AY (ofício, memorando, relatório, currículo, carta, ata, proposta) ou de um modelo pessoal; mostra a origem de cada modelo e separa modelo de formato |  |
 | Novo | Modelos | `.uno:NewDoc` | Sim | Sim — botão na faixa (confirmado pela interface) | Não validado | P1 | Abre o gerenciador de modelos e cria documento a partir de um modelo |  |
+| Novo | Salvar como modelo | `ayescreva:SalvarModelo` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Salvar como modelo" (fechado pelo teste) (efeito não conferido) | P1 | Grava o documento atual como modelo pessoal (.ott) na pasta de modelos do AY; o documento aberto não muda |  |
 | Documento | Abrir | `.uno:Open` | Sim | Sim — botão na faixa (confirmado pela interface) | Por API: ida_e_volta | P0 | Abre DOCX, ODT, DOC, RTF e TXT locais |  |
 | Documento | Recentes | `.uno:Open` | Sim | Sim, por outro controle (seta do botão Abrir) | Por API: ida_e_volta | P1 | Lista os documentos recentes do perfil local |  |
 | Documento | Salvar | `.uno:Save` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface: ODT gravado pelo botão Salvar, sem aviso (formato nativo) · Por API: aceite_etapa1 | P0 | Salva no formato atual; avisa possíveis perdas antes de salvar fora do ODT |  |
@@ -161,6 +163,8 @@
 
 | Grupo | Função | Comando | Comando encontrado | Funcionalidade implementada | Funcionamento validado | Prioridade | Critério de aceite | Pendências e observações |
 |---|---|---|---|---|---|---|---|---|
+| Trabalho acadêmico | Formatar trabalho acadêmico | `ayescreva:FormatarTrabalho` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Formatar trabalho acadêmico" (fechado pelo teste) (efeito não conferido) | P1 | Aplica as regras da ABNT (NBR 14724, 15287, 6022 ou 10719) ou do modelo da instituição com estilos e campos reais, prévia, cópia opcional e uma única ação de desfazer |  |
+| Trabalho acadêmico | Relatório de conformidade | `ayescreva:Conformidade` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Relatório de conformidade" (fechado pelo teste) (efeito não conferido) | P1 | Confere o documento regra a regra (conforme, não conforme, aviso, não verificável) com norma, edição, camada e origem |  |
 | Sumário | Sumário e índices | `.uno:InsertMultiIndex` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) · Por API: ida_e_volta (sumário) | P1 | Gera sumário a partir dos títulos (também bibliografia, ilustrações e índice remissivo, escolhendo o tipo); preservado em DOCX |  |
 | Sumário | Atualizar sumário | `.uno:UpdateCurIndex` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P1 | Atualiza números de página e entradas |  |
 | Sumário | Atualizar todos os índices | `.uno:UpdateAllIndexes` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P1 | Atualiza sumários, listas e índices |  |

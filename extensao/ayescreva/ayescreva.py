@@ -15,6 +15,7 @@ Componentes:
 Nada aqui acessa a rede nem lê conteúdo de documentos para fora do computador.
 SPDX-License-Identifier: MPL-2.0
 """
+import contextlib
 import os
 import platform
 import sys
@@ -36,6 +37,7 @@ ID_EXTENSAO = 'br.ayescreva.extensao'
 _PYTHONPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pythonpath')
 if _PYTHONPATH not in sys.path:
     sys.path.insert(0, _PYTHONPATH)
+import ay_academico  # noqa: E402
 import ay_formatar  # noqa: E402
 import ay_galeria  # noqa: E402
 import ay_painel  # noqa: E402
@@ -375,10 +377,18 @@ def escolher_arquivo(ctx, doc, filtro_atual, copia=False):
 def _guardar(doc, url, filtro, como=True):
     extra = {'FilterOptions': 'UTF8,CRLF,,'} if filtro == 'Text (encoded)' else {}
     args = _props(FilterName=filtro, Overwrite=True, **extra)
-    if como:
-        doc.storeAsURL(url, args)
-    else:
-        doc.storeToURL(url, args)
+    with _recomecos(doc, filtro, proprio=como):
+        if como:
+            doc.storeAsURL(url, args)
+        else:
+            doc.storeToURL(url, args)
+
+
+def _recomecos(doc, filtro, proprio=True):
+    """Fora do ODT, o recomeço da contagem de páginas que o AY guarda em estilo vai para o parágrafo durante a gravação."""
+    if not filtro or filtro in NATIVOS:
+        return contextlib.nullcontext()
+    return ay_academico.recomecos_para_docx(doc, proprio)
 
 
 def _url_copia_odt(url):
@@ -529,7 +539,8 @@ class _DespachoSalvar(unohelper.Base, XNotifyingDispatch):
                 destino = _url_copia_odt(doc.getURL())
                 _guardar(doc, destino, 'writer8', como=False)
                 _infobar(doc, 'ay-copia', 'Cópia completa em ODT guardada.', uno.fileUrlToSystemPath(destino))
-        doc.store()
+        with _recomecos(doc, filtro):
+            doc.store()
         return True
 
     def _salvar_como(self, doc, copia):

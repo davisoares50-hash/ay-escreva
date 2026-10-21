@@ -33,10 +33,6 @@
         <info><desc>Modelo da instituição (JSON: nome, manual e parâmetros que trocam os da norma ou as preferências).</desc></info>
         <value/>
       </prop>
-      <prop oor:name="TrabalharNaCopia" oor:type="xs:boolean">
-        <info><desc>Formatar uma cópia sem título em vez do documento aberto.</desc></info>
-        <value>true</value>
-      </prop>
     </group>
   </component>
 </oor:component-schema>

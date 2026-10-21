@@ -1,8 +1,9 @@
-# Resultados dos testes — versão 0.3.0 (versão de testes local, em avaliação) · versão pública: 0.2.0
+# Resultados dos testes — versão 0.4.0 (versão de testes local, em avaliação) · versão pública: 0.2.0
 
-Execução da 0.3.0: 20/10/2026 · `scripts/testar.ps1` + `tests/interface/testar_faixa.ps1` (7 fases) +
-`tests/instalacao/testar_instalacao.ps1`. As seções 2–4 e 6–11 valem para as duas versões, salvo indicação; a
-publicação (§10) e o fluxo do site referem-se à 0.2.0, a versão pública.
+Execução da 0.4.0: 21/10/2026 · `scripts/testar.ps1 -ComInterface` (15 etapas, 0 falhas; inclui
+`tests/interface/testar_faixa.ps1` com 8 fases) + `tests/instalacao/testar_instalacao.ps1` +
+`tests/instalacao/testar_atualizacao.ps1`. Resultados da 0.3.0 (20/10/2026) ficam indicados onde ainda servem de
+comparação; a publicação (§10) e o fluxo do site referem-se à 0.2.0, a versão pública.
 Ambiente: Windows 11 Pro 10.0.26200 x64, Intel Core i5-8500, 16 GB · Motor: LibreOffice 26.8.1.1 (binários oficiais)
 Oráculo independente: Microsoft Word 16.0 (instalado na máquina, usado só via automação COM com macros desativadas)
 
@@ -14,14 +15,16 @@ Oráculo independente: Microsoft Word 16.0 (instalado na máquina, usado só via
 | Distribuição AY (poda de idiomas, fontes privadas, runtime VC++) | sim | sim — 797 MB | sim: o motor inicia e edita (testes abaixo) |
 | Camada de configuração `ayescreva.xcd` | sim | sim | sim: título "AY ESCREVA", realce→`w:highlight`, faixa AY padrão, segurança de macros |
 | Identidade visual | sim — `tools/marca.mjs` | sim | parcial: ícone do lançador, tela de abertura e instalador conferidos; ícone da janela ainda é o da base |
-| Lançador `AYEscreva.exe` (0.3.0) | sim — C# | sim — csc do .NET Framework 4.8.1 | sim: abre o aplicativo instalado com perfil próprio |
-| Faixa de opções AY (`notebookbar_ayescreva.ui`, 11 abas + 4 contextuais) | sim — `tools/gerar-faixa.mjs` a partir de `ui/abas.json` | sim — 227 botões | sim — §4 (Forma e Visualizar impressão: só conferência visual) |
+| Lançador `AYEscreva.exe` (0.4.0) | sim — C# | sim — csc do .NET Framework 4.8.1 | sim: abre o aplicativo instalado com perfil próprio |
+| Faixa de opções AY (`notebookbar_ayescreva.ui`, 11 abas + 4 contextuais) | sim — `tools/gerar-faixa.mjs` a partir de `ui/abas.json` | sim — 231 botões | sim — §4 (Forma e Visualizar impressão: só conferência visual) |
 | Extensão AY (comandos `ayescreva:`, avisos de perdas e de fontes) | sim — `extensao/ayescreva` | sim — empacotada na distribuição | sim — §4 e §5 |
-| Instalador Windows 11 x64 (Inno Setup 6.7.3) | sim — `installer/ayescreva.iss` | sim — 0.2.0 (pública) e 0.3.0 (local) | sim — §3 |
+| Instalador Windows 11 x64 (Inno Setup 6.7.3) | sim — `installer/ayescreva.iss` | sim — 0.2.0 (pública), 0.3.0 e 0.4.0 (locais) | sim — §3 |
 | Revisão de texto: correção automática de casos inequívocos, gramática e pontuação, estilo opcional (0.3.0) | sim — `extensao/ayescreva/pythonpath/`, `dados/correcoes_pt_BR.json` | sim | sim — §5.1 |
 | Painel lateral "Assistente AY" e grupo na aba Revisão (0.3.0) | sim — `ay_painel.py`, `Painel.xdl`, `Sidebar.xcu` | sim | sim — §5.1 (acessibilidade só pela API; leitores de tela não testados) |
 | Confiabilidade: recuperação, salvamento seguro, desfazer/refazer, TXT (0.3.0) | sim — testes `tests/uno/confiabilidade.py`, `recuperacao.py` | — | sim — §5.2 (comportamento do motor, agora com teste) |
-| IA local (entrega C) | **não** | — | — |
+| Formatar trabalho acadêmico (0.4.0): perfis, modelo da instituição, prévia, aplicação numa cópia, relatório de conformidade | sim — `ay_academico.py`, `ay_formatar.py`, `dados/normas.json`, `dados/perfis_formatacao.json` | sim | sim — §5.3 (sequência formatar → desfazer → refazer → salvar → reabrir → PDF → imprimir) |
+| Galeria de modelos e "Salvar como modelo" (0.4.0) | sim — `ay_modelos.py`, `ay_galeria.py` | sim | sim — §5.4 |
+| IA local (entrega C) | em andamento (fora da 0.4.0) | — | — |
 | Site oficial | sim — `site/`, `tools/gerar-site.mjs` | sim — publicado em https://davisoares50-hash.github.io/ay-escreva/ | sim — fluxo público 25/25, com HTTPS (§10) |
 | Acessibilidade com leitores de tela | — | — | **não validado** (§12) |
 
@@ -48,6 +51,35 @@ O mesmo teste roda com o motor **instalado** pelo instalador (§3).
 | PDF com o mesmo número de páginas; PDF/UA marcado | OK | OK |
 
 ## 3. Instalador e instalação — `tests/instalacao/testar_instalacao.ps1`
+
+**0.4.0 (local, 21/10/2026): 19/19** — `out\instalador\AYEscreva-0.4.0-teste-windows11-x64.exe` · 208 MB (218.382.863 bytes) ·
+SHA-256 `73e2745f5e69a981510116432fcecca29a1f95641d2b15cf94325d04a23151df` · sem assinatura digital. Mesmas verificações da 0.3.0; a
+extensão instalada traz também a formatação acadêmica e a galeria de modelos (versão da extensão 0.4.0); instalado: 808 MB;
+aceite com o motor instalado 40/40.
+
+**Atualização de uma instalação anterior — `tests/instalacao/testar_atualizacao.ps1` (0.4.0, 21/10/2026): 14/14.**
+Para cada versão anterior (0.2.0 pública e 0.3.0 local): instala, grava preferências no perfil real
+(`%APPDATA%AYEscreva`) pelo próprio motor instalado — palavra no dicionário pessoal, unidade de medida em mm e,
+na 0.3.0, a lista "não corrigir" —, instala a 0.4.0 por cima, confere versão, peças novas, preferências e os
+comandos da entrega B no perfil antigo, compara por SHA-256 os documentos do usuário (DOCX e ODT em Documentos) e
+desinstala. O perfil que já existia na máquina é guardado antes e devolvido no fim.
+
+| Verificação | Resultado |
+|---|---|
+| 0.2.0: instalação da versão anterior | OK — código 0 |
+| 0.2.0: preferências gravadas no perfil (dicionário pessoal, unidade de medida) | OK — {"modo":"gravar","nao_corrigir":"sem revisão de texto nesta versão (com.sun.star.uno.RuntimeException)","dicionario":true,"unidade_mm":true,"lista_nao_corrigir":null,"comandos_entrega_b":false,"versao_extensao":"0.2.0"} |
+| 0.2.0: atualização instalada por cima (código 0, versão no registro e na extensão, peças novas presentes) | OK — código 0; registro 0.4.0; extensão 0.4.0; faltam:  |
+| 0.2.0: preferências preservadas e recursos novos registrados no perfil antigo | OK — {"modo":"conferir","dicionario":true,"unidade_mm":true,"lista_nao_corrigir":[],"comandos_entrega_b":true,"versao_extensao":"0.4.0"} |
+| 0.2.0: documentos do usuário intactos depois da atualização | OK |
+| 0.2.0: desinstalação remove o programa e o registro | OK |
+| 0.2.0: depois de desinstalar, perfil (com o dicionário pessoal) e documentos continuam | OK |
+| 0.3.0: instalação da versão anterior | OK — código 0 |
+| 0.3.0: preferências gravadas no perfil (dicionário pessoal, unidade de medida, não corrigir) | OK — {"modo":"gravar","nao_corrigir":true,"dicionario":true,"unidade_mm":true,"lista_nao_corrigir":["nao"],"comandos_entrega_b":false,"versao_extensao":"0.3.0"} |
+| 0.3.0: atualização instalada por cima (código 0, versão no registro e na extensão, peças novas presentes) | OK — código 0; registro 0.4.0; extensão 0.4.0; faltam:  |
+| 0.3.0: preferências preservadas e recursos novos registrados no perfil antigo | OK — {"modo":"conferir","dicionario":true,"unidade_mm":true,"lista_nao_corrigir":["nao"],"comandos_entrega_b":true,"versao_extensao":"0.4.0"} |
+| 0.3.0: documentos do usuário intactos depois da atualização | OK |
+| 0.3.0: desinstalação remove o programa e o registro | OK |
+| 0.3.0: depois de desinstalar, perfil (com o dicionário pessoal) e documentos continuam | OK |
 
 **0.3.0 (local, 20/10/2026): 19/19** — `out\instalador\AYEscreva-0.3.0-teste-windows11-x64.exe` · 208 MB (218.325.835 bytes) ·
 SHA-256 `e280a9139a39d3592b126738607273d6fb613a1fa7a9fa5b17db52f3c0449d5b` · sem assinatura digital. Mesmas verificações da 0.2.0, mais: a extensão instalada traz a revisão
@@ -91,14 +123,14 @@ Diálogos e listas abertos pelos botões são registrados e fechados.
 
 | Medida | Resultado |
 |---|---|
-| Funções com botão nas 11 abas e nas contextuais Tabela e Imagem (as testadas) | 213 |
-| Botão presente na aba certa | 213/213 |
-| Acionadas pelo clique (comando disparado conferido; diálogo ou lista registrado e fechado) | 151 |
+| Funções com botão nas 11 abas e nas contextuais Tabela e Imagem (as testadas) | 217 |
+| Botão presente na aba certa | 217/217 |
+| Acionadas pelo clique (comando disparado conferido; diálogo ou lista registrado e fechado) | 155 |
 | Validadas pelo efeito no documento ou na exibição | 35 |
-| Efeitos conferidos nas 7 fases (inclui abas contextuais, avisos, salvamento e revisão de texto) | 73/73 |
-| Diálogos e listas abertos pelos botões e fechados pelo teste | 47 |
+| Efeitos conferidos nas 8 fases (inclui abas contextuais, avisos, salvamento, revisão de texto e formatação acadêmica) | 91/91 |
+| Diálogos e listas abertos pelos botões e fechados pelo teste | 51 |
 | Erros do teste · quedas do motor · conexões de rede para fora do computador | 0 · 0 · 0 |
-| Duração | fase 1: 13:29:00–13:35:25; fase 2: 13:35:39–13:35:57; fase 3: 13:36:12–13:36:28; fase 4: 13:36:41–13:37:02; fase 5: 13:37:14–13:39:03; fase 6: 13:39:15–13:47:27; fase 7: 13:47:43–13:47:59 (0.3.0, 20/10/2026) |
+| Duração | fase 1: 07:51:48–07:58:24; fase 2: 07:58:46–07:59:05; fase 3: 07:59:18–07:59:34; fase 4: 07:59:48–08:00:08; fase 5: 08:00:21–08:02:16; fase 6: 08:02:31–08:11:13; fase 7: 08:11:43–08:12:06; fase 8: 08:12:21–08:13:31 (0.4.0, 21/10/2026) |
 
 Efeitos conferidos (amostra): Negrito, Itálico, Sublinhado, Tachado, Sobrescrito, Subscrito, Aumentar fonte, Diminuir fonte, Limpar formatação, Centralizar, Alinhar à direita, Justificar, Alinhar à esquerda, Aumentar recuo, Diminuir recuo, Marcadores, Numeração, Marcas de formatação, Quebra de página, Página em branco, Comentário, Nota de rodapé, Nota de fim, Controlar alterações, Régua, Página inteira, 100%, Largura da página, Guia de utilização do AY, Atalhos de teclado, Limitações conhecidas, Recuperação de documentos, Relatório de diagnóstico, Aba contextual Tabela, Inserir linha abaixo, Aba contextual Imagem, Salvar, Aviso de substituição de fontes, Aviso de perdas ao salvar em DOCX, Aviso de formato ao fechar e salvar DOCX. As 62 funções não acionadas genericamente ficam de fora de propósito (fechar, abrir, salvar como, recortar/colar, tela inteira, mala direta, aceitar/rejeitar tudo etc.) ou são listas suspensas; elas aparecem como "não validado" na matriz.
 
@@ -107,8 +139,10 @@ Fases: (1) documento ODT de trabalho — botões das 11 abas, abas contextuais T
 (3) outro DOCX alterado, fechado pela faixa com "Salvar" na pergunta; (4) Salvar como DOCX pelo seletor de arquivo do
 AY; (5) revisão de texto (digitação real, desfazer, proteções, painel, largura do painel na barra lateral e captura
 de tela em `tests/output/interface/painel-assistente.png`); (6) documento longo (3.000 parágrafos); (7) integridade
-de DOCX/ODT depois de correções com controle de alterações. Todas as fases são de uma única execução, feita depois
-da correção da largura do painel.
+de DOCX/ODT depois de correções com controle de alterações; (8) formatação acadêmica e galeria (0.4.0): diálogo
+Formatar pelo teclado, prévia, cópia formatada com o original intacto (inclusive a frase digitada e não salva e o
+histórico dele), relatório, Ctrl+Z e Ctrl+Y na cópia, modelo da instituição com prévia das diferenças, galeria e
+"Salvar como modelo", com capturas `tests/output/interface/dialogo-*.png`. Todas as fases são de uma única execução.
 
 Limites deste teste: as abas contextuais **Forma** e **Visualizar impressão** foram conferidas só visualmente
 (capturas em `tests/output/interface/abas/`), sem clique automatizado. Nos comandos de Ajuda que abrem uma página
@@ -263,6 +297,130 @@ Correção do próprio teste (20/10/2026): a primeira versão encerrava só o la
 
 Salvar como pela interface (seletor de arquivo do AY → DOCX → aviso de perdas): OK — diálogos: ['Salvar como', 'Salvar em DOCX: possíveis perdas']; DOCX gravado=True; cópia ODT=True; documento agora é o DOCX=True.
 
+## 5.3 Formatar trabalho acadêmico (0.4.0, entrega B)
+
+`tests/uno/academico.py`: **38/38** — sequência completa numa cópia sem título: formatar → desfazer → refazer
+(duas vezes) → salvar em DOCX e ODT pelo caminho de gravação do AY → fechar → reabrir → exportar PDF → imprimir; em cada
+etapa o teste compara conteúdo, notas, estilos, alinhamentos, sumário (entradas e números), número exibido no alto de cada
+título e o relatório de conformidade. Nenhuma tolerância para defeito conhecido: uma diferença reprova o item.
+
+| Verificação | Resultado |
+|---|---|
+| DOCX: títulos com número digitado identificados com o nível | OK — [(1, '1 INTRODUÇÃO'), (1, '2 REFERENCIAL TEÓRICO'), (2, '2.1 Conceitos básicos'), (1, '3 CONCLUSÃO')] |
+| DOCX: início da parte textual em "1 INTRODUÇÃO" | OK — 1 INTRODUÇÃO |
+| DOCX: títulos sem indicativo, citação, legendas, fontes e referências identificados | OK — {'pre_texto': 12, 'titulo_pre': 3, 'titulo': 4, 'texto': 6, 'citacao': 1, 'legenda': 2, 'tabela': 1, 'fonte_legenda': 2, 'objeto': 1, 'titulo_pos': 2, 'referencia': 3} |
+| ODT: títulos com número digitado identificados com o nível | OK — [(1, '1 INTRODUÇÃO'), (1, '2 REFERENCIAL TEÓRICO'), (2, '2.1 Conceitos básicos'), (1, '3 CONCLUSÃO')] |
+| ODT: início da parte textual em "1 INTRODUÇÃO" | OK — 1 INTRODUÇÃO |
+| ODT: títulos sem indicativo, citação, legendas, fontes e referências identificados | OK — {'pre_texto': 12, 'titulo_pre': 3, 'titulo': 4, 'texto': 6, 'citacao': 1, 'legenda': 2, 'tabela': 1, 'fonte_legenda': 2, 'objeto': 1, 'titulo_pos': 2, 'referencia': 3} |
+| Relatório antes: margens, tamanho, entrelinhas, sumário e paginação não conformes | OK — Margens: não conforme ("Standard": superior 2,00 cm (pede 3), esquerda 2,00 cm (pede 3)); Tamanho da letra do texto: não conforme (0 de 5 parágrafos de texto com 12 pt); Família da fonte: aviso (0 de 5 parágrafos de texto em Times New Roman |
+| Relatório e prévia são só leitura: o original não muda (texto, alteração não salva, "modificado", histórico) | OK — 37 mudanças; avisos: 2 |
+| O motor recusa formatar um documento com histórico de desfazer (o motor apagaria o histórico) | OK |
+| Cópia sem título: inclui a alteração não salva do original e nasce sem histórico | OK |
+| Original intacto depois de formatar a cópia (texto, alteração não salva, "modificado" e histórico) | OK — histórico do original: ('Digitação: “ Frase a... salva.”',) |
+| Aplicar não muda o texto: parágrafos, notas, tabela, imagem, comentário e alterações controladas preservados | OK — 36 parágrafos; notas 1; redlines [('Insert', 'Autor desconhecido')] |
+| Relatório depois: regras aplicáveis conformes | OK — {} |
+| Capa e folha de rosto mantêm o alinhamento (centralizado), inclusive o parágrafo que recomeça a contagem | OK — [3, 3, 3, 3, 3, 3, 3, 0, 3] |
+| Relatório depois: citação longa entre aspas apontada como aviso (o texto não é mudado) | OK |
+| Relatório depois: conteúdo das referências marcado como não avaliado | OK |
+| Relatório distingue regras conferidas, preferências e itens não avaliados, sem afirmar conformidade completa | OK — {'verificada': 22, 'instituicao': 0, 'preferencia': 5, 'nao_avaliado': 4, 'nao_se_aplica': 0}; margens: Norma: NBR 14724:2024 (edição conferida no catálogo da ABNT em 20/10/2026); texto oficial não consultado; regra tirada de guia da PUC-SP |
+| Documento do relatório: aviso de que não atesta conformidade completa e uma seção por grupo | OK — 3 tabelas |
+| Paginação: contagem desde a folha de rosto (capa fora); a introdução, 5ª página contada, mostra 5; sumário com os mesmos números | OK — {'1 INTRODUÇÃO': 5, '2 REFERENCIAL TEÓRICO': 6, '2.1 Conceitos básicos': 6, '3 CONCLUSÃO': 7, 'REFERÊNCIAS': 8, 'APÊNDICE A – Questionário aplicado': 9}; sumário {'1 INTRODUÇÃO': 5, '2 REFERENCIAL TEÓRICO': 6, '2.1 Conceitos básicos': 6, '3 |
+| Desfazer: uma ação devolve a cópia exatamente ao estado de antes (conteúdo, estilos, sumário, numeração, relatório) | OK — ação "Formatar trabalho acadêmico (Trabalho acadêmico (TCC, monografia, dissertação, tese))"; diferenças: {} |
+| Refazer: a formatação volta inteira, inclusive o recomeço da contagem (conteúdo, estilos, sumário, numeração, relatório) | OK — diferenças: {} |
+| Segundo ciclo desfazer/refazer: mesmo estado | OK — diferenças: {} |
+| Salvar uma cópia em DOCX pelo AY: histórico, "modificado" e estado da cópia inalterados | OK — {} |
+| Salvar uma cópia em ODT pelo AY: histórico, "modificado" e estado da cópia inalterados | OK — {} |
+| DOCX gravado com o recomeço da contagem na seção (pgNumType start=1) | OK — ['<w:pgNumType w:fmt="decimal"/>', '<w:pgNumType w:start="1" w:fmt="decimal"/>', '<w:pgNumType w:fmt="decimal"/>'] |
+| DOCX reaberto: conteúdo, notas, sumário e numeração iguais aos da cópia formatada; regras conformes (filete das notas: aviso conhecido do DOCX) | OK — {'notas_rodape': 'aviso'}; {} |
+| PDF exportado do DOCX: páginas sem a página em branco automática, números no alto da página e sumário iguais aos do documento | OK — 10 páginas no PDF, 11 no motor (com a página em branco automática); impressos {'1 INTRODUÇÃO': 5, '2 REFERENCIAL TEÓRICO': 6, '2.1 Conceitos básicos': 6, '3 CONCLUSÃO': 7, 'REFERÊNCIAS': 8, 'APÊNDICE A – Questionário aplicado': 9}; sumário  |
+| ODT reaberto: conteúdo, notas, sumário e numeração iguais aos da cópia formatada; regras conformes | OK — {}; {} |
+| PDF exportado do ODT: páginas sem a página em branco automática, números no alto da página e sumário iguais aos do documento | OK — 10 páginas no PDF, 11 no motor (com a página em branco automática); impressos {'1 INTRODUÇÃO': 5, '2 REFERENCIAL TEÓRICO': 6, '2.1 Conceitos básicos': 6, '3 CONCLUSÃO': 7, 'REFERÊNCIAS': 8, 'APÊNDICE A – Questionário aplicado': 9}; sumário  |
+| Impressão só frente: a página em branco automática não é impressa (contagem igual à do PDF) | OK — 10 páginas impressas; 11 no motor; imprimir páginas vazias = False |
+| Frente e verso: margens espelhadas, número à direita no anverso e à esquerda no verso, seções primárias em página ímpar | OK — ímpares [True, True, True]; {'1 INTRODUÇÃO': 5, '2 REFERENCIAL TEÓRICO': 7, '2.1 Conceitos básicos': 7, '3 CONCLUSÃO': 9, 'REFERÊNCIAS': 10, 'APÊNDICE A – Questionário aplicado': 11} |
+| Frente e verso: desfazer e refazer devolvem o mesmo estado | OK |
+| Frente e verso: impressão e PDF com páginas em branco têm todas as páginas do motor; o PDF padrão omite as brancas automáticas | OK — {'paginas_motor': 13, 'pdf_padrao': 10, 'pdf_com_brancas': 13, 'impresso': 13} |
+| Títulos por estilo sem número: numeração automática 1, 2, 2.1, 3, indicativo conforme, texto igual; desfazer/refazer estável | OK — ['1', '2', '2.1', '3']; conforme |
+| Modelo da instituição: Arial e ponto depois do número aplicados; relatório mostra a instituição e a divergência da norma | OK — ['1.', '2.', '2.1.', '3.']; origem: Instituição: Universidade do Exemplo — Manual de normalização de trabalhos acadêmicos (2025). Diverge da norma (NBR 6024:2012) |
+| Artigo: sem página nova por seção, número desde a 1ª página, aparência como preferência e estrutura conferida | OK — {} |
+| Documento longo: formatado e conferido (tempos medidos por UNO de outro processo) | OK — 943 parágrafos, 247 páginas; analisar 7.7 s, planejar 7.0 s, aplicar 8.46 s, estado e relatório 24.1 s |
+| Documento longo: desfazer e refazer numa ação, com o mesmo estado (sumário e numeração) | OK — {} |
+
+Documento longo (943 parágrafos, 247 páginas): analisar 7.7 s, planejar 7 s,
+aplicar 8.46 s, estado e relatório 24.1 s — medidos por UNO de outro processo (dentro do aplicativo é mais
+rápido: a formatação do TCC de teste levou 0,2 s pela interface).
+
+Página em branco automática (capa fora da contagem), TCC de teste: só frente — o motor mostra 11 páginas, o PDF e a
+impressão têm 10, e a introdução mostra o número 5 na tela, no PDF e no sumário; frente e verso — motor 13,
+PDF padrão 10 (omite os versos em branco), PDF com páginas em branco 13, impressão 13.
+
+Pela interface, de dentro do aplicativo (fase 8 de `tests/interface/testar_faixa.ps1`): **18/18**.
+
+| Verificação | Resultado |
+|---|---|
+| Formatar trabalho acadêmico abre pela aba Referências (comando) | OK |
+| Acessibilidade: controles do diálogo Formatar com nome acessível | OK — sem nome: nenhum \| perfil="Tipo de trabalho:" |
+| Diálogo mostra os cinco perfis e informa que a formatação é sempre feita numa cópia (sem opção no original) | OK — 5 perfis |
+| Prévia pelo teclado: lista do que vai mudar, sem alterar o documento | OK — 37 mudanças |
+| Aplicar numa cópia: relatório de conformidade aparece com as regras conferidas | OK — 22 conformes, 0 não conformes:  |
+| Acessibilidade: controles do relatório com nome acessível | OK — sem nome: nenhum |
+| Original intacto (texto com a frase não salva, arquivo, "modificado" e histórico de desfazer) e a cópia sem título formatada | OK — histórico do original: ('Digitação: “.”', 'Digitação: “formatar”'); cópia: estilo AY Pré-textual, índices 1 |
+| Ctrl+Z pelo teclado na cópia desfaz a formatação inteira | OK — estilo da 1ª página Standard; índices 0 |
+| Ctrl+Y pelo teclado refaz a formatação inteira, com a mesma numeração no sumário | OK — antes: '1 INTRODUÇÃO\t5'; refeito: '1 INTRODUÇÃO\t5' |
+| Teclado em "Formatar trabalho acadêmico": foco inicial em perfil, Tab vai a fonte, Shift+Tab volta; teclas de acesso sem repetição | OK — inicial perfil, Tab fonte, Shift+Tab perfil; repetidas: [] |
+| Modelo da instituição abre pelo botão do diálogo Formatar | OK |
+| Teclado em "Modelo da instituição": foco inicial em nome, Tab vai a man_titulo, Shift+Tab volta; teclas de acesso sem repetição | OK — inicial nome, Tab man_titulo, Shift+Tab nome; repetidas: [] |
+| Modelo da instituição: prévia mostra cada mudança, o valor do perfil base e a divergência da norma; controles com nome acessível | OK — Fonte: Arial (perfil base: Times New Roman) — troca uma preferência (a norma não define) \| Tamanho da letra: 11 pt (perfil base: 12 pt) — diverge da norma (NBR 14724:2024) \| Ponto depois do número da seção: sim (perfil base: não) — diverge  |
+| Galeria de modelos abre pela aba Arquivo (comando) | OK |
+| Galeria lista ofício, memorando, relatório, currículo, carta, ata e proposta, com origem de cada modelo | OK — 7 modelos; sem nome acessível: [] |
+| Criar documento: ofício novo, sem título e sem alterações pendentes | OK — Ofício (padrão ofício) |
+| Salvar como modelo abre pela aba Arquivo (comando) | OK |
+| Salvar como modelo: .ott gravado na pasta de modelos do perfil e listado na galeria | OK — C:\Users\Micro\AppData\Local\Temp\ay-faixa-f8-c60ea496\user\template\AY\Modelo do teste pela interface.ott |
+
+Conferência visual (capturas em `tests/output/interface/dialogo-*.png`, medidas em 125% de escala neste computador):
+Formatar 676 × 563 px, Prévia 856 × 571, Relatório 856 × 591, Modelo da instituição 676 × 591, Galeria 856 × 531. Os
+diálogos têm no máximo 276 unidades de altura: em 150% ficam com cerca de 710 px (cálculo, não medida — a variável
+`SAL_FORCEDPI` não muda a escala no Windows, então outras escalas não foram observadas).
+
+## 5.4 Galeria de modelos (0.4.0, entrega B)
+
+`tests/uno/modelos.py`: **33/33**
+
+| Verificação | Resultado |
+|---|---|
+| Ofício (padrão ofício): documento novo sem título, sem alterações pendentes, sem histórico de desfazer e com campos | OK — 17 campos de preenchimento |
+| Ofício (padrão ofício): DOCX salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 17; margens 3000/1499 |
+| Ofício (padrão ofício): ODT salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 17; margens 3000/1499 |
+| Ofício: margens esquerda 3 cm, direita 1,5 cm, superior e inferior 2 cm; A4 | OK — (3000, 1499, 2000, 2000) |
+| Ofício: Calibri ou Carlito 12; texto justificado, entrelinhas simples, 6 pt depois, recuo de 2,5 cm | OK — ('Calibri', 2, 0, 100, 212, 2499) |
+| Ofício: citação 11 pt e nota de rodapé 10 pt | OK |
+| Ofício: três parágrafos de texto numerados 1, 2, 3 (sem numerar vocativo e fecho) | OK — ['1', '2', '3'] |
+| Ofício: cabeçalho só na primeira página (brasão, órgão, setor), com 5 cm a partir da borda; rodapé com número a partir da 2ª | OK — cabeçalho: '[Brasão de Armas da República]\r\n[Nome do órgão]\r\n[Secretaria/Departamento/Setor]'; altura 3000 |
+| Ofício: identificação "OFÍCIO Nº …/ano/…", local e data por extenso, "Assunto:" em negrito e fecho | OK — 21 de outubro de 2026 |
+| Data por extenso: "1º" no primeiro dia do mês e sem zero à esquerda nos demais | OK |
+| Memorando (padrão ofício): documento novo sem título, sem alterações pendentes, sem histórico de desfazer e com campos | OK — 15 campos de preenchimento |
+| Memorando (padrão ofício): DOCX salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 15; margens 3000/1499 |
+| Memorando (padrão ofício): ODT salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 15; margens 3000/1499 |
+| Relatório (administrativo ou de atividades): documento novo sem título, sem alterações pendentes, sem histórico de desfazer e com campos | OK — 9 campos de preenchimento |
+| Relatório (administrativo ou de atividades): DOCX salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 9; margens 3000/2000 |
+| Relatório (administrativo ou de atividades): ODT salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 9; margens 3000/2000 |
+| Currículo: documento novo sem título, sem alterações pendentes, sem histórico de desfazer e com campos | OK — 17 campos de preenchimento |
+| Currículo: DOCX salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 17; margens 2000/2000 |
+| Currículo: ODT salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 17; margens 2000/2000 |
+| Carta: documento novo sem título, sem alterações pendentes, sem histórico de desfazer e com campos | OK — 12 campos de preenchimento |
+| Carta: DOCX salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 12; margens 2499/2499 |
+| Carta: ODT salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 12; margens 2499/2499 |
+| Ata de reunião: documento novo sem título, sem alterações pendentes, sem histórico de desfazer e com campos | OK — 16 campos de preenchimento |
+| Ata de reunião: DOCX salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 16; margens 3000/2000 |
+| Ata de reunião: ODT salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 16; margens 3000/2000 |
+| Proposta comercial ou técnica: documento novo sem título, sem alterações pendentes, sem histórico de desfazer e com campos | OK — 11 campos de preenchimento |
+| Proposta comercial ou técnica: DOCX salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 11; margens 2499/2000 |
+| Proposta comercial ou técnica: ODT salvo e reaberto com o mesmo texto (inclusive o dos campos) e as mesmas margens | OK — campos depois: 11; margens 2499/2000 |
+| Salvar como modelo: grava .ott na pasta pessoal e aparece na lista; o documento aberto continua o mesmo | OK — E:\AY\tests\output\perfis\modelos_7b36dcbd\user\template\AY\Meu modelo de teste.ott |
+| Salvar como modelo: não sobrescreve sem confirmação e recusa nomes inválidos | OK — ['', 'a/b', 'nome:ruim', '..oculto', 'xxxxxxxxxx'] |
+| Modelo pessoal: cria documento sem título com o conteúdo do modelo | OK |
+| Modelo pessoal gravado como modelo ODT | OK — application/vnd.oasis.opendocument.text-template |
+| Remover modelo pessoal: só dentro da pasta pessoal; o arquivo sai da lista | OK |
+
 ## 6. Impressão — `tests/uno/impressao.py`: **4/4**
 
 Impressão real pela fila do Windows na impressora virtual "Microsoft Print to PDF" (o teste aborta antes de
@@ -279,9 +437,9 @@ imprimir se essa impressora não estiver selecionada, para nunca usar uma impres
 | DOCX com imagem vinculada a servidor HTTP local: **0** requisições ao abrir e exportar PDF | OK |
 | (informativo) pedido explícito de "atualizar vínculos": também 0 requisições | bloqueio total hoje; não há como autorizar por documento |
 
-## 8. Comandos da matriz — `tests/uno/comandos.py`: **236/236**
+## 8. Comandos da matriz — `tests/uno/comandos.py`: **240/240**
 
-241 funções mapeadas nas 11 abas + 4 contextuais; 236 têm comando e **todos** foram encontrados no motor em
+245 funções mapeadas nas 11 abas + 4 contextuais; 240 têm comando e **todos** foram encontrados no motor em
 execução (despachante do quadro do Writer, controlador de menu ou extensão AY); os comandos da visualização de
 impressão são conferidos com o documento nessa vista. 5 funções não têm comando e ficam fora da faixa:
 marca-texto, borracha, pressão da caneta, modo de leitura e verificar atualizações (a revisão gramatical offline
@@ -443,11 +601,21 @@ Imagens lado a lado (original | cópia | diferença) em `tests/output/visual/*.p
 - Revisão de texto: o painel verifica corpo do texto e tabelas; cabeçalhos, rodapés, notas e caixas de texto
   ficam de fora da lista (o sublinhado do motor continua valendo neles). As regras de gramática e estilo podem
   apontar trechos corretos; não há medida de precisão com um corpus real de textos em pt-BR.
-- Desempenho medido só neste computador (i5-8500, 16 GB): ~7,7 min para verificar 3.000 parágrafos em segundo
-  plano; durante a verificação o atraso médio da interface sobe de ~14 ms para ~69 ms, e a memória do processo
-  sobe até ~200 MB (406 → 601 MB nesta execução; 405 → 454 MB numa execução anterior do mesmo teste). Outros
+- Desempenho medido só neste computador (i5-8500, 16 GB): ~8,2 min para verificar 3.000 parágrafos em segundo
+  plano (491,6 s nesta execução); durante a verificação o atraso médio da interface sobe de ~15 ms para ~62 ms (pior
+  caso 193 ms), e a memória do processo vai de ~437 MB para ~455 MB (601 MB numa execução da 0.3.0). Outros
   computadores podem ser mais lentos.
-- IA local (entrega C) não está implementada nesta versão; nenhuma medida de IA foi feita ainda.
+- Formatação acadêmica (0.4.0): o relatório confere só as regras listadas; não atesta conformidade completa com a
+  ABNT. Os textos oficiais das normas (NBR 14724, 6022, 15287, 10719, 6023, 6024, 6027, 6028, 10520, 12225) **não**
+  foram consultados: as edições foram conferidas no catálogo da ABNT e as regras vêm de guias universitários
+  (citados em cada item). Conteúdo das referências, citações e resumo não são avaliados. Só o motor aplica a
+  formatação: ela é feita sempre numa cópia sem título (no original o motor apagaria o histórico de desfazer).
+- Página em branco automática (0.4.0, frente e verso): quando a contagem recomeça numa página de paridade
+  trocada, o motor insere uma página vazia; o PDF padrão a omite (10 páginas), o PDF com "páginas em branco" e a
+  impressão a incluem (13). Em só frente, o PDF e a impressão têm 10 páginas e o motor mostra 11 na tela.
+- Diálogos da 0.4.0: capturas e medidas só em 125 % de escala (a escala do Windows não pôde ser trocada pelo
+  teste); 150 % e 200 % calculados, não observados. Leitura dos diálogos por NVDA ou Narrador não testada.
+- IA local (entrega C) não faz parte da 0.4.0.
 - Teste de imagem remota cobre só o filtro DOCX e imagem vinculada; outros tipos de recurso externo (OLE/DDE,
   fontes remotas, modelos remotos) não foram testados.
 - Máquina sem Microsoft Office (para ver a substituição de Calibri por Carlito): não testada.
