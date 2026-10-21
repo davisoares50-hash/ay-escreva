@@ -38,7 +38,6 @@ h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:32px}li{
 <li><strong>Exibir:</strong> modo de leitura dedicado (use Tela inteira e Exibição de livro).</li>
 <li><strong>Inserir:</strong> galeria de capas prontas (o botão Capa abre o diálogo de páginas de rosto).</li>
 <li><strong>Design:</strong> galeria visual de conjuntos de estilos (o botão importa estilos de um modelo).</li>
-<li><strong>Ajuda:</strong> verificação de atualizações.</li>
 <li>Em janelas estreitas, os grupos da faixa de opções não se recolhem automaticamente: alguns botões ficam fora da área visível.</li>
 </ul>
 
@@ -57,6 +56,21 @@ h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:32px}li{
 <li>Durante o uso, o modelo ocupa vários GB de memória; o AY encerra o motor depois de 10 minutos sem pedidos e quando o aplicativo fecha.</li>
 <li>A IA pode errar, inclusive em crase, regência e "há/a". As conferências automáticas pegam números, datas, citações, endereços, siglas e nomes perdidos ou inventados e frases apagadas em "Revisar"; não garantem que o sentido foi mantido.</li>
 <li>Só texto comum: trechos com tabela, campo, nota, imagem, marcador ou alteração controlada são recusados. Uma seleção por vez, até cerca de 6.000 caracteres.</li>
+<li>Revisar o documento inteiro leva alguns segundos por parágrafo (no computador de testes, cerca de 3 s): um documento de 100 parágrafos leva alguns minutos. Parágrafos com campos, notas ou imagens, tabelas, títulos e a lista de referências ficam de fora.</li>
+<li>"Apontar inconsistências" e "Explicar" são respostas da IA: podem errar ou deixar de ver algo. Nos testes, a IA local apontou as contradições plantadas, mas às vezes só repetiu o trecho sem explicar (o AY marca essas linhas como "sem explicação") e deu um falso alarme num trecho coerente. Use como apoio; "Conferir consistência" (por regras) e a sua leitura continuam sendo a conferência.</li>
+</ul>
+
+<h2>Verificar atualizações</h2>
+<ul>
+<li>Enquanto o arquivo de versões assinado não estiver publicado no site oficial, "Verificar agora" responde que ainda não há informação de atualização; instale as versões novas pelo site.</li>
+<li>O instalador ainda não tem assinatura digital do Windows; a autenticidade vem da assinatura do arquivo de versões e do SHA-256.</li>
+</ul>
+
+<h2>Conferir referências e consistência</h2>
+<ul>
+<li>Só o sistema autor-data (NBR 10520). Citações numéricas, notas de rodapé com referências e "apud" não são conferidos.</li>
+<li>A conferência das entradas é básica (ano, "Disponível em", "Acesso em", ordem, repetições): não substitui a revisão de cada referência pela NBR 6023:2025.</li>
+<li>Tabelas, notas, cabeçalhos e caixas de texto ficam de fora nesta versão. Maiúsculas no meio da frase podem ser nomes próprios: o AY só aponta quando as duas formas aparecem várias vezes.</li>
 </ul>
 
 <h2>Formatar trabalho acadêmico e galeria de modelos</h2>
@@ -70,6 +84,11 @@ h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:32px}li{
 <li>Em DOCX, o filete das notas de rodapé é o separador padrão do Word, sem comprimento gravado no arquivo; o relatório avisa em vez de conferir.</li>
 <li>O conteúdo das referências (NBR 6023:2025) não é conferido nem completado.</li>
 <li>Modelos da galeria: o Brasão de Armas da República não acompanha o modelo de ofício (insira a imagem oficial). Ata, carta, currículo, proposta e relatório administrativo não têm norma oficial; a aparência é preferência do AY.</li>
+</ul>
+
+<h2>Falha conhecida do motor</h2>
+<ul>
+<li>Abrir a <strong>Galeria do Fontwork</strong> (Inserir › Fontwork), fechá-la e em seguida abrir o diálogo de <strong>Link</strong> pode fechar o AY de repente. É um defeito da base (LibreOffice 26.8.1), reproduzido nos testes também sem as partes do AY. Se acontecer, ao abrir de novo o AY oferece recuperar o que não estava salvo; para evitar, salve antes ou insira o link antes de usar o Fontwork.</li>
 </ul>
 
 <h2>Acessibilidade</h2>

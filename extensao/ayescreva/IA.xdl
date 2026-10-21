@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE dlg:window PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "dialog.dtd">
-<!-- Painel lateral "Revisão com IA" (entrega C). Posições em unidades de diálogo; o painel ajusta larguras ao redimensionar.
+<!-- Painel lateral "Revisão com IA" (entregas C e D). Posições em unidades de diálogo; o painel ajusta larguras ao
+     redimensionar. "opcoes" ocupa o lugar de "sugestao" quando o pedido é Sugerir títulos.
      SPDX-License-Identifier: MPL-2.0 -->
-<dlg:window xmlns:dlg="http://openoffice.org/2000/dialog" xmlns:script="http://openoffice.org/2000/script" dlg:id="RevisaoIA" dlg:left="0" dlg:top="0" dlg:width="160" dlg:height="300" dlg:closeable="false" dlg:moveable="false" dlg:withtitlebar="false">
+<dlg:window xmlns:dlg="http://openoffice.org/2000/dialog" xmlns:script="http://openoffice.org/2000/script" dlg:id="RevisaoIA" dlg:left="0" dlg:top="0" dlg:width="160" dlg:height="372" dlg:closeable="false" dlg:moveable="false" dlg:withtitlebar="false">
  <dlg:bulletinboard>
   <dlg:text dlg:id="estado" dlg:tab-index="0" dlg:left="2" dlg:top="2" dlg:width="156" dlg:height="26" dlg:value="IA local: verificando…" dlg:multiline="true"/>
   <dlg:text dlg:id="rotulo_acao" dlg:tab-index="1" dlg:left="2" dlg:top="32" dlg:width="40" dlg:height="10" dlg:value="~Pedido:"/>
   <dlg:menulist dlg:id="acao" dlg:tab-index="2" dlg:left="44" dlg:top="30" dlg:width="114" dlg:height="14" dlg:spin="true" dlg:help-text="O que a IA deve fazer com o trecho selecionado."/>
-  <dlg:button dlg:id="pedir" dlg:tab-index="3" dlg:left="2" dlg:top="48" dlg:width="76" dlg:height="14" dlg:value="~Revisar seleção" dlg:help-text="Envia o trecho selecionado à IA local deste computador (nada vai para a internet)."/>
+  <dlg:button dlg:id="pedir" dlg:tab-index="3" dlg:left="2" dlg:top="48" dlg:width="76" dlg:height="14" dlg:value="Pe~dir à IA" dlg:help-text="Envia o trecho selecionado à IA local deste computador (nada vai para a internet)."/>
   <dlg:button dlg:id="cancelar" dlg:tab-index="4" dlg:left="82" dlg:top="48" dlg:width="76" dlg:height="14" dlg:value="Ca~ncelar" dlg:disabled="true"/>
-  <dlg:text dlg:id="rotulo_original" dlg:tab-index="6" dlg:left="2" dlg:top="76" dlg:width="156" dlg:height="10" dlg:value="~Original:"/>
-  <dlg:textfield dlg:id="original" dlg:tab-index="7" dlg:left="2" dlg:top="87" dlg:width="156" dlg:height="56" dlg:multiline="true" dlg:readonly="true" dlg:vscroll="true"/>
-  <dlg:text dlg:id="rotulo_sugestao" dlg:tab-index="8" dlg:left="2" dlg:top="147" dlg:width="156" dlg:height="10" dlg:value="~Sugestão:"/>
-  <dlg:textfield dlg:id="sugestao" dlg:tab-index="9" dlg:left="2" dlg:top="158" dlg:width="156" dlg:height="56" dlg:multiline="true" dlg:readonly="true" dlg:vscroll="true"/>
-  <dlg:text dlg:id="avisos" dlg:tab-index="10" dlg:left="2" dlg:top="217" dlg:width="156" dlg:height="34" dlg:multiline="true" dlg:value=""/>
-  <dlg:checkbox dlg:id="controlada" dlg:tab-index="11" dlg:left="2" dlg:top="253" dlg:width="156" dlg:height="10" dlg:value="Aplicar como alteração ~controlada" dlg:checked="true"/>
-  <dlg:button dlg:id="aceitar" dlg:tab-index="12" dlg:left="2" dlg:top="266" dlg:width="76" dlg:height="14" dlg:value="~Aceitar" dlg:disabled="true"/>
-  <dlg:button dlg:id="rejeitar" dlg:tab-index="13" dlg:left="82" dlg:top="266" dlg:width="76" dlg:height="14" dlg:value="Re~jeitar" dlg:disabled="true"/>
-  <dlg:button dlg:id="gerenciar" dlg:tab-index="14" dlg:left="2" dlg:top="284" dlg:width="156" dlg:height="14" dlg:value="~Gerenciar IA local…" dlg:help-text="Baixar, escolher ou remover o modelo de IA (opcional)."/>
+  <dlg:button dlg:id="documento" dlg:tab-index="5" dlg:left="2" dlg:top="64" dlg:width="156" dlg:height="14" dlg:value="Revisar o documento ~inteiro" dlg:help-text="Revisa parágrafo por parágrafo em segundo plano; cada sugestão entra na lista abaixo para você aceitar ou rejeitar."/>
+  <dlg:text dlg:id="rotulo_original" dlg:tab-index="6" dlg:left="2" dlg:top="82" dlg:width="156" dlg:height="10" dlg:value="~Original:"/>
+  <dlg:textfield dlg:id="original" dlg:tab-index="7" dlg:left="2" dlg:top="93" dlg:width="156" dlg:height="52" dlg:multiline="true" dlg:readonly="true" dlg:vscroll="true"/>
+  <dlg:text dlg:id="rotulo_sugestao" dlg:tab-index="8" dlg:left="2" dlg:top="148" dlg:width="156" dlg:height="10" dlg:value="~Sugestão:"/>
+  <dlg:textfield dlg:id="sugestao" dlg:tab-index="9" dlg:left="2" dlg:top="159" dlg:width="156" dlg:height="52" dlg:multiline="true" dlg:readonly="true" dlg:vscroll="true"/>
+  <dlg:text dlg:id="rotulo_opcoes" dlg:tab-index="10" dlg:left="2" dlg:top="148" dlg:width="156" dlg:height="10" dlg:value="~Títulos sugeridos (escolha um):"/>
+  <dlg:menulist dlg:id="opcoes" dlg:tab-index="11" dlg:left="2" dlg:top="159" dlg:width="156" dlg:height="52" dlg:spin="false"/>
+  <dlg:text dlg:id="avisos" dlg:tab-index="12" dlg:left="2" dlg:top="214" dlg:width="156" dlg:height="30" dlg:multiline="true" dlg:value=""/>
+  <dlg:checkbox dlg:id="controlada" dlg:tab-index="13" dlg:left="2" dlg:top="246" dlg:width="156" dlg:height="10" dlg:value="Aplicar como alteração ~controlada" dlg:checked="true"/>
+  <dlg:button dlg:id="aceitar" dlg:tab-index="14" dlg:left="2" dlg:top="259" dlg:width="76" dlg:height="14" dlg:value="~Aceitar" dlg:disabled="true"/>
+  <dlg:button dlg:id="rejeitar" dlg:tab-index="15" dlg:left="82" dlg:top="259" dlg:width="76" dlg:height="14" dlg:value="Re~jeitar" dlg:disabled="true"/>
+  <dlg:text dlg:id="rotulo_lista" dlg:tab-index="16" dlg:left="2" dlg:top="277" dlg:width="156" dlg:height="10" dlg:value="Sugestões do docu~mento:"/>
+  <dlg:menulist dlg:id="lista" dlg:tab-index="17" dlg:left="2" dlg:top="288" dlg:width="156" dlg:height="46" dlg:spin="false"/>
+  <dlg:button dlg:id="ir" dlg:tab-index="18" dlg:left="2" dlg:top="337" dlg:width="156" dlg:height="14" dlg:value="Ir ao pa~rágrafo" dlg:disabled="true" dlg:help-text="Seleciona no documento o parágrafo da sugestão escolhida."/>
+  <dlg:button dlg:id="gerenciar" dlg:tab-index="19" dlg:left="2" dlg:top="355" dlg:width="156" dlg:height="14" dlg:value="~Gerenciar IA local…" dlg:help-text="Baixar, escolher ou remover o modelo de IA (opcional)."/>
  </dlg:bulletinboard>
 </dlg:window>

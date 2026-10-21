@@ -700,7 +700,8 @@ class Inicio(unohelper.Base, XJob, XServiceInfo):
 class Comandos(unohelper.Base, XDispatchProvider, XDispatch, XInitialization, XServiceInfo):
     ACOES = ('PaginaEmBranco', 'Recuperacao', 'Guia', 'Atalhos', 'Limitacoes', 'Diagnostico', 'DetalhesFontes',
              'Assistente', 'VerificarDocumento', 'CorrecaoAutomatica', 'NaoCorrigir',
-             'FormatarTrabalho', 'Conformidade', 'Galeria', 'SalvarModelo', 'RevisaoIA', 'GerenciarIA')
+             'FormatarTrabalho', 'Conformidade', 'Galeria', 'SalvarModelo', 'RevisaoIA', 'GerenciarIA',
+             'ConferirReferencias', 'ConferirConsistencia', 'VerificarAtualizacoes')
 
     def __init__(self, ctx, *args):
         self.ctx = ctx
@@ -821,6 +822,21 @@ class Comandos(unohelper.Base, XDispatchProvider, XDispatch, XInitialization, XS
 
     def _Assistente(self):
         self._executar(ay_painel.COMANDO_DECK)
+
+    def _VerificarAtualizacoes(self):
+        import ay_atualizacao
+        ay_atualizacao.registrar = _log
+        ay_atualizacao.dialogo(self.ctx, self.frame)
+
+    def _ConferirReferencias(self):
+        import ay_achados
+        ay_achados.registrar = _log
+        ay_achados.conferir_referencias(self.ctx, self.frame)
+
+    def _ConferirConsistencia(self):
+        import ay_achados
+        ay_achados.registrar = _log
+        ay_achados.conferir_consistencia(self.ctx, self.frame)
 
     def _RevisaoIA(self):
         import ay_ia_painel

@@ -51,6 +51,18 @@
         <prop oor:name="Label"><value xml:lang="pt-BR">Relatório de conformidade</value><value xml:lang="en-US">Conformity Report</value></prop>
         <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Confere o documento regra a regra, com norma, edição e origem de cada regra</value><value xml:lang="en-US">Check the document rule by rule</value></prop>
       </node>
+      <node oor:name="ayescreva:VerificarAtualizacoes" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Verificar atualizações</value><value xml:lang="en-US">Check for Updates</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Consulta o site oficial só quando você pede; baixa e instala apenas com confirmação, se a versão estiver assinada pelo projeto</value><value xml:lang="en-US">Check the official site for a signed update</value></prop>
+      </node>
+      <node oor:name="ayescreva:ConferirReferencias" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Conferir referências</value><value xml:lang="en-US">Check References</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Confere citações do texto com a lista de referências e a apresentação de cada entrada; não cria nem completa referências</value><value xml:lang="en-US">Check citations against the reference list</value></prop>
+      </node>
+      <node oor:name="ayescreva:ConferirConsistencia" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Conferir consistência</value><value xml:lang="en-US">Check Consistency</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Aponta grafias diferentes do mesmo termo, siglas, numeração de figuras e tabelas e formatos misturados; não altera o texto</value><value xml:lang="en-US">Find inconsistent spellings, acronyms and numbering</value></prop>
+      </node>
       <node oor:name="ayescreva:RevisaoIA" oor:op="replace">
         <prop oor:name="Label"><value xml:lang="pt-BR">Revisão com IA</value><value xml:lang="en-US">AI Review</value></prop>
         <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Abre o painel da IA local (opcional): revisar, deixar mais claro, formal ou simples, resumir o trecho selecionado</value><value xml:lang="en-US">Open the optional local AI panel</value></prop>

@@ -1,6 +1,6 @@
 # Matriz de funcionalidades do AY ESCREVA
 
-> Gerado por `tests/uno/comandos.py` a partir de `ui/abas.json`, do mapa da faixa e do teste pela interface de 2026-10-21T13:04:30, em 2026-10-21. Não editar à mão.
+> Gerado por `tests/uno/comandos.py` a partir de `ui/abas.json`, do mapa da faixa e do teste pela interface de 2026-10-21T17:42:32, em 2026-10-21. Não editar à mão.
 
 **Como ler as colunas**
 
@@ -9,7 +9,7 @@
 - **Funcionamento validado**: *Pela interface* = o teste clicou no botão da faixa, confirmou o comando disparado e conferiu o efeito no documento ou na exibição. *Acionado pela interface* = o clique disparou o comando certo (e o diálogo/lista que abriu foi registrado), mas o efeito não tem verificação automática. *Por API* = a função foi exercitada de ponta a ponta pelos testes de documento, sem clicar no botão.
 - **Prioridade**: P0 = Etapas 1-2, P1 = Etapa 3, P2 = Etapa 4, P3 = avaliar.
 
-**Resumo** (247 funções): comando encontrado 242 · implementadas 242 (botão confirmado pela interface: 219) · validadas pela interface 38 · só acionadas pela interface 119 · validadas por API 49 · pendentes 5
+**Resumo** (249 funções): comando encontrado 245 · implementadas 245 (botão confirmado pela interface: 222) · validadas pela interface 38 · só acionadas pela interface 122 · validadas por API 49 · pendentes 4
 
 
 ## Arquivo
@@ -94,12 +94,12 @@
 | Ilustrações | Gráfico | `.uno:InsertObjectChart` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P2 | Gráfico com dados internos |  |
 | Ilustrações | Fontwork (texto artístico) | `.uno:FontworkGalleryFloater` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu janela não modal "Galeria do Fontwork" (fechado pelo teste) (efeito não conferido) | P3 | Texto decorativo |  |
 | Links e comentários | Link | `.uno:HyperlinkDialog` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu janela não modal "" (fechado pelo teste) (efeito não conferido) · Por API: ida_e_volta | P0 | Hiperlink exige Ctrl+clique e não é acessado ao abrir |  |
-| Links e comentários | Indicador | `.uno:InsertBookmark` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Marca-páginas" (fechado pelo teste) (efeito não conferido) · Por API: ida_e_volta | P1 | Preservado em DOCX |  |
-| Links e comentários | Referência cruzada | `.uno:InsertReferenceField` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "" (fechado pelo teste) (efeito não conferido) · Por API: ida_e_volta | P1 | Preservada em DOCX |  |
+| Links e comentários | Indicador | `.uno:InsertBookmark` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) · Por API: ida_e_volta | P1 | Preservado em DOCX |  |
+| Links e comentários | Referência cruzada | `.uno:InsertReferenceField` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) · Por API: ida_e_volta | P1 | Preservada em DOCX |  |
 | Links e comentários | Comentário | `.uno:InsertAnnotation` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface: comentarios: 0 → 1 · Por API: ida_e_volta | P0 | Preservado em ODT e DOCX |  |
 | Cabeçalho e rodapé | Cabeçalho | `.uno:InsertPageHeader` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) · Por API: aceite_etapa1, ida_e_volta | P0 | Ativa cabeçalho do estilo de página |  |
 | Cabeçalho e rodapé | Rodapé | `.uno:InsertPageFooter` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) · Por API: aceite_etapa1, ida_e_volta | P0 | Ativa rodapé do estilo de página |  |
-| Cabeçalho e rodapé | Número de página | `.uno:PageNumberWizard` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Assistente de numeração de página" (fechado pelo teste) (efeito não conferido) · Por API: aceite_etapa1 (campo de página) | P0 | Insere número de página com posição e formato |  |
+| Cabeçalho e rodapé | Número de página | `.uno:PageNumberWizard` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) · Por API: aceite_etapa1 (campo de página) | P0 | Insere número de página com posição e formato |  |
 | Texto | Caixa de texto | `.uno:DrawText` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) · Por API: ida_e_volta (caixa de texto) | P1 | Caixa de texto exportada como forma DOCX |  |
 | Texto | Quadro | `.uno:InsertFrame` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P2 | Quadro de texto posicionável |  |
 | Texto | Campos | `.uno:InsertFieldCtrl` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu janela não modal "" (fechado pelo teste) (efeito não conferido) | P1 | Data, hora, autor, título, contagem de páginas |  |
@@ -163,8 +163,10 @@
 
 | Grupo | Função | Comando | Comando encontrado | Funcionalidade implementada | Funcionamento validado | Prioridade | Critério de aceite | Pendências e observações |
 |---|---|---|---|---|---|---|---|---|
-| Trabalho acadêmico | Formatar trabalho acadêmico | `ayescreva:FormatarTrabalho` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Formatar trabalho acadêmico" (fechado pelo teste) (efeito não conferido) | P1 | Aplica as regras da ABNT (NBR 14724, 15287, 6022 ou 10719) ou do modelo da instituição com estilos e campos reais, prévia, cópia opcional e uma única ação de desfazer |  |
+| Trabalho acadêmico | Formatar trabalho acadêmico | `ayescreva:FormatarTrabalho` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Formatar trabalho acadêmico" (fechado pelo teste) (efeito não conferido) | P1 | Aplica as regras da ABNT (NBR 14724, 15287, 6022 ou 10719) ou do modelo da instituição numa cópia sem título, com estilos e campos reais, prévia e uma única ação de desfazer |  |
 | Trabalho acadêmico | Relatório de conformidade | `ayescreva:Conformidade` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Relatório de conformidade" (fechado pelo teste) (efeito não conferido) | P1 | Confere o documento regra a regra (conforme, não conforme, aviso, não verificável) com norma, edição, camada e origem |  |
+| Trabalho acadêmico | Conferir referências | `ayescreva:ConferirReferencias` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Conferir referências" (fechado pelo teste) (efeito não conferido) | P1 | Lista citações sem referência, referências não citadas e entradas sem ano, sem Disponível em/Acesso em, repetidas ou fora de ordem, com Ir para; não cria nem altera referências |  |
+| Trabalho acadêmico | Conferir consistência | `ayescreva:ConferirConsistencia` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Conferir consistência" (fechado pelo teste) (efeito não conferido) | P1 | Lista grafias diferentes do mesmo termo, siglas usadas antes de definidas, numeração de figuras e tabelas e formatos misturados, com Ir para; não altera o texto |  |
 | Sumário | Sumário e índices | `.uno:InsertMultiIndex` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) · Por API: ida_e_volta (sumário) | P1 | Gera sumário a partir dos títulos (também bibliografia, ilustrações e índice remissivo, escolhendo o tipo); preservado em DOCX |  |
 | Sumário | Atualizar sumário | `.uno:UpdateCurIndex` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P1 | Atualiza números de página e entradas |  |
 | Sumário | Atualizar todos os índices | `.uno:UpdateAllIndexes` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P1 | Atualiza sumários, listas e índices |  |
@@ -241,7 +243,7 @@
 | Modos de exibição | Modo de leitura | — | — | Não — pendente | Não validado | P2 | Leitura em tela cheia, sem faixa de opções, páginas lado a lado | Hoje: Tela inteira + Exibição de livro. Modo de leitura dedicado (sem edição) previsto na extensão AY. |
 | Zoom | Zoom | `.uno:Zoom` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Zoom e leiaute" (fechado pelo teste) (efeito não conferido) | P0 | Diálogo de zoom |  |
 | Zoom | 100% | `.uno:Zoom100Percent` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface: ZoomType=3 ZoomValue=100 | P1 | Zoom real |  |
-| Zoom | Página inteira | `.uno:ZoomPage` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface: ZoomType=2 ZoomValue=70 | P1 | Ajusta à página |  |
+| Zoom | Página inteira | `.uno:ZoomPage` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface: ZoomType=2 ZoomValue=68 | P1 | Ajusta à página |  |
 | Zoom | Largura da página | `.uno:ZoomPageWidth` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface: ZoomType=1 ZoomValue=223 | P1 | Ajusta à largura |  |
 | Zoom | Uma página | `.uno:ShowSinglePage` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P1 | Uma página por linha |  |
 | Zoom | Várias páginas | `.uno:ShowTwoPages` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P1 | Páginas lado a lado |  |
@@ -271,7 +273,7 @@
 | Sobre | Créditos | `.uno:ShowCredits` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu a janela "CREDITS.fodt (somente leitura) — AY ESCREVA Writer" (fechada pelo teste) (efeito não conferido) | P1 | Créditos da base |  |
 | Diagnóstico | Relatório de diagnóstico | `ayescreva:Diagnostico` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Pela interface: relatório criado no perfil, sem conteúdo de documentos | P2 | Gera arquivo local com versão, sistema e configuração (sem conteúdo de documentos) |  |
 | Diagnóstico | Reiniciar em modo de segurança | `.uno:SafeMode` | Sim | Sim — botão na faixa (confirmado pela interface) | Não validado | P1 | Restaura perfil e desativa extensões |  |
-| Diagnóstico | Verificar atualizações (opcional) | — | — | Não — pendente | Não validado | P2 | Só consulta quando o usuário pede; nunca envia conteúdo | Depende do endereço definitivo do site; a verificação da base está desligada. |
+| Diagnóstico | Verificar atualizações (opcional) | `ayescreva:VerificarAtualizacoes` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Verificar atualizações" (fechado pelo teste) (efeito não conferido) | P2 | Só consulta quando o usuário pede; nunca envia conteúdo; arquivo de versões assinado pelo projeto, instalador só das versões publicadas no GitHub com SHA-256; baixa e instala só com confirmação, sem documentos com alterações pendentes |  |
 
 ## Tabela (contextual)
 

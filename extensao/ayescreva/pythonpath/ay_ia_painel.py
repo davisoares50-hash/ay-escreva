@@ -20,6 +20,7 @@ import uno
 import unohelper
 from com.sun.star.awt import XActionListener, XItemListener, XWindowListener
 from com.sun.star.lang import XComponent
+from com.sun.star.text.ControlCharacter import PARAGRAPH_BREAK
 from com.sun.star.ui import XSidebarPanel, XToolPanel, XUIElement
 
 import ay_dialogos as D
@@ -202,6 +203,108 @@ def aplicar(doc, rng, original, sugestao, acao, controlada=True):
     return len(eds)
 
 
+def inserir_titulo(doc, rng, original, titulo, controlada=True):
+    """Usa um título sugerido: se o trecho começa num título (nível de tópico), troca o texto dele; senão, insere um
+    parágrafo de título antes do trecho, com o estilo do título anterior do documento. Uma ação de desfazer."""
+    atual = rng.getString().replace('\r\n', '\n')
+    if atual != original:
+        raise TrechoInvalido('O trecho mudou depois do pedido; o título não foi inserido. Peça de novo.')
+    texto = rng.getText()
+    par = texto.createTextCursorByRange(rng.getStart())
+    par.gotoStartOfParagraph(False)
+    par.gotoEndOfParagraph(True)
+    nivel = par.getPropertyValue('OutlineLevel') if par.getPropertySetInfo().hasPropertyByName('OutlineLevel') else 0
+    um = doc.getUndoManager()
+    gravava = doc.RecordChanges
+    um.enterUndoContext('Título sugerido pela IA')
+    try:
+        if controlada:
+            doc.RecordChanges = True
+        if nivel and nivel > 0:
+            antigo = par.getString()
+            for ini, fim, novo in T.edicoes(antigo, titulo):
+                c = texto.createTextCursorByRange(par.getStart())
+                c.goRight(ini, False)
+                c.goRight(fim - ini, True)
+                c.setString(novo)
+            como = f'Título trocado: "{antigo}" → "{titulo}"'
+        else:
+            estilo = _estilo_titulo_anterior(doc, par)
+            c = texto.createTextCursorByRange(par.getStart())
+            texto.insertString(c, titulo, False)
+            texto.insertControlCharacter(c, PARAGRAPH_BREAK, False)
+            novo = texto.createTextCursorByRange(par.getStart())
+            novo.gotoPreviousParagraph(False)
+            novo.setPropertyValue('ParaStyleName', estilo)
+            como = f'Título inserido antes do trecho (estilo {estilo})'
+    finally:
+        doc.RecordChanges = gravava
+        um.leaveUndoContext()
+    return como
+
+
+def _estilo_titulo_anterior(doc, par):
+    """Estilo do último título (nível de tópico) antes do parágrafo; sem nenhum, o Título 1."""
+    estilo = 'Heading 1'
+    e = doc.getText().createEnumeration()
+    comparar = doc.getText().compareRegionStarts
+    while e.hasMoreElements():
+        p = e.nextElement()
+        if not p.supportsService('com.sun.star.text.Paragraph'):
+            continue
+        if comparar(p.getStart(), par.getStart()) <= 0:     # chegou ao parágrafo do trecho
+            break
+        if getattr(p, 'OutlineLevel', 0):
+            estilo = p.ParaStyleName
+    return estilo
+
+
+def candidatos_documento(doc, limite=1000):
+    """Parágrafos que a revisão do documento inteiro analisa: texto comum do corpo (sem títulos, sem a lista de
+    referências, sem campos, notas, imagens ou alterações controladas) com pelo menos 4 palavras.
+    Devolve ([(número do parágrafo, texto, cursor sobre o parágrafo)], quantos ficaram de fora)."""
+    import ay_referencias as R
+    pars = R.coletar(doc)
+    i_ref, entradas = R.secao_referencias(pars)
+    fora = set(entradas) | ({i_ref} if i_ref is not None else set())
+    itens, pulados = [], 0
+    for i, p in enumerate(pars):
+        t = p['texto']
+        if i in fora or p['titulo'] or len(t.split()) < 4 or len(t) > 6000:
+            continue
+        pe = p['obj'].createEnumeration()
+        comum = True
+        while pe.hasMoreElements():
+            if pe.nextElement().TextPortionType not in ('Text', 'SoftPageBreak'):
+                comum = False
+                break
+        if not comum:
+            pulados += 1
+            continue
+        c = p['obj'].getText().createTextCursorByRange(p['obj'].getStart())
+        c.gotoEndOfParagraph(True)
+        itens.append((i, t, c))
+        if len(itens) >= limite:
+            break
+    return itens, pulados
+
+
+class _Lote:
+    """Revisão do documento inteiro em andamento: cancela também o pedido do parágrafo atual."""
+
+    def __init__(self, total):
+        self.cancelado = threading.Event()
+        self.atual = None
+        self.total = total
+        self.feitos = 0
+        self.inicio = time.time()
+
+    def cancelar(self):
+        self.cancelado.set()
+        if self.atual is not None:
+            self.atual.cancelar()
+
+
 # ---------------------------------------------------------------- painel
 class _Ouvinte(unohelper.Base, XActionListener, XItemListener, XWindowListener):
     def __init__(self, painel):
@@ -235,10 +338,13 @@ class PainelIA(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent
         self.win.setVisible(True)
         self.c = {c.getModel().Name: c for c in self.win.getControls()}
         self.ouvinte = _Ouvinte(self)
-        for n in ('pedir', 'cancelar', 'aceitar', 'rejeitar', 'gerenciar'):
+        for n in ('pedir', 'cancelar', 'aceitar', 'rejeitar', 'gerenciar', 'documento', 'ir'):
             self.c[n].setActionCommand(n)
             self.c[n].addActionListener(self.ouvinte)
-        self.c['controlada'].addItemListener(self.ouvinte)
+        for n in ('controlada', 'lista', 'opcoes', 'acao'):
+            self.c[n].addItemListener(self.ouvinte)
+        self.c['opcoes'].setVisible(False)
+        self.c['rotulo_opcoes'].setVisible(False)      # rótulo próprio da lista de títulos (nome para leitores de tela)
         self.win.addWindowListener(self.ouvinte)
         self.c['acao'].getModel().StringItemList = tuple(T.ACOES[a][0] for a in ACOES)
         self.c['acao'].selectItemPos(0, True)
@@ -246,6 +352,9 @@ class PainelIA(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent
         self.pedido = None
         self.trecho = None              # (intervalo, original, ação, documento)
         self.sugestao = ''
+        self.titulos = []               # títulos sugeridos (pedido Sugerir títulos)
+        self.doc_sugestoes = []         # revisão do documento inteiro: [{'par', 'texto', 'cursor', 'sug', 'doc'}]
+        self.item_doc = None            # índice em doc_sugestoes mostrado em original × sugestão
         self.ouvintes_fim = []
         self.g.paineis.append(self)
         registrar(f'painel {id(self):x} criado ({len(self.g.paineis)} aberto(s))')
@@ -326,7 +435,8 @@ class PainelIA(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent
         w = self.win.getPosSize().Width
         m = 3
         meia = (w - 3 * m) // 2
-        for n in ('estado', 'rotulo_original', 'original', 'rotulo_sugestao', 'sugestao', 'avisos', 'controlada', 'gerenciar'):
+        for n in ('estado', 'documento', 'rotulo_original', 'original', 'rotulo_sugestao', 'sugestao', 'rotulo_opcoes', 'opcoes', 'avisos',
+                  'controlada', 'rotulo_lista', 'lista', 'ir', 'gerenciar'):
             self.c[n].setPosSize(m, 0, max(40, w - 2 * m), 0, PS_X | PS_WIDTH)
         for n in ('pedir', 'aceitar'):
             self.c[n].setPosSize(m, 0, meia, 0, PS_X | PS_WIDTH)
@@ -343,7 +453,9 @@ class PainelIA(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent
         if self.pedido is None:
             self._estado(self.g.descricao_estado())
         self._ativar('pedir', self.pedido is None)
+        self._ativar('documento', self.pedido is None)
         self._ativar('cancelar', self.pedido is not None)
+        self._ativar('ir', self.item_doc is not None)
 
     # pedido
     def _botao_pedir(self):
@@ -355,6 +467,7 @@ class PainelIA(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent
         doc = self._doc()
         rng, texto = ler_selecao(doc)
         acao = ACOES[max(0, self.c['acao'].getSelectedItemPos())]
+        self._limpar()
         self.trecho = (rng, texto, acao, doc)
         self.sugestao = ''
         self.c['original'].getModel().Text = texto
@@ -377,7 +490,7 @@ class PainelIA(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent
                 ay_revisao.adiar(painel.ctx, lambda: painel._avancou(t))
 
         # o pedido existe desde já: Cancelar vale também enquanto o servidor ainda está carregando o modelo
-        p = IA.Pedido(None, mensagens, max_tokens=min(2048, 80 + len(texto)), sem_pensar=modelo.get('sem_pensar', True),
+        p = IA.Pedido(None, mensagens, max_tokens=T.max_tokens(acao, texto), sem_pensar=modelo.get('sem_pensar', True),
                       ao_avancar=avancou, ao_terminar=lambda ped: ay_revisao.adiar(painel.ctx, lambda: painel._terminou(ped)))
 
         def trabalho():
@@ -407,8 +520,13 @@ class PainelIA(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent
 
     def _avancou(self, t):
         # progresso em texto (lido por leitores de tela): a sugestão aparece aos poucos e o estado conta os caracteres
+        if self.trecho is None:
+            return
         self.c['sugestao'].getModel().Text = t
-        self._estado(f'A IA local está escrevendo… {len(t)} de ~{len(self.trecho[1])} caracteres (você pode continuar editando)')
+        if T.TIPO[self.trecho[2]] == 'substitui':
+            self._estado(f'A IA local está escrevendo… {len(t)} de ~{len(self.trecho[1])} caracteres (você pode continuar editando)')
+        else:
+            self._estado(f'A IA local está escrevendo… {len(t)} caracteres (você pode continuar editando)')
 
     def _falhou(self, ped, msg):
         if ped is not self.pedido:
@@ -444,10 +562,39 @@ class PainelIA(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent
             self._estado(f'A IA não sugeriu mudanças ({seg} s).')
             self._ativar('rejeitar', True)
             return
-        if acao == 'resumir':
-            self.c['avisos'].getModel().Label = ('Resumo: não substitui o trecho. Copie o que quiser usar. '
-                                                 + ('Atenção: ' + '; '.join(probl) + '.' if probl else ''))
-            self._estado(f'Resumo pronto em {seg} s.')
+        tipo = T.TIPO[acao]
+        if tipo == 'leitura':
+            nome = {'resumir': 'Resumo', 'explicar': 'Explicação', 'inconsistencias': 'Inconsistências'}[acao]
+            novos = [x for x in T.conferir_preservacao(original, sug, 'resumir') if 'que não estão no original' in x]
+            if acao == 'inconsistencias':
+                linhas = T.inconsistencias(sug, original)
+                sug = ('\n'.join(('• Trecho apontado, sem explicação: ' if eco else '• ') + t for t, eco in linhas)
+                       if linhas else 'A IA não apontou inconsistências neste trecho.')
+                self.sugestao = sug
+                self.c['sugestao'].getModel().Text = sug
+                novos = []                       # as linhas citam números do próprio trecho, de propósito
+            self.c['avisos'].getModel().Label = (f'{nome}: só leitura, não altera o texto. A IA pode errar: confira no trecho. '
+                                                 + ('Atenção — ' + '; '.join(novos) + '.' if novos else ''))
+            self._estado(f'{nome} pronto em {seg} s.')
+            self._ativar('rejeitar', True)
+            return
+        if tipo == 'titulo':
+            validos, recusados = T.titulos(sug, original)
+            self.titulos = validos
+            self.c['sugestao'].setVisible(False)
+            self.c['opcoes'].setVisible(True)
+            self.c['rotulo_sugestao'].setVisible(False)
+            self.c['rotulo_opcoes'].setVisible(True)
+            self.c['opcoes'].getModel().StringItemList = tuple(validos)
+            self.c['aceitar'].getModel().Label = 'Inserir es~te título'
+            if validos:
+                self.c['opcoes'].selectItemPos(0, True)
+            self.c['avisos'].getModel().Label = (
+                ('Inserir: troca o título, se o trecho começa num título; senão, cria um título antes do trecho. Ctrl+Z desfaz. '
+                 if validos else 'Nenhum título aproveitável. ')
+                + ('Recusados por trazer dados que não estão no trecho: ' + ' | '.join(recusados) if recusados else ''))
+            self._estado(f'{len(validos)} título(s) sugerido(s) em {seg} s.')
+            self._ativar('aceitar', bool(validos))
             self._ativar('rejeitar', True)
             return
         if probl:
@@ -472,22 +619,186 @@ class PainelIA(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent
             return
         rng, original, acao, doc = self.trecho
         controlada = self.c['controlada'].getModel().State == 1
-        n = aplicar(doc, rng, original, self.sugestao, acao, controlada)
+        sufixo = (' como alteração controlada: aceite ou rejeite em Revisão › Alterações. ' if controlada else '. ') + 'Ctrl+Z desfaz.'
+        if T.TIPO[acao] == 'titulo':
+            i = self.c['opcoes'].getSelectedItemPos()
+            if not 0 <= i < len(self.titulos):
+                return
+            como = inserir_titulo(doc, rng, original, self.titulos[i], controlada)
+            self._limpar()
+            self._estado(como + sufixo)
+            return
+        item = self.item_doc
+        try:
+            n = aplicar(doc, rng, original, self.sugestao, acao, controlada)
+        except TrechoInvalido:
+            if item is not None:
+                self._tirar_da_lista(item)          # o parágrafo mudou: a sugestão antiga não vale mais
+            raise
         self._limpar()
-        self._estado(f'Sugestão aplicada ({n} trecho(s))' + (' como alteração controlada: aceite ou rejeite em Revisão › Alterações. '
-                                                              if controlada else '. ') + 'Ctrl+Z desfaz.')
+        if item is not None:
+            self._tirar_da_lista(item)
+        self._estado(f'Sugestão aplicada ({n} trecho(s))' + sufixo)
 
     def _botao_rejeitar(self):
+        item = self.item_doc
         self._limpar()
+        if item is not None:
+            self._tirar_da_lista(item)
         self._estado('Sugestão descartada. Nada foi alterado.')
 
     def _limpar(self):
-        self.trecho, self.sugestao = None, ''
+        self.trecho, self.sugestao, self.titulos, self.item_doc = None, '', [], None
         for n in ('original', 'sugestao'):
             self.c[n].getModel().Text = ''
         self.c['avisos'].getModel().Label = ''
+        self.c['opcoes'].setVisible(False)
+        self.c['rotulo_opcoes'].setVisible(False)
+        self.c['sugestao'].setVisible(True)
+        self.c['rotulo_sugestao'].setVisible(True)
+        self.c['opcoes'].getModel().StringItemList = ()
+        self.c['aceitar'].getModel().Label = '~Aceitar'
         self._ativar('aceitar', False)
         self._ativar('rejeitar', False)
+        self._ativar('ir', False)
+
+    def _mudou_opcoes(self):
+        self._ativar('aceitar', 0 <= self.c['opcoes'].getSelectedItemPos() < len(self.titulos))
+
+    def _mudou_acao(self):
+        pass
+
+    # ---------------------------------------------------------------- revisão do documento inteiro
+    def _botao_documento(self):
+        if self.pedido is not None:
+            return
+        if not self.g.pronto():
+            self._estado(self.g.descricao_estado())
+            return
+        doc = self._doc()
+        itens, pulados = candidatos_documento(doc)
+        if not itens:
+            self._estado('Nenhum parágrafo de texto comum para revisar (títulos, referências, campos, notas e parágrafos com '
+                         'menos de 4 palavras ficam de fora).')
+            return
+        self._limpar()
+        self.doc_sugestoes = []
+        self._atualizar_lista()
+        lote = _Lote(len(itens))
+        lote.pulados = pulados
+        self.pedido = lote
+        self.atualizar()
+        self._estado(f'Revisando o documento: {len(itens)} parágrafo(s) em segundo plano. Você pode continuar editando; '
+                     'as sugestões entram na lista abaixo.')
+        registrar(f'revisão do documento: {len(itens)} parágrafo(s), {pulados} com campos ou notas pulados (painel {id(self):x})')
+        gerente, painel, modelo = self.g, self, self.g.caminhos()[1]
+
+        def trabalho():
+            # thread de trabalho: só textos; os cursores dos parágrafos só passam adiante, sem uso aqui
+            gerente.ocupado += 1
+            erro = None
+            try:
+                try:
+                    srv = gerente.servidor_pronto()
+                except Exception as e:
+                    erro = f'A IA local não iniciou: {e}'
+                    return
+                for k, (par, texto, cur) in enumerate(itens):
+                    if lote.cancelado.is_set():
+                        break
+                    p = IA.Pedido(srv, T.prompt('revisar', texto), max_tokens=T.max_tokens('revisar', texto),
+                                  sem_pensar=modelo.get('sem_pensar', True))
+                    lote.atual = p
+                    p._rodar()
+                    gerente.ultimo_uso = time.time()
+                    if lote.cancelado.is_set():
+                        break
+                    sug = None if p.erro else T.limpar_resposta(p.texto, texto)
+                    ay_revisao.adiar(painel.ctx, lambda k=k, par=par, texto=texto, cur=cur, sug=sug, err=p.erro:
+                                     painel._doc_resultado(lote, k, par, texto, cur, sug, err))
+            finally:
+                gerente.ocupado -= 1
+                gerente.ultimo_uso = time.time()
+                ay_revisao.adiar(painel.ctx, lambda: painel._doc_fim(lote, erro))
+        threading.Thread(target=trabalho, daemon=True).start()
+
+    def _doc_resultado(self, lote, k, par, texto, cur, sug, erro):
+        lote.feitos = k + 1
+        if erro:
+            lote.erros = getattr(lote, 'erros', 0) + 1
+        elif sug and sug != texto:
+            probl = T.conferir_preservacao(texto, sug, 'revisar')
+            if texto.count('\n') != sug.count('\n'):
+                probl.append('junta ou separa parágrafos')
+            if probl:
+                lote.bloqueadas = getattr(lote, 'bloqueadas', 0) + 1
+                registrar(f'revisão do documento: parágrafo {par + 1} com sugestão bloqueada ({"; ".join(probl)})')
+            else:
+                self.doc_sugestoes.append({'par': par, 'texto': texto, 'cursor': cur, 'sug': sug, 'doc': self._doc()})
+                self._atualizar_lista()
+        if self.pedido is lote:
+            self._estado(f'Revisando o documento: parágrafo {lote.feitos} de {lote.total} · {len(self.doc_sugestoes)} '
+                         'sugestão(ões) na lista. Pode cancelar; o que já veio fica.')
+
+    def _doc_fim(self, lote, erro):
+        if self.pedido is not lote:
+            return
+        self.pedido = None
+        self.atualizar()
+        seg = f'{time.time() - lote.inicio:.0f}'
+        extra = ''.join([f' {lote.bloqueadas} sugestão(ões) bloqueada(s) pela conferência de preservação.' if getattr(lote, 'bloqueadas', 0) else '',
+                         f' {lote.pulados} parágrafo(s) com campos ou notas ficaram de fora.' if lote.pulados else '',
+                         f' {lote.erros} parágrafo(s) sem resposta da IA.' if getattr(lote, 'erros', 0) else ''])
+        if erro:
+            self._estado(erro)
+        elif lote.cancelado.is_set():
+            self._estado(f'Revisão do documento cancelada no parágrafo {lote.feitos} de {lote.total}. '
+                         f'{len(self.doc_sugestoes)} sugestão(ões) na lista.' + extra)
+        else:
+            self._estado(f'Revisão do documento concluída em {seg} s: {lote.total} parágrafo(s), {len(self.doc_sugestoes)} '
+                         'sugestão(ões). Escolha na lista para ver, aceitar ou rejeitar.' + extra)
+        registrar(f'revisão do documento: fim — {lote.feitos}/{lote.total}, {len(self.doc_sugestoes)} sugestões, '
+                  f'{getattr(lote, "bloqueadas", 0)} bloqueadas, cancelado={lote.cancelado.is_set()}, {seg} s')
+
+    def _atualizar_lista(self):
+        rot = []
+        for s in self.doc_sugestoes:
+            n = T.resumo_mudancas(s['texto'], s['sug'])['edicoes']
+            inicio = ' '.join(s['texto'].split()[:6])
+            rot.append(f'§{s["par"] + 1}: {n} trecho(s) — {inicio}…')
+        self.c['lista'].getModel().StringItemList = tuple(rot)
+
+    def _mudou_lista(self):
+        i = self.c['lista'].getSelectedItemPos()
+        if not 0 <= i < len(self.doc_sugestoes) or self.pedido is not None and not isinstance(self.pedido, _Lote):
+            return
+        s = self.doc_sugestoes[i]
+        self._limpar()
+        self.item_doc = i
+        self.trecho = (s['cursor'], s['texto'], 'revisar', s['doc'])
+        self.sugestao = s['sug']
+        self.c['original'].getModel().Text = s['texto']
+        self.c['sugestao'].getModel().Text = s['sug']
+        mud = T.resumo_mudancas(s['texto'], s['sug'])
+        self.c['avisos'].getModel().Label = (f'Parágrafo {s["par"] + 1}: {mud["edicoes"]} trecho(s) alterado(s). Números, datas, '
+                                             'citações, endereços, siglas e nomes conferidos: preservados.')
+        self._ativar('aceitar', True)
+        self._ativar('rejeitar', True)
+        self._ativar('ir', True)
+
+    def _tirar_da_lista(self, i):
+        if 0 <= i < len(self.doc_sugestoes):
+            del self.doc_sugestoes[i]
+        self._atualizar_lista()
+        if self.doc_sugestoes:
+            self.c['lista'].selectItemPos(min(i, len(self.doc_sugestoes) - 1), True)
+            self._mudou_lista()
+
+    def _botao_ir(self):
+        if self.item_doc is None or not 0 <= self.item_doc < len(self.doc_sugestoes):
+            return
+        s = self.doc_sugestoes[self.item_doc]
+        s['doc'].getCurrentController().select(s['cursor'])
 
     def _mudou_controlada(self):
         self.g.gravar(controlada=self.c['controlada'].getModel().State == 1)
@@ -530,7 +841,7 @@ def gerenciar(ctx, frame):
     d.add('FixedText', 'espaco', 50, 162, 304, 10)
     # progresso do download em texto (lido por leitores de tela)
     d.add('FixedText', 'situacao', 6, 176, 348, 30, MultiLine=True, Label='Nenhum download em andamento.')
-    estado = {'cancelar': None, 'baixando': False}
+    estado = {'cancelar': None, 'baixando': False, 'fechado': False}
 
     def atual():
         i = d.c('modelos').getSelectedItemPos()
@@ -551,17 +862,25 @@ def gerenciar(ctx, frame):
                   f'Origem: {m["origem"]}']
         if r:
             linhas.append(f'Medido no computador de testes do AY ({r.get("computador", "")}): {r.get("resumo", "")}')
-        linhas.append('Situação: ' + ('instalado' if os.path.exists(arq) else 'não instalado') + (' (em uso)' if cfg['modelo'] == m['id'] and os.path.exists(arq) else ''))
+        parte = IA.tamanho_parcial(arq)
+        if os.path.exists(arq):
+            situacao = 'instalado' + (' (em uso)' if cfg['modelo'] == m['id'] else '')
+        elif parte:
+            situacao = f'download incompleto: {_mb(parte)} de {_mb(m["tamanho"])} guardados ("Baixar o restante" continua)'
+        else:
+            situacao = 'não instalado'
+        linhas.append('Situação: ' + situacao)
         d.m('detalhe').Text = '\n'.join(linhas)
         try:
             livre = IA.espaco_livre(pasta)
-            precisa = m['tamanho'] + (0 if os.path.exists(motor) else cat['motor']['tamanho'])
-            d.m('espaco').Label = f'Espaço livre: {_mb(livre)} · este modelo precisa de {_mb(precisa)}'
-        except Exception:
-            d.m('espaco').Label = ''
+            precisa = m['tamanho'] - parte + (0 if os.path.exists(motor) else cat['motor']['tamanho'])
+            d.m('espaco').Label = f'Espaço livre: {_mb(livre)} · falta baixar {_mb(precisa)}' if not os.path.exists(arq) else f'Espaço livre: {_mb(livre)}'
+        except Exception as e:
+            d.m('espaco').Label = f'Pasta inválida: {e}'
+        d.m('baixar').Label = '~Baixar o restante…' if parte and not os.path.exists(arq) else '~Baixar…'
         d.m('baixar').Enabled = not estado['baixando'] and not os.path.exists(arq)
         d.m('usar').Enabled = not estado['baixando'] and os.path.exists(arq) and os.path.exists(motor)
-        d.m('remover').Enabled = not estado['baixando'] and os.path.exists(arq)
+        d.m('remover').Enabled = not estado['baixando'] and (os.path.exists(arq) or parte > 0)
         d.m('cancelar').Enabled = estado['baixando']
 
     def escolher():
@@ -574,14 +893,27 @@ def gerenciar(ctx, frame):
         m = atual()
         pasta = d.c('pasta').getText().strip() or IA.pasta_padrao()
         motor, arq = arquivos(m, pasta)
-        precisa = m['tamanho'] + (0 if os.path.exists(motor) else cat['motor']['tamanho'])
-        if IA.espaco_livre(pasta) < precisa + 500 * 2**20:
-            D.mensagem(ctx, frame.getContainerWindow(), 'Gerenciar IA local', f'Espaço insuficiente em {pasta}. Escolha outra pasta.', 'WARNINGBOX')
+        janela = frame.getContainerWindow()
+        parte = IA.tamanho_parcial(arq)
+        precisa = m['tamanho'] - parte + (0 if os.path.exists(motor) else cat['motor']['tamanho'])
+        try:
+            if not os.path.isabs(pasta):
+                raise ValueError('use o caminho completo da pasta (por exemplo, D:\\IA)')
+            livre = IA.espaco_livre(pasta)
+            os.makedirs(os.path.join(pasta, 'modelos'), exist_ok=True)
+        except (OSError, ValueError) as e:
+            D.mensagem(ctx, janela, 'Gerenciar IA local', f'Não é possível usar a pasta {pasta}: {e}. Escolha outra pasta.', 'WARNINGBOX')
             return
-        if D.mensagem(ctx, frame.getContainerWindow(), 'Baixar modelo de IA',
+        if livre < precisa + 500 * 2**20:
+            D.mensagem(ctx, janela, 'Gerenciar IA local', f'Espaço insuficiente em {pasta}: faltam {_mb(precisa + 500 * 2**20 - livre)} '
+                       '(o modelo e uma folga de 500 MB). Libere espaço ou escolha outra pasta.', 'WARNINGBOX')
+            return
+        retomada = f' Já há {_mb(parte)} baixados: o download continua de onde parou.' if parte else ''
+        if D.mensagem(ctx, janela, 'Baixar modelo de IA',
                       f'Baixar {m["nome"]} ({_mb(m["tamanho"])}) de {m["origem"]}'
                       + ('' if os.path.exists(motor) else f' e o motor llama.cpp ({_mb(cat["motor"]["tamanho"])}) do GitHub')
-                      + f' para {pasta}? Só os arquivos do modelo e do motor são transferidos; nenhum documento.', 'QUERYBOX', 3) != 2:
+                      + f' para {pasta}? Só os arquivos do modelo e do motor são transferidos; nenhum documento.' + retomada,
+                      'QUERYBOX', 3) != 2:
             return
         cancelar = threading.Event()
         estado.update(cancelar=cancelar, baixando=True)
@@ -590,13 +922,16 @@ def gerenciar(ctx, frame):
         def progresso(rotulo):
             ultimo = [0.0]
 
-            def f(feito, total):
+            def f(feito, total, fase='baixando'):
                 if time.time() - ultimo[0] < 0.25 and feito < total:      # no máximo 4 atualizações por segundo
                     return
                 ultimo[0] = time.time()
                 pct = f' ({100 * feito // total}%)' if total else ''
-                texto = f'Baixando {rotulo.lower()}: {_mb(feito)} de {_mb(total)}{pct}. Pode cancelar.'
-                ay_revisao.adiar(ctx, lambda: setattr(d.m('situacao'), 'Label', texto))
+                if fase == 'conferindo':
+                    texto = f'Conferindo a parte já baixada do {rotulo.lower()}: {_mb(feito)} de {_mb(total)}{pct}…'
+                else:
+                    texto = f'Baixando {rotulo.lower()}: {_mb(feito)} de {_mb(total)}{pct}. Pode cancelar; o que já veio fica guardado.'
+                ay_revisao.adiar(ctx, lambda: estado['fechado'] or setattr(d.m('situacao'), 'Label', texto))
             return f
 
         def trabalho():
@@ -608,18 +943,30 @@ def gerenciar(ctx, frame):
                     os.remove(zipf)
                 IA.baixar(m['url'], arq, m['sha256'], m['tamanho'], progresso('Modelo'), cancelar)
                 msg = f'{m["nome"]} baixado e conferido (SHA-256). Clique em "Usar este modelo".'
+                registrar(f'download concluído: {m["id"]}')
             except IA.Cancelado:
-                msg = 'Download cancelado. Os arquivos parciais foram apagados.'
+                parte = IA.tamanho_parcial(arq)
+                msg = (f'Download interrompido. {_mb(parte)} ficaram guardados em {pasta}: "Baixar o restante" continua de onde '
+                       'parou; "Remover" apaga.' if parte else 'Download interrompido antes de começar; nada foi gravado.')
+                registrar(f'download cancelado: {m["id"]}, {parte} bytes guardados')
+            except IA.FalhaDownload as e:
+                msg = str(e)
+                registrar(f'download falhou: {m["id"]}: {e}')
             except Exception as e:
-                msg = f'Falha no download: {e}'
+                msg = f'Falha no download: {e}. O que já foi baixado ficou guardado.'
+                registrar(f'download falhou: {m["id"]}: ' + traceback.format_exc())
+
             def fim():
                 estado['baixando'] = False
+                if estado['fechado']:
+                    return
                 d.m('situacao').Label = msg
                 mostrar()
             ay_revisao.adiar(ctx, fim)
         threading.Thread(target=trabalho, daemon=True).start()
 
     def cancelar():
+        registrar('download: botão Cancelar download')
         if estado['cancelar'] is not None:
             estado['cancelar'].set()
 
@@ -635,19 +982,22 @@ def gerenciar(ctx, frame):
         m = atual()
         pasta = d.c('pasta').getText().strip() or IA.pasta_padrao()
         _, arq = arquivos(m, pasta)
-        if D.mensagem(ctx, frame.getContainerWindow(), 'Remover modelo', f'Apagar {m["arquivo"]} ({_mb(m["tamanho"])}) de {pasta}?',
+        o_que = m['arquivo'] if os.path.exists(arq) else f'o download incompleto de {m["arquivo"]}'
+        if D.mensagem(ctx, frame.getContainerWindow(), 'Remover modelo', f'Apagar {o_que} de {pasta}? Seus documentos não são afetados.',
                       'QUERYBOX', 3) != 2:
             return
         if cfg['modelo'] == m['id']:
             g.parar()
-        os.remove(arq)
+        for a in (arq, arq + '.parcial'):
+            if os.path.exists(a):
+                os.remove(a)
         d.m('situacao').Label = f'{m["nome"]} removido.'
         mostrar()
 
     d.botao('baixar', 6, 212, 60, '~Baixar…', baixar)
-    d.botao('cancelar', 70, 212, 60, 'Ca~ncelar download', cancelar)
-    d.botao('usar', 134, 212, 76, '~Usar este modelo', usar)
-    d.botao('remover', 214, 212, 60, '~Remover', remover)
+    d.botao('cancelar', 70, 212, 66, 'Ca~ncelar download', cancelar)
+    d.botao('usar', 140, 212, 76, '~Usar este modelo', usar)
+    d.botao('remover', 220, 212, 54, '~Remover', remover)
     d.botao('fechar', 294, 212, 60, '~Fechar', lambda: d.fechar(None), padrao=True)
     d.ao_mudar('modelos', mostrar)
     d.ao_digitar('pasta', mostrar)
@@ -657,8 +1007,10 @@ def gerenciar(ctx, frame):
         d.c('modelos').selectItemPos(i, True)
         mostrar()
     d.executar(frame.getContainerWindow(), iniciar)
+    estado['fechado'] = True
+    registrar('Gerenciar IA local fechado' + (' durante um download (a parte baixada fica guardada)' if estado['baixando'] else ''))
     if estado['cancelar'] is not None:
-        estado['cancelar'].set()          # fechar o diálogo cancela um download em andamento
+        estado['cancelar'].set()          # fechar o diálogo interrompe o download; a parte baixada fica guardada
 
 
 def _arquivos_motor(zipf):

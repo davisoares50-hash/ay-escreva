@@ -247,6 +247,16 @@ O AY só oferecerá instalar uma atualização que passe por **todas** as verifi
 Sem a chave de assinatura guardada com segurança pelo responsável, a instalação continua **manual** pelo site
 (com SHA-256), e a consulta só informa que há versão nova.
 
+**Implementado na 0.7.0** (`ay_atualizacao.py`; publicação em [ATUALIZACOES.md](ATUALIZACOES.md)): o arquivo de versões
+fica no site oficial (`atualizacoes.json` + `atualizacoes.json.sig`), assinado com Ed25519 pela chave do projeto (gerada
+em 21/10/2026, parte privada fora do repositório); a verificação é feita em Python puro (`ay_ed25519.py`, conferida
+com os vetores da RFC 8032 e com assinaturas do Node.js). O instalador só pode vir de
+`github.com/davisoares50-hash/ay-escreva/releases/download/`, com nome, tamanho e SHA-256 do arquivo assinado; o
+download reaproveita o da IA (continuação de onde parou, SHA-256). Antes de instalar, documentos com alterações não
+salvas bloqueiam; depois, um roteiro espera o AY fechar, instala por cima (`/SILENT /CURRENTUSER /CLOSEAPPLICATIONS`) e
+reabre o AY. Testado de ponta a ponta (0.5.0 → 0.7.0, RESULTADOS §5.8). Authenticode continua sem certificado. Falta
+publicar o primeiro arquivo de versões no site.
+
 ## 8. Fontes consultadas
 
 - Qwen3-4B, cartão oficial: <https://huggingface.co/Qwen/Qwen3-4B> (Apache 2.0, 4,0 B, contexto 32K).

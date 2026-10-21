@@ -36,8 +36,9 @@ def main():
         recusou = False
     except ValueError:
         recusou = True
-    verificar('Só as ações do AY existem (revisar, clareza, formal, simplificar, resumir); outra é recusada', recusou and set(T.ACOES) ==
-              {'revisar', 'clareza', 'formal', 'simplificar', 'resumir'})
+    verificar('Só as ações do AY existem (revisar, clareza, formal, simplificar, resumir, títulos, explicar, inconsistências); outra é recusada',
+              recusou and set(T.ACOES) == {'revisar', 'clareza', 'formal', 'simplificar', 'resumir', 'titulos', 'explicar', 'inconsistencias'}
+              and set(T.TIPO) == set(T.ACOES) and T.TIPO['explicar'] == 'leitura' and T.TIPO['titulos'] == 'titulo')
     verificar('Preservação: o próprio texto não tem problemas', T.conferir_preservacao(ORIGINAL, ORIGINAL) == [])
     corrigido = ORIGINAL.replace('foi avaliado', 'foi avaliado,').replace('variação ', 'de variação '.replace('de ', '', 1))
     verificar('Preservação: correção que mantém números, datas, citação, nomes e endereços passa',
@@ -82,6 +83,21 @@ def main():
     verificar('Revisar: frase do usuário apagada ou reescrita ampla é bloqueada; correção de acentos e crase passa',
               any('apagou' in p for p in obedeceu) and corrigiu == [] and any('mudou' in p for p in reescreveu),
               f'{obedeceu} | {reescreveu}')
+    # títulos: limpa numeração, marcadores e aspas; recusa título com número ou sigla que não está no trecho
+    texto = 'A pesquisa ouviu servidores de três órgãos sobre a adoção de editores livres e a formação das equipes.'
+    resp = ('1. Formação das equipes e editores livres\n- "Adoção de editores livres no serviço público"\n'
+            '3) Pesquisa com 500 servidores do MEC\n4. Outro título qualquer')
+    validos, recusados = T.titulos(resp, texto)
+    verificar('Sugerir títulos: até 3 títulos limpos; título com número ou sigla inventados é recusado',
+              validos == ['Formação das equipes e editores livres', 'Adoção de editores livres no serviço público', 'Outro título qualquer']
+              and len(recusados) == 1 and '500' in recusados[0], (validos, recusados))
+    # inconsistências: linha que só repete o trecho é marcada como "sem explicação"; "Nenhuma…" vira lista vazia
+    o = 'A pesquisa ouviu 120 servidores em 2024. Dos 150 servidores entrevistados, 90% aprovaram.'
+    eco = T.inconsistencias('- A pesquisa ouviu 120 servidores em 2024. Dos 150 servidores entrevistados, 90% aprovaram.', o)
+    explicada = T.inconsistencias('- O número de ouvidos (120) não bate com o de entrevistados (150).', o)
+    verificar('Apontar inconsistências: repetição do trecho marcada como sem explicação; explicação real mantida; "Nenhuma" = vazio',
+              eco == [(eco[0][0], True)] and explicada == [(explicada[0][0], False)]
+              and T.inconsistencias('Nenhuma inconsistência encontrada.', o) == [], (eco, explicada))
     saida = RAIZ / 'tests' / 'output' / 'ia'
     saida.mkdir(parents=True, exist_ok=True)
     (saida / 'texto.json').write_text(json.dumps({'itens': itens}, ensure_ascii=False, indent=1), encoding='utf-8')

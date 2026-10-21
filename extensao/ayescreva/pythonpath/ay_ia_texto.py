@@ -23,7 +23,62 @@ ACOES = {
                                    'informações.'),
     'resumir': ('Resumir', 'Escreva um resumo fiel do trecho, em português do Brasil, com no máximo um terço do tamanho. Use só '
                            'informações que estão no trecho.'),
+    'titulos': ('Sugerir títulos', 'Sugira até três títulos curtos para o trecho (no máximo 10 palavras cada), um por linha, sem '
+                                   'numeração, sem aspas e sem ponto final. Use só informações que estão no trecho.'),
+    'explicar': ('Explicar', 'Explique em português simples, em até cinco frases curtas, o que o trecho diz e o sentido dos termos '
+                             'técnicos que aparecem nele. Não reescreva o trecho e não acrescente informações que não estão nele.'),
+    'inconsistencias': ('Apontar inconsistências', 'Procure contradições dentro do trecho: números que não batem entre si, datas '
+                                                   'impossíveis ou fora de ordem, quantidades, valores ou nomes que se contradizem. '
+                                                   'Não repita nem reescreva o trecho. Para cada contradição, escreva uma linha '
+                                                   'começando com "- " explicando o que não bate, citando os dois dados em conflito. '
+                                                   'Se não houver contradição, responda exatamente: Nenhuma inconsistência encontrada.'),
 }
+
+# o que o AY faz com a resposta: 'substitui' = original × sugestão, aplicada só se a pessoa aceitar; 'leitura' = só
+# mostra (resumo, explicação, inconsistências), nunca altera o texto; 'titulo' = a pessoa escolhe um título para inserir
+TIPO = {'revisar': 'substitui', 'clareza': 'substitui', 'formal': 'substitui', 'simplificar': 'substitui',
+        'resumir': 'leitura', 'explicar': 'leitura', 'inconsistencias': 'leitura', 'titulos': 'titulo'}
+
+
+def max_tokens(acao, trecho):
+    """Limite de tokens da resposta conforme o pedido (títulos e explicações são curtos)."""
+    return {'titulos': 120, 'explicar': 400, 'inconsistencias': 400}.get(acao, min(2048, 80 + len(trecho)))
+
+
+def inconsistencias(resposta, original):
+    """Linhas apontadas pela IA: [(texto, eco)], com eco=True quando a linha só repete frases do trecho, sem explicar o que
+    não bate (o modelo pequeno às vezes faz isso). O painel mostra as duas, marcando a segunda como "trecho apontado, sem
+    explicação": a pessoa vê o que a IA indicou e com que confiança."""
+    frases = [f.strip().lower() for f in re.split(r'(?<=[.!?])\s+|\n', original) if f.strip()]
+    trechos = [' '.join(frases[i:j]) for i in range(len(frases)) for j in range(i + 1, min(len(frases), i + 3) + 1)]
+    linhas = []
+    for linha in resposta.splitlines():
+        t = re.sub(r'^\s*(?:[-*•–]|\d+[.)])\s*', '', linha).strip()
+        if not t or t.lower().startswith('nenhuma inconsist'):
+            continue
+        eco = max((difflib.SequenceMatcher(None, t.lower(), f).ratio() for f in trechos), default=0) > 0.85
+        linhas.append((t, eco))
+    return linhas
+
+
+def titulos(resposta, original):
+    """Títulos sugeridos (até 3), limpos de numeração, marcadores e aspas, e os recusados por trazerem número ou nome
+    que não está no trecho (a IA não pode inventar dados). Devolve (válidos, recusados)."""
+    validos, recusados = [], []
+    for linha in resposta.splitlines():
+        t = re.sub(r'^\s*(?:[-*•–]|\d+[.)]|título\s*\d*:)\s*', '', linha.strip(), flags=re.I).strip()
+        t = t.strip('"“”\'').strip().rstrip('.').strip()
+        if not t or len(t) > 120 or t.lower() in (v.lower() for v in validos):
+            continue
+        novos = [p for p in conferir_preservacao(original, t, 'resumir') if 'que não estão no original' in p]
+        longas = [p for p in RE_PALAVRA.findall(t) if len(p) > 3]
+        if longas and sum(p[:1].isupper() for p in longas) * 2 >= len(longas):
+            # título com iniciais maiúsculas: palavras capitalizadas não indicam nome próprio
+            novos = [p for p in novos if not p.startswith('nomes')]
+        (recusados if novos else validos).append(t if not novos else f'{t} — {"; ".join(novos)}')
+        if len(validos) == 3:
+            break
+    return validos, recusados
 
 SISTEMA = (
     'Você é o revisor de textos do editor AY ESCREVA, em português do Brasil.\n'

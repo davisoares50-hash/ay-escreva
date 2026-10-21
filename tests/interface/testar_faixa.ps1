@@ -18,7 +18,8 @@
   powershell -ExecutionPolicy Bypass -File tests\interface\testar_faixa.ps1 -Somente texto,tabela   # depuração
 #>
 param([string]$Dist = 'E:\AY\dist\AY ESCREVA', [int]$Limite = 2400, [string]$Somente, [string]$Documento,
-      [string]$IAPasta = (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) 'out\ia'), [string]$IAModelo)
+      [string]$IAPasta = (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) 'out\ia'), [string]$IAModelo,
+      [switch]$SoFase1)
 $ErrorActionPreference = 'Stop'
 $Raiz = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $Saida = Join-Path $Raiz 'tests\output\interface'
@@ -42,7 +43,7 @@ try {
 $mapa = Join-Path $Raiz 'out\faixa\mapa.json'
 & node.exe (Join-Path $Raiz 'tools\gerar-faixa.mjs') (Join-Path $Raiz 'ui\abas.json') (Join-Path $Dist 'share\config\soffice.cfg\modules\swriter\ui\notebookbar_ayescreva.ui') (Join-Path $Dist 'share\config\images_colibre.zip') '-' $mapa | Out-Null
 
-function Executar-Fase([string]$nome, [string]$documento, [string[]]$passos, [string]$resultado, [hashtable]$extra = @{}) {
+function Executar-Fase([string]$nome, [string]$documento, [string[]]$passos, [string]$resultado, [hashtable]$extra = @{}, [string]$RotuloFalha) {
   $perfil = Join-Path $env:TEMP ("ay-faixa-$nome-" + [guid]::NewGuid().ToString('N').Substring(0, 8))
   New-Item -ItemType Directory -Force (Join-Path $perfil 'user') | Out-Null
   @'
@@ -81,7 +82,15 @@ function Executar-Fase([string]$nome, [string]$documento, [string[]]$passos, [st
   Remove-Item Env:\AY_TESTE_UI_SPEC, Env:\AY_SIMULAR_ABERTURA, Env:\AY_DEPURAR_REVISAO
   $quedas = @(Get-WinEvent -FilterHashtable @{ LogName = 'Application'; ProviderName = 'Application Error'; StartTime = $inicio } -ErrorAction SilentlyContinue | Where-Object { $_.Message -like '*soffice*' })
   Remove-Item -Recurse -Force $perfil -ErrorAction SilentlyContinue
-  if (-not (Test-Path $resultado)) { throw "Fase ${nome}: sem relatório em $Limite s (quedas registradas: $($quedas.Count))" }
+  if (-not (Test-Path $resultado)) {
+    # o motor caiu ou travou: a fase vira uma falha registrada e as fases seguintes continuam (antes, o roteiro parava aqui)
+    $msg = "Fase ${nome}: sem relatório em $Limite s (quedas registradas: $($quedas.Count))"
+    Write-Warning $msg
+    [ordered]@{ inicio = $inicio.ToString('s'); fim = (Get-Date).ToString('s'); abas = @(); funcoes = @{}; dialogos = @(); avisos = @()
+                efeitos = @([ordered]@{ funcao = $(if ($RotuloFalha) { $RotuloFalha } else { "Fase $nome completa (o motor terminou ou travou antes do fim)" }); ok = $false; detalhe = $msg })
+                erros = @($msg) } | ConvertTo-Json -Depth 5 | Set-Content -Encoding UTF8 $resultado
+    return [math]::Max(1, $quedas.Count)
+  }
   return $quedas.Count
 }
 
@@ -99,7 +108,7 @@ if (-not $IAModelo) { $IAModelo = @($cat.modelos | Where-Object { $_.recomendado
 $extraIA = @{ ia_pasta = $IAPasta; ia_modelo = $IAModelo }
 
 $quedas = Executar-Fase 'f1' $(if ($Documento) { $Documento } else { $odt }) $passos $resultado $extraIA
-if (-not $Somente) {
+if (-not $Somente -and -not $SoFase1) {
   $r2 = Join-Path $Saida 'faixa-resultado-fase2.json'
   $quedas += Executar-Fase 'f2' $docx @('docx_inicial') $r2
   # Fase 3: outro DOCX, fechado pela faixa com "Salvar" na pergunta (caminho que não passa pelo botão Salvar)
@@ -146,10 +155,26 @@ if (-not $Somente) {
   $odt9 = Join-Path $Trab 'ia-interface.odt'
   Copy-Item (Join-Path $Raiz 'tests\output\etapa1\teste-etapa1.odt') $odt9
   $r9 = Join-Path $Saida 'faixa-resultado-fase9.json'
-  $quedas += Executar-Fase 'f9' $odt9 @($(if ($temModelo) { 'ia' } else { 'ia_basico' })) $r9 $extraIA
-  # Junta os efeitos das fases 2 a 9 no relatório principal
+  $quedas += Executar-Fase 'f9' $odt9 @($(if ($temModelo) { 'ia' } else { 'ia_basico' }), 'escala', 'atualizacoes') $r9 $extraIA
+  # Fase 10: entrega D — revisar o documento inteiro, títulos, explicar, conferir referências e consistência (com o modelo)
+  $r10 = Join-Path $Saida 'faixa-resultado-fase10.json'
+  $fases = @(@('fase2', $r2), @('fase3', $r3), @('fase4', $r4), @('fase5', $r5), @('fase6', $r6), @('fase7', $r7), @('fase8', $r8), @('fase9', $r9))
+  if ($temModelo) {
+    $odt10 = Join-Path $Trab 'documento-interface.odt'
+    Copy-Item (Join-Path $Raiz 'tests\output\etapa1\teste-etapa1.odt') $odt10
+    $quedas += Executar-Fase 'f10' $odt10 @('ia_documento') $r10 $extraIA
+    $fases += ,@('fase10', $r10)
+  } else { Write-Warning 'Fase 10 (entrega D com a IA) BLOQUEADA: sem o modelo em $IAPasta' }
+  # Fase 11: falha conhecida do motor (Galeria do Fontwork e depois Link, como uma pessoa faria). Enquanto o motor cair,
+  # a fase vira FALHA CONHECIDA no relatório; quando uma versão do motor corrigir, ela passa sozinha (RESULTADOS §9)
+  $odt11 = Join-Path $Trab 'falha-conhecida.odt'
+  Copy-Item (Join-Path $Raiz 'tests\output\etapa1\teste-etapa1.odt') $odt11
+  $r11 = Join-Path $Saida 'faixa-resultado-fase11.json'
+  $quedas += Executar-Fase 'f11' $odt11 @('seq_fontwork_como_pessoa') $r11 $extraIA 'FALHA CONHECIDA (defeito do motor LibreOffice 26.8.1): Galeria do Fontwork e depois Link fecham o aplicativo'
+  $fases += ,@('fase11', $r11)
+  # Junta os efeitos das fases 2 a 10 no relatório principal
   $a = Get-Content $resultado -Raw -Encoding UTF8 | ConvertFrom-Json
-  foreach ($par in @(@('fase2', $r2), @('fase3', $r3), @('fase4', $r4), @('fase5', $r5), @('fase6', $r6), @('fase7', $r7), @('fase8', $r8), @('fase9', $r9))) {
+  foreach ($par in $fases) {
     $b = Get-Content $par[1] -Raw -Encoding UTF8 | ConvertFrom-Json
     $a.efeitos = @($a.efeitos) + @($b.efeitos)
     $a.dialogos = @($a.dialogos) + @($b.dialogos)

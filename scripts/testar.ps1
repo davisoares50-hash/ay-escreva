@@ -71,6 +71,10 @@ Etapa 'modelos' { & $Py (Join-Path $Raiz 'tests\uno\modelos.py') }
 Etapa 'ia_texto' { & $Py (Join-Path $Raiz 'tests\ia\testar_texto.py') }
 # IA local no editor: a parte com modelo só roda se o motor e o modelo estiverem em out\ia (senão aparece como BLOQUEADA)
 Etapa 'ia_integracao' { & $Py (Join-Path $Raiz 'tests\ia\integracao.py') }
+# download do modelo com servidor local simulando falhas (o download real pelo botão roda à parte: testar_faixa.ps1 -Somente ia_download)
+Etapa 'ia_download' { & $Py (Join-Path $Raiz 'tests\ia\testar_download.py') }
+Etapa 'conferencias' { & $Py (Join-Path $Raiz 'tests\documento\testar_conferencias.py') }
+Etapa 'ia_integracao_d' { & $Py (Join-Path $Raiz 'tests\ia\integracao_d.py') }
 Etapa 'fixtures' { & $Py (Join-Path $Fx 'gerar_docx.py') $Fx (Join-Path $Raiz 'out\marca\icone-128.png') }
 if ($ComInterface) {
   Etapa 'interface' { & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Raiz 'tests\interface\testar_faixa.ps1') -Dist $Dist }

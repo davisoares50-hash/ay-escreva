@@ -4,13 +4,12 @@ Editor de textos gratuito, instalável e em português do Brasil, com experiênc
 identidade própria. Sem mensalidade, sem conta, offline e com documentos locais.
 
 **Estado:** versão pública **0.2.0, versão inicial de testes para Windows 11 x64** (o único sistema validado).
-Versões de testes locais, ainda não publicadas: **0.3.0** (confiabilidade + revisão de texto com o painel
-**Assistente AY**), **0.4.0** (formatação de trabalhos acadêmicos numa cópia, relatório de conformidade e galeria
-de modelos) e **0.5.0** (IA local opcional, que revisa um trecho no próprio computador). Instaladores locais, gerados
-por `scripts\instalador.ps1`: `out\instalador\AYEscreva-0.4.0-teste-windows11-x64.exe` (208 MB, SHA-256
-`73e2745f5e69a981510116432fcecca29a1f95641d2b15cf94325d04a23151df`) e
-`out\instalador\AYEscreva-0.5.0-teste-windows11-x64.exe` (209 MB, SHA-256 `2f7853ec2aaf295037cbce68a3ae9309ee37b6613fc864375d754e04061950d6`). O instalador não traz
-modelo de IA: o download (3,1 GB) é opcional e feito pelo próprio AY. Windows 10, Windows em ARM, macOS e Linux
+Versão de testes local mais recente, ainda não publicada: **0.7.0**, que reúne tudo o que veio depois da 0.2.0 —
+revisão de texto e painel **Assistente AY** (0.3.0), formatação de trabalhos acadêmicos e galeria de modelos (0.4.0), IA
+local opcional (0.5.0), revisão do documento inteiro, referências, títulos, explicações e inconsistências (entrega D) e
+**Verificar atualizações** (entrega E). Instalador: `out\instalador\AYEscreva-0.7.0-teste-windows11-x64.exe` (209 MB,
+SHA-256 `a4d4653b8cd994f7e20216773085df2f4703cff4c960ab313f4c06b7535bf14d`), gerado por `scripts\instalador.ps1`. O modelo de IA não vem no instalador: o download (3,1 GB) é
+opcional e feito pelo próprio AY. Situação de cada item do projeto: [docs/SITUACAO.md](docs/SITUACAO.md). Windows 10, Windows em ARM, macOS e Linux
 estão em desenvolvimento. Veja
 [docs/PLANO.md](docs/PLANO.md) e, sobre revisão e IA, [docs/REVISAO-E-IA.md](docs/REVISAO-E-IA.md).
 
@@ -65,6 +64,20 @@ comparação com as alternativas em [docs/ARQUITETURA.md](docs/ARQUITETURA.md).
    arquivo.
 6. **Exportar PDF** da cópia (Arquivo › Exportar PDF) e confira os números de página com o sumário.
 
+### Roteiro curto da 0.7.0 — entregas D e E (≈10 min, com o modelo já baixado)
+
+1. **Download com retomada:** em Gerenciar IA local, comece a baixar, clique em **Cancelar download** e depois em
+   **Baixar o restante…**: o download continua de onde parou (dá até para fechar o AY no meio).
+2. **Documento inteiro:** abra um texto com alguns erros, **Revisão › Revisão com IA › Revisar o documento inteiro**.
+   Continue escrevendo; as sugestões entram na lista **Sugestões do documento**. Escolha uma, veja original × sugestão,
+   **Ir ao parágrafo**, **Aceitar** (Ctrl+Z desfaz) ou **Rejeitar**.
+3. **Títulos e explicação:** selecione um parágrafo, em **Pedido** escolha **Sugerir títulos** › **Pedir à IA** ›
+   escolha um título › **Inserir título**. Teste também **Explicar** e **Apontar inconsistências** (só leitura).
+4. **Referências e consistência:** **Referências › Conferir referências** e **Conferir consistência**: lista do que
+   foi encontrado e **Ir para o trecho**. Nada é mudado nem inventado.
+5. **Atualizações:** **Ajuda › Verificar atualizações › Verificar agora**. Enquanto o arquivo de versões assinado não
+   for publicado no site, a resposta é que ainda não há informação; nada é baixado sem a sua confirmação.
+
 ### Roteiro curto da 0.5.0 — IA local (≈10 min, mais o download de 3,1 GB)
 
 1. **Sem IA:** abra **Revisão › Revisão com IA**. O painel diz que a IA é opcional e não está instalada; o resto do
@@ -103,7 +116,11 @@ Site oficial e publicação de versões: [docs/SITE.md](docs/SITE.md).
 | Aceite (várias páginas, formatação, tabela, imagem, salvar/fechar/reabrir ODT e DOCX, PDF e PDF/UA) | 40/40 |
 | Instalador: instalar, abrir, usar com o motor instalado, desinstalar, perfil do LibreOffice intacto | 0.2.0: 18/18 · 0.3.0: 19/19 · 0.4.0: 19/19 · 0.5.0: 19/19 |
 | Atualizar 0.2.0/0.3.0 → 0.4.0 e 0.2.0/0.4.0 → 0.5.0: preferências (dicionário pessoal, unidade, "não corrigir") e documentos preservados; IA continua sem modelo; desinstalar mantém perfil e documentos | 14/14 · 14/14 |
-| Faixa de opções testada pela interface (de dentro do aplicativo; 11 abas + Tabela e Imagem; 9 fases, 0.5.0) | 219/219 botões presentes; 157 acionados; 109/109 efeitos conferidos; 0 quedas; 0 conexões externas |
+| Faixa de opções testada pela interface (de dentro do aplicativo; 11 abas + Tabela e Imagem; 10 fases, 0.7.0) | 222/222 botões presentes; 160 acionados; 135/136 efeitos conferidos; 0 quedas |
+| Entrega D (0.7.0): referências e consistência por regras · com o modelo real · pela interface | 21/21 · 12/12 · 12/12 |
+| Entrega E (0.7.0): assinatura e conferências · documentos não salvos bloqueiam · atualização pelo próprio AY de ponta a ponta · pela interface | 16/16 · 2/2 · 8/8 · 4/4 |
+| Download do modelo: real pela interface (3,4 GB, cancelar e continuar) · com falhas simuladas | 11/11 · 13/13 |
+| Escala de tela em uso (100 %) · Narrador recebe os nomes dos controles | 8/8 · 5/5 |
 | IA local (0.5.0): partes sem modelo · no editor com motor e modelo reais (chave, rede, desfazer, cancelar, queda) · pela interface (teclado, aceitar/rejeitar, Ctrl+Z, Gerenciar IA local) | 10/10 · 21/21 · 18/18 |
 | Escolha do modelo: 12 casos em pt-BR, tempo, memória e cancelamento (Qwen3 4B, Gemma 4 E2B, Gemma 4 E4B) | Gemma 4 E2B 12/12, ~3,3 s por pedido curto, 2,6 GB |
 | Formatar trabalho acadêmico (0.4.0): formatar → desfazer → refazer → salvar DOCX/ODT → reabrir → PDF → imprimir, numa cópia · pela interface (teclado, prévia, relatório, original intacto, Ctrl+Z/Ctrl+Y, galeria) | 38/38 · 18/18 |

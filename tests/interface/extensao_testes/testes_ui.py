@@ -29,6 +29,7 @@ import zipfile
 import uno
 import unohelper
 from testes_academico import AcademicoMixin
+from testes_escala import EscalaMixin
 from testes_ia import IAMixin
 from testes_revisao import RevisaoMixin
 from com.sun.star.awt import XCallback
@@ -47,6 +48,12 @@ NAO_ACIONAR = {'.uno:CloseDoc', '.uno:CloseWin', '.uno:NewWindow', '.uno:SafeMod
                '.uno:AcceptAllTrackedChanges', '.uno:RejectAllTrackedChanges', '.uno:ProtectTraceChangeMode',
                '.uno:PrintPreview', '.uno:Delete', '.uno:ShowWhitespace',
                '.uno:CompareDocuments', '.uno:MergeDocuments'}  # exigem um segundo documento (seletor de arquivo)
+
+
+# Defeito do motor (LibreOffice 26.8.1): Galeria do Fontwork e depois o diálogo de Link fecham o aplicativo (RESULTADOS §9).
+# A Fontwork continua sendo acionada na fase 1, só que depois dos outros botões (para a queda não interromper o resto);
+# a sequência que derruba o motor é testada à parte, na fase 11, e aparece como FALHA CONHECIDA enquanto o motor não mudar.
+POR_ULTIMO = {'.uno:FontworkGalleryFloater'}
 
 
 # Comandos que abrem janelas NÃO modais (abrem e fecham pelo mesmo comando): o teste aciona de novo para fechar
@@ -114,7 +121,7 @@ class Executor(unohelper.Base, XJob):
         return None
 
 
-class Teste(RevisaoMixin, AcademicoMixin, IAMixin):
+class Teste(RevisaoMixin, AcademicoMixin, IAMixin, EscalaMixin):
     def __init__(self, ctx, spec, modelo):
         self.ctx = ctx
         self.doc = modelo
@@ -395,7 +402,22 @@ class Teste(RevisaoMixin, AcademicoMixin, IAMixin):
                                          (self.academico_salvar_modelo, 0.5)],
                            # Entrega C: IA local — sem modelo, fluxo completo com o modelo e Gerenciar IA local
                            'ia': [(self.ia_sem_modelo, 1.0), (self.ia_fluxo, 1.0), (self.ia_gerenciar, 0.5)],
-                           'ia_basico': [(self.ia_sem_modelo, 1.0), (self.ia_gerenciar, 0.5)]}
+                           'ia_basico': [(self.ia_sem_modelo, 1.0), (self.ia_gerenciar, 0.5)],
+                           # download real do modelo pelo botão Baixar (3,4 GB; roda à parte, fora da bateria)
+                           'ia_download': [(self.ia_download, 1.0)],
+                           # entrega D: documento inteiro, títulos, explicar, conferir referências e consistência
+                           'ia_documento': [(self.ia_documento, 1.0)],
+                           # diálogos e painéis na escala de tela atual (texto cortado, sobreposição, cabe na tela)
+                           'escala': [(self.escala_dialogos, 1.0)],
+                           # leitor de tela disponível (Narrador): o que ele recebe do painel e dos diálogos
+                           'leitor': [(self.leitor_de_tela, 1.0)],
+                           # entrega E: Verificar atualizações (consulta real ao site oficial)
+                           'atualizacoes': [(self.atualizacoes_dialogo, 1.0)],
+                           # diagnóstico da queda do motor: só as sequências da aba Inserir (ver RESULTADOS §9)
+                           'seq_grafico_fontwork_link': [(self.preparar_texto, 0.2)] + [(lambda c=c: self.acionar_por_comando(c), 0.2) for c in ('.uno:InsertObjectChart', '.uno:FontworkGalleryFloater', '.uno:HyperlinkDialog')],
+                           'seq_grafico_link': [(self.preparar_texto, 0.2)] + [(lambda c=c: self.acionar_por_comando(c), 0.2) for c in ('.uno:InsertObjectChart', '.uno:HyperlinkDialog')],
+                           'seq_fontwork_link': [(self.preparar_texto, 0.2)] + [(lambda c=c: self.acionar_por_comando(c), 0.2) for c in ('.uno:FontworkGalleryFloater', '.uno:HyperlinkDialog')],
+                           'seq_fontwork_como_pessoa': [(self.preparar_texto, 0.2), (self.fontwork_como_pessoa, 0.2)]}
             for nome in somente:
                 passos.extend(mapa_passos[nome])
             return passos
@@ -441,9 +463,15 @@ class Teste(RevisaoMixin, AcademicoMixin, IAMixin):
                           ('ayescreva:Limitacoes', 'limitacoes.html'), ('ayescreva:Recuperacao', 'backup')):
             P(lambda c=cmd, n=nome: self.efeito_log(c, n))
         P(self.efeito_diagnostico)
+        depois = []
         for b in self.mapa['botoes']:
             if self.aba_info(b['aba'])['contextual'] or b['comando'] in NAO_ACIONAR:
                 continue
+            if b['comando'] in POR_ULTIMO:
+                depois.append(b)
+                continue
+            P(lambda b=b: self.acionar_generico(b))
+        for b in depois:                          # acionados também, só que depois dos outros botões
             P(lambda b=b: self.acionar_generico(b))
         P(lambda: self.fechar_outras_janelas())   # volta ao documento do teste antes das abas contextuais
         P(self.contexto_tabela)
@@ -579,10 +607,29 @@ class Teste(RevisaoMixin, AcademicoMixin, IAMixin):
         ok = os.path.exists(alvo) and 'relatório de diagnóstico' in open(alvo, encoding='utf-8-sig').read()
         self.resultado(b, ok, 'relatório criado no perfil, sem conteúdo de documentos', disparado)
 
+    def fontwork_como_pessoa(self):
+        """Fontwork pela faixa, fechada com Esc (como uma pessoa faz), e depois Link pela faixa."""
+        for comando in ('.uno:FontworkGalleryFloater', '.uno:HyperlinkDialog'):
+            b = next(x for x in self.mapa['botoes'] if x['comando'] == comando)
+            _log(f'como pessoa: {comando}')
+            self.selecionar_texto('alfa')
+            self.clicar(b)
+            time.sleep(1.5)
+            j, tipo = self.janela_extra()
+            _log(f'  janela aberta: {tipo} "{_estado(j).get("Text", "") if j is not None else ""}"')
+            self.vigiar(comando)              # fecha com Esc
+            time.sleep(1.0)
+        self.efeito('Fontwork e depois Link, fechando cada janela com Esc: o motor continua de pé', self.principal() is not None)
+
+    def acionar_por_comando(self, comando):
+        b = next(x for x in self.mapa['botoes'] if x['comando'] == comando)
+        self.acionar_generico(b)
+
     def acionar_generico(self, b):
         ch = self.chave(b)
         if self.registro(ch).get('acionado'):
             return
+        _log(f'acionar {b["aba"]} › {b["comando"]}')         # o último comando antes de uma queda fica no registro
         self.selecionar_texto('alfa')
         antes = len(self.res['dialogos'])
         disparado = self.clicar(b)

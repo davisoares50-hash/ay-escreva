@@ -1,11 +1,11 @@
-# Resultados dos testes — versão 0.5.0 (versão de testes local, em avaliação) · versão pública: 0.2.0
+# Resultados dos testes — versão 0.7.0 (versão de testes local, em avaliação) · versão pública: 0.2.0
 
-Execução da 0.5.0: 21/10/2026 · `scripts/testar.ps1 -ComInterface` (17 etapas, 0 falhas; inclui
-`tests/interface/testar_faixa.ps1` com 9 fases e as etapas da IA local) + `tests/instalacao/testar_instalacao.ps1` +
-`tests/instalacao/testar_atualizacao.ps1`. Uma primeira execução da bateria da 0.5.0 teve 2 etapas reprovadas
-(queda do motor na fase 1 da interface; recuperação com um documento a menos) — corrigido o carregamento da IA ao
-iniciar (§12), esta é a execução completa seguinte. Resultados da 0.3.0 e da 0.4.0 ficam indicados onde ainda servem
-de comparação; a publicação (§10) e o fluxo do site referem-se à 0.2.0, a versão pública.
+Execução da 0.7.0: 21/10/2026 · `scripts/testar.ps1 -ComInterface` (20 etapas) + `tests/interface/testar_faixa.ps1` (11 fases)
++ instalação, atualização de versões anteriores e atualização de ponta a ponta pelo próprio AY. Na bateria, todas as
+etapas sem interface passaram; a etapa de interface caiu na fase 1 por um defeito do motor isolado depois (§9: Galeria do
+Fontwork → Link); com a Fontwork acionada por último na fase 1 e a sequência que derruba o motor testada à parte (fase 11,
+FALHA CONHECIDA), a interface foi executada de novo por inteiro. Resultados da 0.3.0 à 0.5.0 ficam indicados onde ainda
+servem de comparação; a publicação (§10) e o fluxo do site referem-se à 0.2.0, a versão pública.
 Ambiente: Windows 11 Pro 10.0.26200 x64, Intel Core i5-8500, 16 GB · Motor: LibreOffice 26.8.1.1 (binários oficiais)
 Oráculo independente: Microsoft Word 16.0 (instalado na máquina, usado só via automação COM com macros desativadas)
 
@@ -17,16 +17,18 @@ Oráculo independente: Microsoft Word 16.0 (instalado na máquina, usado só via
 | Distribuição AY (poda de idiomas, fontes privadas, runtime VC++) | sim | sim — 797 MB | sim: o motor inicia e edita (testes abaixo) |
 | Camada de configuração `ayescreva.xcd` | sim | sim | sim: título "AY ESCREVA", realce→`w:highlight`, faixa AY padrão, segurança de macros |
 | Identidade visual | sim — `tools/marca.mjs` | sim | parcial: ícone do lançador, tela de abertura e instalador conferidos; ícone da janela ainda é o da base |
-| Lançador `AYEscreva.exe` (0.5.0) | sim — C# | sim — csc do .NET Framework 4.8.1 | sim: abre o aplicativo instalado com perfil próprio |
-| Faixa de opções AY (`notebookbar_ayescreva.ui`, 11 abas + 4 contextuais) | sim — `tools/gerar-faixa.mjs` a partir de `ui/abas.json` | sim — 233 botões | sim — §4 (Forma e Visualizar impressão: só conferência visual) |
+| Lançador `AYEscreva.exe` (0.7.0) | sim — C# | sim — csc do .NET Framework 4.8.1 | sim: abre o aplicativo instalado com perfil próprio |
+| Faixa de opções AY (`notebookbar_ayescreva.ui`, 11 abas + 4 contextuais) | sim — `tools/gerar-faixa.mjs` a partir de `ui/abas.json` | sim — 236 botões | sim — §4 (Forma e Visualizar impressão: só conferência visual) |
 | Extensão AY (comandos `ayescreva:`, avisos de perdas e de fontes) | sim — `extensao/ayescreva` | sim — empacotada na distribuição | sim — §4 e §5 |
-| Instalador Windows 11 x64 (Inno Setup 6.7.3) | sim — `installer/ayescreva.iss` | sim — 0.2.0 (pública), 0.3.0, 0.4.0 e 0.5.0 (locais) | sim — §3 |
+| Instalador Windows 11 x64 (Inno Setup 6.7.3) | sim — `installer/ayescreva.iss` | sim — 0.2.0 (pública); 0.3.0 a 0.7.0 (locais) | sim — §3 |
 | Revisão de texto: correção automática de casos inequívocos, gramática e pontuação, estilo opcional (0.3.0) | sim — `extensao/ayescreva/pythonpath/`, `dados/correcoes_pt_BR.json` | sim | sim — §5.1 |
 | Painel lateral "Assistente AY" e grupo na aba Revisão (0.3.0) | sim — `ay_painel.py`, `Painel.xdl`, `Sidebar.xcu` | sim | sim — §5.1 (acessibilidade só pela API; leitores de tela não testados) |
 | Confiabilidade: recuperação, salvamento seguro, desfazer/refazer, TXT (0.3.0) | sim — testes `tests/uno/confiabilidade.py`, `recuperacao.py` | — | sim — §5.2 (comportamento do motor, agora com teste) |
 | Formatar trabalho acadêmico (0.4.0): perfis, modelo da instituição, prévia, aplicação numa cópia, relatório de conformidade | sim — `ay_academico.py`, `ay_formatar.py`, `dados/normas.json`, `dados/perfis_formatacao.json` | sim | sim — §5.3 (sequência formatar → desfazer → refazer → salvar → reabrir → PDF → imprimir) |
 | Galeria de modelos e "Salvar como modelo" (0.4.0) | sim — `ay_modelos.py`, `ay_galeria.py` | sim | sim — §5.4 |
-| IA local opcional (0.5.0): painel "Revisão com IA", "Gerenciar IA local", llama.cpp + Gemma 4 E2B baixados sob pedido | sim — `ay_ia.py`, `ay_ia_texto.py`, `ay_ia_painel.py`, `IA.xdl`, `dados/ia.json` | sim (o instalador não traz o modelo) | sim — §5.5 |
+| IA local opcional (0.5.0): painel "Revisão com IA", "Gerenciar IA local", llama.cpp + Gemma 4 E2B baixados sob pedido | sim — `ay_ia.py`, `ay_ia_texto.py`, `ay_ia_painel.py`, `IA.xdl`, `dados/ia.json` | sim (o instalador não traz o modelo) | sim — §5.5 e §5.6 |
+| Entrega D (0.7.0): revisão do documento inteiro, títulos, explicar, inconsistências (IA); conferir referências e consistência (regras) | sim — `ay_ia_painel.py`, `ay_ia_texto.py`, `ay_referencias.py`, `ay_consistencia.py`, `ay_achados.py` | sim | sim — §5.7 |
+| Entrega E (0.7.0): verificar atualizações (arquivo de versões assinado, download conferido, instalação com confirmação) | sim — `ay_atualizacao.py`, `ay_ed25519.py`, `tools/gerar-manifesto.mjs` | sim | sim — §5.8; falta publicar o arquivo de versões no site |
 | Site oficial | sim — `site/`, `tools/gerar-site.mjs` | sim — publicado em https://davisoares50-hash.github.io/ay-escreva/ | sim — fluxo público 25/25, com HTTPS (§10) |
 | Acessibilidade com leitores de tela | — | — | **não validado** (§12) |
 
@@ -53,6 +55,31 @@ O mesmo teste roda com o motor **instalado** pelo instalador (§3).
 | PDF com o mesmo número de páginas; PDF/UA marcado | OK | OK |
 
 ## 3. Instalador e instalação — `tests/instalacao/testar_instalacao.ps1`
+
+**0.7.0 (local, 21/10/2026): 19/19** — `out\instalador\AYEscreva-0.7.0-teste-windows11-x64.exe` · 209 MB (218.778.245 bytes) ·
+SHA-256 `a4d4653b8cd994f7e20216773085df2f4703cff4c960ab313f4c06b7535bf14d` · sem assinatura digital do Windows. Mesmas verificações; a extensão instalada traz as entregas D e E
+(versão 0.7.0), sem modelo de IA.
+
+**Atualização para a 0.7.0 — `tests/instalacao/testar_atualizacao.ps1`: 14/14**, a partir da 0.2.0 (pública) e da 0.5.0.
+
+| Verificação | Resultado |
+|---|---|
+| 0.2.0: instalação da versão anterior | OK — código 0 |
+| 0.2.0: preferências gravadas no perfil (dicionário pessoal, unidade de medida) | OK — {"modo":"gravar","nao_corrigir":"sem revisão de texto nesta versão (com.sun.star.uno.RuntimeException)","dicionario":true,"unidade_mm":true,"lista_nao_corrigir":null,"comandos_entrega_b":false,"comandos_entrega_c":false,"ia_sem_modelo":null |
+| 0.2.0: atualização instalada por cima (código 0, versão no registro e na extensão, peças novas presentes) | OK — código 0; registro 0.7.0; extensão 0.7.0; faltam:  |
+| 0.2.0: preferências preservadas e recursos novos registrados no perfil antigo | OK — {"modo":"conferir","dicionario":true,"unidade_mm":true,"lista_nao_corrigir":[],"comandos_entrega_b":true,"comandos_entrega_c":true,"ia_sem_modelo":true,"versao_extensao":"0.7.0"} |
+| 0.2.0: documentos do usuário intactos depois da atualização | OK |
+| 0.2.0: desinstalação remove o programa e o registro | OK |
+| 0.2.0: depois de desinstalar, perfil (com o dicionário pessoal) e documentos continuam | OK |
+| 0.5.0: instalação da versão anterior | OK — código 0 |
+| 0.5.0: preferências gravadas no perfil (dicionário pessoal, unidade de medida, não corrigir) | OK — {"modo":"gravar","nao_corrigir":true,"dicionario":true,"unidade_mm":true,"lista_nao_corrigir":["nao"],"comandos_entrega_b":true,"comandos_entrega_c":true,"ia_sem_modelo":true,"versao_extensao":"0.5.0"} |
+| 0.5.0: atualização instalada por cima (código 0, versão no registro e na extensão, peças novas presentes) | OK — código 0; registro 0.7.0; extensão 0.7.0; faltam:  |
+| 0.5.0: preferências preservadas e recursos novos registrados no perfil antigo | OK — {"modo":"conferir","dicionario":true,"unidade_mm":true,"lista_nao_corrigir":["nao"],"comandos_entrega_b":true,"comandos_entrega_c":true,"ia_sem_modelo":true,"versao_extensao":"0.7.0"} |
+| 0.5.0: documentos do usuário intactos depois da atualização | OK |
+| 0.5.0: desinstalação remove o programa e o registro | OK |
+| 0.5.0: depois de desinstalar, perfil (com o dicionário pessoal) e documentos continuam | OK |
+
+**Atualização pelo próprio AY — `tests/instalacao/testar_atualizar_pelo_ay.ps1`: 8/8** (detalhes em §5.8).
 
 **0.5.0 (local, 21/10/2026): 19/19** — `out\instalador\AYEscreva-0.5.0-teste-windows11-x64.exe` · 209 MB (218.744.331 bytes) ·
 SHA-256 `2f7853ec2aaf295037cbce68a3ae9309ee37b6613fc864375d754e04061950d6` · sem assinatura digital. Mesmas verificações da 0.4.0; a extensão instalada traz também a IA
@@ -151,14 +178,14 @@ Diálogos e listas abertos pelos botões são registrados e fechados.
 
 | Medida | Resultado |
 |---|---|
-| Funções com botão nas 11 abas e nas contextuais Tabela e Imagem (as testadas) | 219 |
-| Botão presente na aba certa | 219/219 |
-| Acionadas pelo clique (comando disparado conferido; diálogo ou lista registrado e fechado) | 157 |
+| Funções com botão nas 11 abas e nas contextuais Tabela e Imagem (as testadas) | 222 |
+| Botão presente na aba certa | 222/222 |
+| Acionadas pelo clique (comando disparado conferido; diálogo ou lista registrado e fechado) | 160 |
 | Validadas pelo efeito no documento ou na exibição | 35 |
-| Efeitos conferidos nas 9 fases (inclui abas contextuais, avisos, salvamento, revisão de texto, formatação acadêmica e IA local) | 109/109 |
+| Efeitos conferidos nas 11 fases (inclui IA local, entregas D e E, escala) | 135/136: 0 falha(s) e 1 FALHA CONHECIDA da base (§9) |
 | Diálogos e listas abertos pelos botões e fechados pelo teste | 52 |
-| Erros do teste · quedas do motor · conexões de rede para fora do computador | 0 · 0 · 0 |
-| Duração | fase 1: 13:04:30–13:11:20; fase 2: 13:11:36–13:11:54; fase 3: 13:12:07–13:12:24; fase 4: 13:12:38–13:12:58; fase 5: 13:13:11–13:15:02; fase 6: 13:15:16–13:23:18; fase 7: 13:23:33–13:23:50; fase 8: 13:24:04–13:24:59; fase 9: 13:25:13–13:27:17 (0.5.0, 21/10/2026) |
+| Erros do teste · quedas do motor · conexões de rede para fora do computador | 1 · 1 (a da fase 11, esperada) · 1 (a consulta pedida ao site oficial em "Verificar agora") |
+| Duração | fase 1: 17:42:32–17:49:16; fase 2: 17:49:30–17:49:48; fase 3: 17:50:04–17:50:20; fase 4: 17:50:34–17:50:54; fase 5: 17:51:08–17:52:58; fase 6: 17:53:11–18:00:58; fase 7: 18:01:13–18:01:29; fase 8: 18:01:44–18:02:38; fase 9: 18:02:51–18:05:29; fase 10: 18:05:50–18:07:07; fase 11: 18:07:15–18:07:54 (0.7.0, 21/10/2026) |
 
 Efeitos conferidos (amostra): Negrito, Itálico, Sublinhado, Tachado, Sobrescrito, Subscrito, Aumentar fonte, Diminuir fonte, Limpar formatação, Centralizar, Alinhar à direita, Justificar, Alinhar à esquerda, Aumentar recuo, Diminuir recuo, Marcadores, Numeração, Marcas de formatação, Quebra de página, Página em branco, Comentário, Nota de rodapé, Nota de fim, Controlar alterações, Régua, Página inteira, 100%, Largura da página, Guia de utilização do AY, Atalhos de teclado, Limitações conhecidas, Recuperação de documentos, Relatório de diagnóstico, Aba contextual Tabela, Inserir linha abaixo, Aba contextual Imagem, Salvar, Aviso de substituição de fontes, Aviso de perdas ao salvar em DOCX, Aviso de formato ao fechar e salvar DOCX. As 62 funções não acionadas genericamente ficam de fora de propósito (fechar, abrir, salvar como, recortar/colar, tela inteira, mala direta, aceitar/rejeitar tudo etc.) ou são listas suspensas; elas aparecem como "não validado" na matriz.
 
@@ -173,7 +200,8 @@ histórico dele), relatório, Ctrl+Z e Ctrl+Y na cópia, modelo da instituição
 "Salvar como modelo", com capturas `tests/output/interface/dialogo-*.png`; (9) IA local (0.5.0): painel sem modelo e
 com o modelo — pedido pelo teclado, digitação durante a análise, aceitar como alteração controlada, Ctrl+Z, rejeitar,
 trecho alterado durante a análise, cancelar, servidor só em 127.0.0.1 — e "Gerenciar IA local" (§5.5). Todas as fases
-são de uma única execução.
+são de uma única execução; (10) entrega D com o modelo; (11) a sequência do defeito do motor (FALHA CONHECIDA).
+Na fase 1, a Fontwork é acionada depois dos outros botões (antes ela vinha logo antes do Link e derrubava o motor).
 
 Limites deste teste: as abas contextuais **Forma** e **Visualizar impressão** foram conferidas só visualmente
 (capturas em `tests/output/interface/abas/`), sem clique automatizado. Nos comandos de Ajuda que abrem uma página
@@ -407,10 +435,10 @@ Pela interface, de dentro do aplicativo (fase 8 de `tests/interface/testar_faixa
 | Salvar como modelo abre pela aba Arquivo (comando) | OK |
 | Salvar como modelo: .ott gravado na pasta de modelos do perfil e listado na galeria | OK — C:\Users\Micro\AppData\Local\Temp\ay-faixa-f8-c60ea496\user\template\AY\Modelo do teste pela interface.ott |
 
-Conferência visual (capturas em `tests/output/interface/dialogo-*.png`, medidas em 125% de escala neste computador):
-Formatar 676 × 563 px, Prévia 856 × 571, Relatório 856 × 591, Modelo da instituição 676 × 591, Galeria 856 × 531. Os
-diálogos têm no máximo 276 unidades de altura: em 150% ficam com cerca de 710 px (cálculo, não medida — a variável
-`SAL_FORCEDPI` não muda a escala no Windows, então outras escalas não foram observadas).
+Conferência visual (capturas em `tests/output/interface/dialogo-*.png`), na escala em uso neste computador, **100 %**
+(AppliedDPI 96; versões anteriores deste relatório diziam 125 % por engano): Formatar 676 × 563 px, Prévia 856 × 571,
+Relatório 856 × 591, Modelo da instituição 676 × 591, Galeria 856 × 531. A conferência automática de texto cortado,
+sobreposição e tamanho na tela, para qualquer escala, está em §5.6.
 
 ## 5.4 Galeria de modelos (0.4.0, entrega B)
 
@@ -564,6 +592,210 @@ Capturas: `tests/output/interface/painel-ia.png` (painel com original, sugestão
 `tests/output/interface/dialogo-gerenciar-ia.png`. O primeiro pedido com o modelo fora do cache do Windows esperou a
 carga do modelo (cerca de 80–90 s neste disco); os pedidos seguintes levaram cerca de 2 s.
 
+## 5.6 Download da IA, escala, teclado e leitor de tela (0.7.0)
+
+### Download do modelo com falhas simuladas — `tests/ia/testar_download.py`: **13/13**
+
+Servidor local que simula a internet: conexão que cai, servidor que não aceita retomar, arquivo adulterado, 404, 500.
+
+| Verificação | Resultado |
+|---|---|
+| Download completo: arquivo final conferido (SHA-256), sem parte sobrando, progresso crescente até 100% | OK — 9 avisos de progresso |
+| Cancelar: para logo, não cria o arquivo final e guarda a parte baixada para continuar | OK — 2097152 bytes guardados; 0.4 s |
+| Continuar: confere a parte guardada, pede só o restante (Range a partir do byte guardado) e termina íntegro | OK — [('/normal', 'bytes=2097152-')] |
+| Queda da conexão: retoma sozinho de onde parou (sem recomeçar) e termina íntegro | OK — [None, 'bytes=3145728-', 'bytes=6291456-'] |
+| Servidor que não aceita retomar (responde 200 inteiro): recomeça do zero e o arquivo final é íntegro | OK — [('/sem-range', 'bytes=3145728-')] |
+| Parte guardada adulterada: o resultado não confere com o SHA-256, nada vira arquivo final e a parte é apagada | OK — O arquivo baixado não confere com o SHA-256 do catálogo (veio diferente do oficial); ele foi apagado. Baixe de novo. |
+| Arquivo diferente do oficial: recusado pelo SHA-256 e apagado | OK — O arquivo baixado não confere com o SHA-256 do catálogo (veio diferente do oficial); ele foi apagado. Baixe de novo. |
+| Servidor manda mais dados que o esperado: recusado e apagado | OK — O servidor mandou mais dados do que o esperado; o arquivo foi apagado. |
+| Endereço inexistente (404): uma tentativa só, mensagem clara, nada criado | OK — O servidor respondeu 404 (Not Found); nada foi alterado. |
+| Servidor com erro 500: 3 novas tentativas, depois mensagem para tentar mais tarde (nada guardado) | OK — 4 pedidos; Não foi possível baixar (servidor respondeu 500). Confira a conexão e tente de novo mais tarde. |
+| Parte já completa (cancelado no último instante): só confere o SHA-256, sem baixar de novo | OK — [] |
+| Só https: endereço http recusado; resposta que termina num endereço sem https também | OK — só endereços https do catálogo \| O endereço redirecionou para uma conexão sem https; o download foi recusado. |
+| Pasta numa unidade inexistente: avisa na hora (sem travar) | OK — a unidade de Z:\IA não existe |
+
+### Download real pelo botão "Baixar…" — `tests/interface/testar_faixa.ps1 -Somente ia_download`: **11/11**
+
+Pela interface, de dentro do aplicativo: 3,4 GB baixados dos endereços oficiais (motor no GitHub, modelo no Hugging
+Face), com cancelamento no meio, "Baixar o restante" depois de reabrir o diálogo, diálogo fechado durante o download e
+conclusão com SHA-256; depois "Usar este modelo", uma revisão real com o modelo baixado e "Remover". As 4 conexões
+externas registradas são o próprio download pedido (servidor de conteúdo do GitHub e nuvens da Amazon e da Microsoft
+usadas pelo Hugging Face e pelo GitHub). Uma rodada anterior foi interrompida porque o diálogo fechou aos 97 % sem
+registro do motivo (o registro de fechamento foi acrescentado depois); a rodada seguinte, com registro, completou.
+
+| Verificação | Resultado |
+|---|---|
+| Download real: antes, o modelo aparece como não instalado, com tamanho e espaço livre | OK — Espaço livre: 579,7 GB · falta baixar 3,1 GB |
+| Download real: pasta inválida é avisada e nada começa | OK — Pasta inválida: a unidade de Z:\IA não existe |
+| Download real: progresso em texto, crescente (primeiro o motor, depois o modelo) | OK — 119 mudanças; último: Baixando modelo: 400 MB de 3,1 GB (12%). Pode cancelar; o que já veio fica guardado. |
+| Download real: Cancelar para o download e guarda a parte baixada; o botão vira "Baixar o restante" | OK — 405 MB guardados; Download interrompido. 405 MB ficaram guardados em E:\AY\tests\output\interface\ia-download-teste: "Baixar o restante" continua de onde parou; "Remover" apaga. |
+| Download real: ao reabrir o diálogo, o download incompleto aparece com o que já foi baixado | OK — Situação: download incompleto: 405 MB de 3,1 GB guardados ("Baixar o restante" continua) |
+| Download real: continuar confere a parte guardada e segue de onde parou (não recomeça do zero) | OK — guardado 405 MB; retomou em 406 MB |
+| Download real: fechar o diálogo durante o download interrompe e guarda o que já veio | OK — 709 MB guardados |
+| Download real: termina, confere o SHA-256 do catálogo e deixa só o arquivo final | OK — Gemma 4 E2B (Q4_0, QAT) baixado e conferido (SHA-256). Clique em "Usar este modelo". (10.4 min no total, com as interrupções) |
+| Download real: "Usar este modelo" passa a valer para os pedidos | OK — {'pasta': 'E:\\AY\\tests\\output\\interface\\ia-download-teste', 'modelo': 'gemma4-e2b', 'controlada': True} |
+| Download real: o modelo baixado pelo botão responde a uma revisão | OK — O relatório foi entregue à coordenação ontem. |
+| Download real: "Remover" apaga o modelo do disco | OK — Gemma 4 E2B (Q4_0, QAT) removido. |
+
+### Escala — fase 9 da bateria: **8/8**
+
+Na escala em uso neste computador (100 %): cada diálogo e painel sem texto cortado (tamanho mínimo que o controle
+pede para o texto inteiro × espaço que ele tem), sem controles sobrepostos e cabendo na área de trabalho. A primeira
+execução apontou textos apertados em 100 %: "Cancelar download" (Gerenciar IA local) e três botões do painel Assistente
+AY ("Adicionar ao dicionário" e "Não corrigir novamente" na largura mínima do painel); foram corrigidos (botão mais
+largo; rótulos "Pôr no dicionário" e "Não corrigir mais"). 125 %, 150 % e 200 %: **não observadas** — trocar a escala
+do Windows é configuração do sistema; o mesmo teste roda com `tests\interface\conferir_escala.ps1` depois da troca.
+
+| Verificação | Resultado |
+|---|---|
+| Escala 100 %: "Formatar trabalho" sem texto cortado, sem controles sobrepostos e cabendo na tela | OK — janela 660×524 px, área 1920×1080; cortados: nenhum; sobrepostos: nenhum |
+| Escala 100 %: "o que vai mudar" sem texto cortado, sem controles sobrepostos e cabendo na tela | OK — janela 840×532 px, área 1920×1080; cortados: nenhum; sobrepostos: nenhum |
+| Escala 100 %: "Modelo da instituição" sem texto cortado, sem controles sobrepostos e cabendo na tela | OK — janela 660×552 px, área 1920×1080; cortados: nenhum; sobrepostos: nenhum |
+| Escala 100 %: "Relatório" sem texto cortado, sem controles sobrepostos e cabendo na tela | OK — janela 840×552 px, área 1920×1080; cortados: nenhum; sobrepostos: nenhum |
+| Escala 100 %: "Galeria" sem texto cortado, sem controles sobrepostos e cabendo na tela | OK — janela 840×492 px, área 1920×1080; cortados: nenhum; sobrepostos: nenhum |
+| Escala 100 %: painel "Revisão com IA" sem texto cortado e sem controles sobrepostos | OK — cortados: nenhum; sobrepostos: nenhum |
+| Escala 100 %: "Gerenciar IA local" sem texto cortado, sem controles sobrepostos e cabendo na tela | OK — janela 720×464 px, área 1920×1080; cortados: nenhum; sobrepostos: nenhum |
+| Escala 100 %: painel "Assistente AY" sem texto cortado e sem controles sobrepostos | OK — cortados: nenhum; sobrepostos: nenhum |
+
+### Leitor de tela (Narrador) — `testar_faixa.ps1 -Somente leitor`: **5/5**
+
+Com o Narrador ligado, o teste lê pela interface MSAA (a que o motor expõe aos leitores de tela) o painel e os
+diálogos e confere que botões, campos e listas têm nome; no fim desliga o Narrador (atalho Ctrl + Windows + Enter:
+o Narrador roda com privilégio elevado e não aceita ser encerrado por outro programa). Não confere o áudio falado.
+A leitura pela UI Automation do PowerShell não enxerga os controles do motor; a MSAA, sim. NVDA e JAWS não estão
+instalados. Teclado: foco inicial, Tab e Shift+Tab e teclas de acesso conferidos nos diálogos (§4, §5.3, §5.5).
+
+| Verificação | Resultado |
+|---|---|
+| Narrador: "painel Revisão com IA" anuncia os controles pelo nome (botões, campos, listas) | OK — 780 elementos lidos; faltam: nenhum; focáveis sem nome: nenhum |
+| Narrador: "Gerenciar IA local" anuncia os controles pelo nome (botões, campos, listas) | OK — 17 elementos lidos; faltam: nenhum; focáveis sem nome: nenhum |
+| Narrador: "Formatar trabalho acadêmico" anuncia os controles pelo nome (botões, campos, listas) | OK — 49 elementos lidos; faltam: nenhum; focáveis sem nome: nenhum |
+| Narrador: "Conferir referências" anuncia os controles pelo nome (botões, campos, listas) | OK — 9 elementos lidos; faltam: nenhum; focáveis sem nome: nenhum |
+| Narrador: "Verificar atualizações" anuncia os controles pelo nome (botões, campos, listas) | OK — 15 elementos lidos; faltam: nenhum; focáveis sem nome: nenhum |
+
+## 5.7 Entrega D — documento inteiro, títulos, explicações, referências e inconsistências (0.7.0)
+
+### Conferir referências e consistência (regras, sem IA) — `tests/documento/testar_conferencias.py`: **21/21**
+
+| Verificação | Resultado |
+|---|---|
+| Seção REFERÊNCIAS encontrada e termina no APÊNDICE | OK — (5, [6, 7, 8, 9, 10, 11, 12, 13, 14]) |
+| Citações reconhecidas: narrativa com página, entidade, coautores com ";", et al. e várias na mesma parênteses | OK — [('ibge', '2020'), ('silva', '2019'), ('souza', '2018'), ('pereira', '2021'), ('oliveira', '2022'), ('costa', '2017')] |
+| Lei com ano e ano solto entre parênteses NÃO viram citação | OK — [] |
+| Citação sem referência na lista é apontada no lugar dela: OLIVEIRA (2022) | OK — ['(OLIVEIRA, 2022) é citado no texto, mas não há referência de OLIVEIRA (2022) na lista.'] |
+| Citações com referência não são apontadas (Silva, IBGE pela sigla, Souza e Lima, Pereira et al., Costa) | OK — [] |
+| Referência não citada vira só informação (ALMEIDA) | OK — ['Fora da ordem alfabética (no sistema autor-data, a lista segue a ordem alfabética).', 'Está na lista, mas nenhuma citação no texto foi associada a ela (confira se é citada de outra forma).'] |
+| Documento on-line sem "Disponível em" e sem "Acesso em" é apontado; o completo (IBGE) não | OK — (['Documento on-line sem "Disponível em:" antes do endereço (NBR 6023).', 'Documento on-line sem "Acesso em:" e a data de acesso (NBR 6023).'], []) |
+| Referência sem ano é apontada (ZANETTI) | OK — ['Sem ano identificável (nem "[s. d.]"): confira a data da obra.', 'Está na lista, mas nenhuma citação no texto foi associada a ela (confira se é citada de outra forma).'] |
+| Entrada repetida é apontada | OK — ['Entrada repetida na lista.', 'Fora da ordem alfabética (no sistema autor-data, a lista segue a ordem alfabética).', '2 obras do mesmo autor (SILVA) em 2019: diferencie com 2019a, 2019b… na lista e nas citações.'] |
+| Entrada que começa com minúscula é apontada | OK — ['A entrada começa com letra minúscula: deve começar pelo sobrenome (em maiúsculas), pela entidade ou pelo título.', 'Fora da ordem alfabética (no sistema autor-data, a lista segue a ordem alfabética).', 'Está na lista, mas nenhuma citação no texto foi associa |
+| Ordem alfabética: o desvio é apontado (ZANETTI antes de SILVA) | OK — [10, 13, 14] |
+| Citações sem seção REFERÊNCIAS: aviso único | OK — [{'nivel': 'aviso', 'categoria': 'Referências', 'texto': 'Há 1 citação(ões) no texto, mas não foi encontrada a seção REFERÊNCIAS.', 'par': 0, 'ini': 18, 'fim': 31}] |
+| Conferir referências só lê: os textos não mudam | OK |
+| Grafia: "e-mail"/"email" e "COVID-19"/"Covid-19" apontados | OK — ['O mesmo termo aparece escrito de jeitos diferentes: "COVID-19" (1×), "Covid-19" (1×). Escolha uma forma.', 'O mesmo termo aparece escrito de jeitos diferentes: "e-mail" (1×), "email" (1×). Escolha uma forma.'] |
+| Grafia: diferenças de acento (e/é, esta/está) e maiúscula de início de frase NÃO são apontadas | OK — ['O mesmo termo aparece escrito de jeitos diferentes: "COVID-19" (1×), "Covid-19" (1×). Escolha uma forma.', 'O mesmo termo aparece escrito de jeitos diferentes: "e-mail" (1×), "email" (1×). Escolha uma forma.'] |
+| Sigla usada antes de ser definida (AVA) e definida de dois jeitos (SUS) | OK — ['SUS definida de dois jeitos: "Sistema Único de Saúde" e "Sistema Unificado de Saúde".', 'AVA é usada antes de ser definida ("Ambiente Virtual de Aprendizagem (AVA)").'] |
+| Numeração: salto nas figuras (falta 2) e "Figura 4" citada sem legenda; Tabela 2 correta não é apontada | OK — ['Figuras numeradas com salto: falta figura 2.', 'Tabelas numeradas com salto: falta tabela 1.', '"Figura 4" é citada no texto, mas não há legenda com esse número.'] |
+| Datas em formatos diferentes e "%" com "por cento" viram informação | OK — (['Datas escritas em formatos diferentes: dia/mês/ano (10/03/2025), ex.: 10/03/2025; por extenso (10 de março de 2025), ex.: 5 de abril de 2025. Use um formato só.'], ['Porcentagens escritas com "%" e com "por cento" no mesmo documento.']) |
+| Aspas retas e curvas misturadas viram informação | OK — ['Aspas retas (") e curvas (“ ”) misturadas.'] |
+| A seção REFERÊNCIAS fica de fora da consistência (BRASIL em maiúsculas, data por extenso) | OK — [1, 1, 10, 2, 5, 7, 4, 8, 8, 9] |
+| Documento consistente: nenhum apontamento | OK — [] |
+
+### No editor, com o modelo real — `tests/ia/integracao_d.py`: **12/12**
+
+| Verificação | Resultado |
+|---|---|
+| Revisar documento inteiro: entram só parágrafos de texto comum (fora títulos, referências, curtos e com nota) | OK — parágrafos [1, 3, 5]; 1 com nota pulado(s) |
+| Conferir referências no documento: SOUZA (não citado) vira informação; Silva (2019) citado não é apontado; "Ir para" seleciona a entrada | OK — ['Está na lista, mas nenhuma citação no texto foi associada a '] |
+| Conferir consistência no documento sem problemas plantados: nenhum apontamento falso | OK — [] |
+| Revisão de vários parágrafos com o modelo: sugestões só onde há erro, todas preservando números e nomes | OK — [(1, 'Os dados mostram que a maioria dos participantes concordou com a propo'), (3, 'A pesquisa foi feita em 2024 com 120 servidores e a equipe entregou o '), (5, 'Os questionários foram aplicados entre março e maio, e as respostas fo'), '12.2 s'] |
+| Revisar documento inteiro e conferências só leem: o documento não mudou até aceitar | OK |
+| Aceitar uma sugestão da lista muda só aquele parágrafo; Ctrl+Z volta | OK — 2 trechos no parágrafo 1 |
+| Sugerir títulos (modelo real): até 3 títulos limpos, sem número ou sigla que não estejam no trecho | OK — (['Pesquisa 2024 com 120 servidores', 'Relatório entregue à diretora em 2024', 'Pesquisa realizada em 2024 com equipe'], []) |
+| Inserir título: novo parágrafo antes do trecho, com o estilo do título anterior (Título 1), uma ação de desfazer; Ctrl+Z remove | OK — Título inserido antes do trecho (estilo Heading 1) |
+| Usar título num trecho que já é título troca o texto dele (como alteração controlada); Ctrl+Z volta | OK — Título trocado: "2 MÉTODO" → "2 Método da pesquisa"; com as marcas: '2 Método da pesquisaMÉTODO' |
+| Explicar (modelo real): explicação em português, sem números novos; o documento não muda | OK — A maioria das pessoas que participaram da pesquisa concordou com a ideia apresentada. Silva (2019) é a fonte que aponta essa concordância. Os dados coletados indicam que a opinião majoritária foi posi |
+| Apontar inconsistências (modelo real): aponta os trechos contraditórios nos 2 casos (explicadas e só apontadas registradas) | OK — 2/2 casos; 1 linha(s) com explicação, 1 só apontando; [['A coleta terminou em março de 2023, antes do início em 2024. (só apontado)'], ['O valor total do projeto é R$ 50 mil, mas a divisão em duas parcelas de R$ 30 mil resulta ']] |
+| Apontar inconsistências num trecho coerente: falso alarme registrado (a IA pode errar; é só leitura) | OK — 1 linha(s) apontada(s): ['A pesquisa ouviu 120 servidores em 2024, e 90% deles aprovaram a proposta.'] |
+
+Medidas: revisar 3 parágrafos 12.2 s; sugerir títulos 3.88 s; explicar 6.93 s.
+Apontar inconsistências: 2/2 casos com contradição apontados; 1 linha(s) com explicação e 1 só repetindo o trecho (marcadas "sem explicação"); no trecho coerente, 1 falso(s) alarme(s). É um apoio fraco do modelo pequeno, declarado na Ajuda › Limitações.
+
+### Pela interface — fase 10 da bateria: **12/12**
+
+| Verificação | Resultado |
+|---|---|
+| Revisar o documento inteiro (teclado): em segundo plano, com sugestões na lista e o documento sem mudança | OK — 4 sugestões; Revisão do documento concluída em 32 s: 4 parágrafo(s), 4 sugestão(ões). Escolha na lista para ver, aceitar ou rejeitar. |
+| Escolher na lista mostra original × sugestão; "Ir ao parágrafo" seleciona o parágrafo no documento | OK — Os dados mostra que a maioria dos participantes concordaram  |
+| Aceitar aplica só aquele parágrafo (alteração controlada) e tira a sugestão da lista | OK — 4 marcas; lista 4 → 3 |
+| Ctrl+Z desfaz a sugestão aceita da lista | OK |
+| Rejeitar tira a sugestão da lista sem mudar o documento | OK |
+| Cancelar a revisão do documento para logo e mantém o documento | OK — Revisão do documento cancelada no parágrafo 1 de 4. 1 sugestão(ões) na lista. |
+| Sugerir títulos (teclado): lista de títulos para escolher; o botão vira "Inserir título" | OK — ['Pesquisa concluída em 2024', 'Relatório entregue no prazo', 'Entrega do relatório à diretora'] |
+| Acessibilidade no modo títulos: a lista de títulos visível tem nome acessível | OK — opcoes: "Títulos sugeridos (escolha um):"; sem nome: [] |
+| Inserir título cria o título antes do trecho, no estilo dos títulos; Ctrl+Z remove | OK — ['1 INTRODUÇÃO', 'Os dados mostra que a maioria dos participantes concordaram com a proposta, segundo Silva (2019).', 'Pesquisa concluída em 2024', 'A pesquisa foi feita em 2024 e a equipe entregou o relatorio a diretora no prazo combinado.', 'Os questionários |
+| Explicar: mostra a explicação, avisa que é só leitura e não deixa aplicar nada | OK — Os dados indicam que a maior parte das pessoas que participaram da pesquisa concordou com a sugestão apresentada. Silva  |
+| Conferir referências: lista o problema plantado, "Ir para" seleciona o trecho, controles com nome acessível | OK — 3 apontamentos; selecionado: SOUZA, Paulo. Debate. Curitiba: UFPR, 2018. https:; sem nome: [] |
+| Conferir consistência: lista o problema plantado, "Ir para" seleciona o trecho, controles com nome acessível | OK — 1 apontamentos; selecionado: email; sem nome: [] |
+
+## 5.8 Entrega E — verificar atualizações (0.7.0)
+
+### Assinatura, conferências e download — `tests/atualizacao/testar_verificacao.py`: **16/16**
+
+Chave de teste temporária e servidor local no papel do site e do GitHub; o código é o do diálogo. Inclui a consulta
+ao endereço real do site oficial (hoje sem arquivo de versões publicado).
+
+| Verificação | Resultado |
+|---|---|
+| Ed25519: vetores de teste da RFC 8032 aceitos; mensagem trocada recusada | OK |
+| Gerar o arquivo de versões: assinado pelo Node.js com a chave do projeto (aqui, a de teste) | OK — {'canal': 'testes', 'versao': '9.9.9', 'arquivo': 'AYEscreva-9.9.9-teste-windows11-x64.exe', 'saida': 'C:\\Users\\Micro\\AppData\\Local\\Temp\\ay-atualizacao-glr08dnj\\site\\atualizacoes.json', 'chave_publica': 'df3faa46486b60ba13dc8ebf7deb3857fb323585058aac3f |
+| Versão nova assinada: aceita, com versão, notas, tamanho e SHA-256 do instalador | OK — nova |
+| Mesma versão instalada: "você já tem a mais recente" | OK |
+| Canal sem versões publicadas: informado | OK |
+| Assinada por outra chave: recusada | OK — a assinatura do arquivo de versões não confere: ele não foi publicado pelo projeto |
+| Arquivo de versões alterado depois de assinado: recusado | OK — a assinatura do arquivo de versões não confere: ele não foi publicado pelo projeto |
+| Sem assinatura: recusado | OK — o arquivo de versões não tem assinatura |
+| Assinado, mas com instalador fora das versões publicadas do projeto: recusado | OK — o instalador não vem das versões publicadas do projeto |
+| Assinado, mas com nome que não corresponde à versão: recusado | OK — nome do instalador não corresponde à versão |
+| Assinado, mas com SHA-256 inválido: recusado | OK — SHA-256 do instalador ausente ou inválido |
+| Baixar o instalador: arquivo íntegro (SHA-256 do arquivo de versões) na pasta de atualizações | OK — C:\Users\Micro\AppData\Local\Temp\ay-atualizacao-glr08dnj\baixados\AYEscreva-9.9.9-teste-windows11-x64.exe |
+| Instalador trocado no servidor: recusado pelo SHA-256 e apagado | OK — O arquivo baixado não confere com o SHA-256 do catálogo (veio diferente do oficial); ele foi apagado. Baixe de novo. |
+| Roteiro de instalação: espera o AY fechar, instala por cima sem perguntas (por usuário) e reabre o AY | OK — @echo off  rem Gerado pelo AY ESCREVA: instala a atualização baixada e conferida e reabre o AY.  timeout /t 4 /nobreak >nul  start "" /wait "C:\Users\Micro\AppData\Local\Temp\ay-atualizacao-glr08dnj\AYEscreva-9.9.9-teste-windows11-x64.exe" /SILENT /SUPPRESSMSG |
+| Consulta só por https | OK — só endereços https |
+| Endereço real do site oficial: sem arquivo de versões publicado, a resposta é clara e nada muda | OK — SemInformacao: ainda não há informação de atualização publicada no site oficial |
+
+### Documentos não salvos bloqueiam a instalação — `tests/atualizacao/testar_instalar.py`: **2/2**
+
+| Verificação | Resultado |
+|---|---|
+| Documento com alteração não salva: a instalação é recusada e o documento é citado; nada é fechado | OK — salve ou feche antes os documentos com alterações: Sem título 1 |
+| Documentos salvos: o roteiro de instalação é preparado com o instalador conferido e a reabertura do AY | OK — E:\AY\tests\output\atualizacao\instalar-atualizacao.cmd |
+
+### De ponta a ponta pelo próprio AY — `tests/instalacao/testar_atualizar_pelo_ay.ps1`: **8/8**
+
+Instalada a AYEscreva-0.5.0-teste-windows11-x64.exe, o AY instalado recebe o pedido (o mesmo código do botão "Baixar e instalar", depois do
+download conferido), fecha, instala a AYEscreva-0.7.0-teste-windows11-x64.exe por cima e abre de novo.
+
+| Verificação | Resultado |
+|---|---|
+| Versão anterior instalada | OK — código 0; 0.5.0 |
+| Preferências gravadas no perfil (dicionário pessoal, unidade de medida) | OK — {"modo":"gravar","nao_corrigir":true,"dicionario":true,"unidade_mm":true,"lista_nao_corrigir":["nao"],"comandos_entrega_b":true,"comandos_entrega_c":true,"ia_sem_modelo":true,"versao_extensao":"0.5.0"} |
+| O AY fecha sozinho ao instalar (depois de conferir que não há documentos com alterações) | OK — atualização: roteiro E:\AY\tests\output\atualizacao-pelo-ay\atualizacoes\instalar-atualizacao.cmd roteiro E:\AY\tests\output\atualizacao-pelo-ay\atualizacoes\instalar-atualizacao.cmd  |
+| A versão nova é instalada por cima (0.7.0) | OK — registro 0.7.0; extensão 0.7.0; 103 s |
+| Depois de instalar, o AY abre de novo sozinho | OK — pid 6412 |
+| Preferências preservadas e recursos novos registrados | OK — {"modo":"conferir","dicionario":true,"unidade_mm":true,"lista_nao_corrigir":["nao"],"comandos_entrega_b":true,"comandos_entrega_c":true,"ia_sem_modelo":true,"versao_extensao":"0.7.0"} |
+| Documentos do usuário intactos | OK |
+| Registro da instalação feita pelo roteiro (sem perguntas) | OK — E:\AY\tests\output\atualizacao-pelo-ay\atualizacoes\instalacao.log |
+
+### Pela interface — fase 9 da bateria: **4/4**
+
+| Verificação | Resultado |
+|---|---|
+| Verificar atualizações abre pela aba Ajuda | OK |
+| Acessibilidade: controles de Verificar atualizações com nome acessível | OK — sem nome: nenhum |
+| Teclado em "Verificar atualizações": foco inicial em canal, Tab vai a verificar, Shift+Tab volta; teclas de acesso sem repetição | OK — inicial canal, Tab verificar, Shift+Tab canal; repetidas: [] |
+| Verificar atualizações fecha sem baixar nada | OK |
+
 ## 6. Impressão — `tests/uno/impressao.py`: **4/4**
 
 Impressão real pela fila do Windows na impressora virtual "Microsoft Print to PDF" (o teste aborta antes de
@@ -580,12 +812,12 @@ imprimir se essa impressora não estiver selecionada, para nunca usar uma impres
 | DOCX com imagem vinculada a servidor HTTP local: **0** requisições ao abrir e exportar PDF | OK |
 | (informativo) pedido explícito de "atualizar vínculos": também 0 requisições | bloqueio total hoje; não há como autorizar por documento |
 
-## 8. Comandos da matriz — `tests/uno/comandos.py`: **242/242**
+## 8. Comandos da matriz — `tests/uno/comandos.py`: **245/245**
 
-247 funções mapeadas nas 11 abas + 4 contextuais; 242 têm comando e **todos** foram encontrados no motor em
+249 funções mapeadas nas 11 abas + 4 contextuais; 245 têm comando e **todos** foram encontrados no motor em
 execução (despachante do quadro do Writer, controlador de menu ou extensão AY); os comandos da visualização de
 impressão são conferidos com o documento nessa vista. 5 funções não têm comando e ficam fora da faixa:
-marca-texto, borracha, pressão da caneta, modo de leitura e verificar atualizações (a revisão gramatical offline
+marca-texto, borracha, pressão da caneta e modo de leitura (a revisão gramatical offline
 passou a ser feita pelo Lightproof pt-BR, ligado pelo AY). A matriz completa, com as colunas **comando encontrado / funcionalidade implementada /
 funcionamento validado**, está em [MATRIZ-FUNCIONALIDADES.md](MATRIZ-FUNCIONALIDADES.md).
 
@@ -613,6 +845,27 @@ atender) e uma vez na bateria completa (fase 4, edição feita pela thread do te
   thread principal; a thread de trabalho recebe apenas texto ([REVISAO-E-IA.md §4](REVISAO-E-IA.md));
 - nos testes, todo acesso ao documento passou a ser feito na thread principal (`no_principal`), e o executor da
   bateria desiste de uma fase assim que o motor dela termina, em vez de esperar o tempo-limite.
+
+**Achado da 0.7.0 — queda do motor: Galeria do Fontwork e depois Link (defeito da base, reproduzível).**
+Na bateria da 0.7.0, a fase 1 da interface caiu ou travou na aba Inserir em duas execuções seguidas (e uma vez na
+0.5.0). Com cada comando registrado, a queda veio logo depois de Gráfico → Fontwork → Link. Isolado com passos de
+diagnóstico (`testar_faixa.ps1 -Somente seq_…`, 21/10/2026):
+
+| Sequência pela faixa | Quedas |
+|---|---|
+| Galeria do Fontwork (fechada com Esc, como uma pessoa) → Link | 3 em 3 |
+| Galeria do Fontwork (acionada de novo, como o teste fazia) → Link | 3 em 3 |
+| a mesma, **sem a extensão do AY** na montagem | 2 em 2 |
+| a mesma, com a faixa da 0.5.0 | 2 em 2 |
+| Gráfico → Fontwork → Link | 0 em 3 |
+| Gráfico → Link | 0 em 3 |
+
+A queda (`soffice.bin`, `ucrtbase.dll`, exceção 0xc0000409 — encerramento forçado) acontece também sem a extensão
+do AY: é do motor LibreOffice 26.8.1.1. Não foi possível dizer por que as baterias da 0.4.0 e da 0.5.0 passaram pela
+mesma sequência (lá, o gráfico vinha logo antes, como na linha que não cai). O teste não foi alterado para evitá-la:
+a fase 1 continua acionando todos os botões, e uma queda vira falha registrada (as demais fases seguem). A
+recuperação de documentos após queda está testada (§5.2). Próximo passo sugerido: conferir se uma versão mais nova
+do motor corrige; sem isso, a limitação fica na Ajuda.
 
 ## 10. Site oficial e publicação
 
@@ -730,10 +983,12 @@ Imagens lado a lado (original | cópia | diferença) em `tests/output/visual/*.p
 
 - Somente **Windows 11 x64** nesta máquina. Windows 10 não testado (o instalador exige Windows 11).
 - Windows ARM64, x86 32 bits, macOS e Linux: não montados nem testados.
-- **Leitores de tela** (NVDA, Narrador, JAWS), navegação só por teclado na faixa e escalas de 125–200 %: não
-  testados. A árvore de acessibilidade (MSAA) da janela foi lida por script, mas a ponte de acessibilidade do
-  motor só nasce quando um leitor de tela a pede, e a leitura externa variou entre execuções; falta o teste com
-  NVDA e Narrador.
+- **Leitores de tela:** só o Narrador está disponível neste computador. O teste confere o que ele **recebe** (nome,
+  papel e foco pela interface MSAA, §5.6), não o áudio. NVDA e JAWS não estão instalados (instalar programas de
+  terceiros depende de autorização). Navegação só por teclado na faixa (Alt, F6, setas): sem teste automatizado.
+- **Escalas 125 %, 150 % e 200 %:** não observadas. Trocar a escala do Windows é configuração do sistema e não é feita
+  pelo teste; ele confere a escala em uso (100 % aqui). Para as outras, troque a escala e rode
+  `tests\interface\conferir_escala.ps1`.
 - Os controles do diálogo de perdas do AY não aparecem por nome para o UITest (o teste usa Enter real); a leitura
   desse diálogo por leitor de tela não foi conferida.
 - "Salvar uma cópia" com o diálogo de perdas: usa o mesmo código de "Salvar como" (testado pela interface), mas
@@ -756,8 +1011,15 @@ Imagens lado a lado (original | cópia | diferença) em `tests/output/visual/*.p
 - Página em branco automática (0.4.0, frente e verso): quando a contagem recomeça numa página de paridade
   trocada, o motor insere uma página vazia; o PDF padrão a omite (10 páginas), o PDF com "páginas em branco" e a
   impressão a incluem (13). Em só frente, o PDF e a impressão têm 10 páginas e o motor mostra 11 na tela.
-- Diálogos da 0.4.0: capturas e medidas só em 125 % de escala (a escala do Windows não pôde ser trocada pelo
-  teste); 150 % e 200 % calculados, não observados. Leitura dos diálogos por NVDA ou Narrador não testada.
+- Barra lateral da base: o botão de menu da barra de abas da barra lateral (ao lado de "Assistente AY") não tem nome
+  acessível; é do motor LibreOffice, não do AY.
+- Entrega E: "Verificar atualizações" funciona de ponta a ponta com o arquivo de versões assinado, mas esse arquivo
+  ainda não está publicado no site oficial (publicar é decisão de quem mantém: docs/ATUALIZACOES.md); até lá, a
+  consulta real responde que não há informação. A chave privada de assinatura fica fora do repositório
+  (`%USERPROFILE%\.ay-escreva`): sem ela não se publica atualização aceita pelo AY.
+- Entrega D: conferir referências cobre só o sistema autor-data e a apresentação básica das entradas; "Apontar
+  inconsistências" pela IA é um apoio fraco (§5.7); revisar o documento inteiro deixa de fora títulos, referências,
+  tabelas, notas e parágrafos com campos.
 - IA local (0.5.0): medida em um único computador (i5-8500, 16 GB, sem GPU dedicada), só em CPU. A primeira carga do
   modelo levou ~80–90 s neste disco; outros computadores podem ser bem mais lentos ou não ter memória (o modelo usa
   ~2,6 GB). O teste de qualidade tem 12 casos: não mede a precisão da IA em textos reais. A conferência de preservação

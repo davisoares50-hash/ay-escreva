@@ -1,0 +1,291 @@
+{
+  "descricao": "Itens do pedido original (19/10/2026) e das entregas, com a situação e a evidência. Situações: testado = concluído e testado; parcial = implementado sem validação completa; pendente = ainda não implementado. As ferramentas da faixa vêm de docs/MATRIZ-FUNCIONALIDADES.md. Gera docs/SITUACAO.md (node tools/gerar-situacao.mjs).",
+  "atualizado_em": "21/10/2026",
+  "versao_publica": "0.2.0",
+  "versao_local": "0.7.0",
+  "instalador_local": "out\\instalador\\AYEscreva-0.7.0-teste-windows11-x64.exe",
+  "secoes": [
+    {
+      "titulo": "Requisitos do produto",
+      "itens": [
+        {
+          "item": "Gratuito, sem mensalidade, avaliação ou bloqueio pago",
+          "sit": "testado",
+          "evidencia": "Não há cobrança, chave nem bloqueio no código (licença MPL-2.0); download do site sem login testado (RESULTADOS §10, 25/25). A IA local também é gratuita, sem assinatura nem chave."
+        },
+        {
+          "item": "Sem conta obrigatória",
+          "sit": "testado",
+          "evidencia": "O aplicativo instalado abre e edita sem conta (instalação 19/19); o site não pede login."
+        },
+        {
+          "item": "Editar, abrir, salvar, imprimir e exportar offline",
+          "sit": "testado",
+          "evidencia": "Testes pela interface com 0 conexões de rede para fora do computador; aceite 40/40; impressão 4/4."
+        },
+        {
+          "item": "Documentos locais por padrão",
+          "sit": "testado",
+          "evidencia": "Salvar grava no disco local (aceite 40/40); nada vai para servidores."
+        },
+        {
+          "item": "Nome, logotipo, ícones e identidade próprios",
+          "sit": "parcial",
+          "evidencia": "Nome, logotipo, tela de abertura, faixa e instalador próprios; o ícone da janela ainda é o da base (exige compilar o motor, Nível 2)."
+        }
+      ]
+    },
+    {
+      "titulo": "Sistemas e arquiteturas",
+      "nota": "Só há uma máquina disponível (Windows 11 Pro x64, Intel Core i5-8500). Testes em outros sistemas exigem equipamento que não está disponível: ficam como pendências.",
+      "itens": [
+        {
+          "item": "Windows 11 x64",
+          "sit": "testado",
+          "evidencia": "Instalar, abrir, usar, atualizar de versão anterior e desinstalar (instalação 19/19, atualização 14/14) e bateria completa."
+        },
+        {
+          "item": "Windows 10 x64",
+          "sit": "pendente",
+          "evidencia": "O instalador de testes exige Windows 11; falta um Windows 10 limpo para liberar e testar (sem máquina disponível)."
+        },
+        {
+          "item": "Windows em ARM64",
+          "sit": "pendente",
+          "evidencia": "Não montado nem testado (sem máquina ARM)."
+        },
+        {
+          "item": "Versões antigas do Windows (7, 8.1) e 32 bits",
+          "sit": "pendente",
+          "evidencia": "Não avaliado nesta máquina; limites ainda não documentados com teste."
+        },
+        {
+          "item": "macOS",
+          "sit": "pendente",
+          "evidencia": "Não montado nem testado (sem Mac)."
+        },
+        {
+          "item": "Linux",
+          "sit": "pendente",
+          "evidencia": "Não montado nem testado."
+        }
+      ]
+    },
+    {
+      "titulo": "Acessibilidade",
+      "itens": [
+        {
+          "item": "Navegação por teclado nos diálogos e painéis do AY",
+          "sit": "testado",
+          "evidencia": "Foco inicial, Tab e Shift+Tab e teclas de acesso sem repetição conferidos nos diálogos Formatar, Modelo da instituição e Gerenciar IA local; botões dos painéis acionados com teclado real (RESULTADOS §4, §5.3, §5.5)."
+        },
+        {
+          "item": "Navegação por teclado nos painéis de IA e diálogos novos (D e E)",
+          "sit": "testado",
+          "evidencia": "Botões acionados com teclado real; Tab/Shift+Tab e teclas de acesso conferidos em Gerenciar IA local, Conferir referências e Verificar atualizações."
+        },
+        {
+          "item": "Navegação por teclado na faixa de opções (Alt, F6, setas)",
+          "sit": "parcial",
+          "evidencia": "A faixa vem da base com suporte a teclado; não há teste automatizado de ponta a ponta."
+        },
+        {
+          "item": "Leitor de tela: Narrador (Windows)",
+          "sit": "parcial",
+          "evidencia": "Com o Narrador ligado, nomes, papéis e foco de botões, campos e listas do painel Revisão com IA e de 4 diálogos conferidos pela interface MSAA (5/5). Não confere o áudio falado nem a navegação completa por voz. O botão de menu da barra lateral (do motor) não tem nome."
+        },
+        {
+          "item": "Leitores de tela NVDA e JAWS",
+          "sit": "pendente",
+          "evidencia": "Não instalados neste computador; instalar programas de terceiros depende de autorização. Teste pendente."
+        },
+        {
+          "item": "Escala de exibição 100 % (a deste computador)",
+          "sit": "testado",
+          "evidencia": "Diálogos e painéis sem texto cortado, sem sobreposição e cabendo na tela (8/8, fase 9). Textos apertados encontrados e corrigidos (Cancelar download; botões do Assistente AY)."
+        },
+        {
+          "item": "Escalas de exibição 125 %, 150 % e 200 %",
+          "sit": "pendente",
+          "evidencia": "Trocar a escala do Windows é configuração do sistema: o teste está pronto (tests\\interface\\conferir_escala.ps1) e roda depois que a escala for trocada em Configurações › Sistema › Tela."
+        }
+      ]
+    },
+    {
+      "titulo": "Documentos e confiabilidade",
+      "itens": [
+        {
+          "item": "Ler e gravar DOCX e ODT",
+          "sit": "testado",
+          "evidencia": "Aceite 40/40; ida e volta com documento representativo e variantes do Word, sem perda de texto (RESULTADOS §2, §11)."
+        },
+        {
+          "item": "Exportar PDF (inclusive PDF/UA)",
+          "sit": "testado",
+          "evidencia": "Aceite 40/40; PDF com o mesmo número de páginas."
+        },
+        {
+          "item": "DOC, RTF e TXT",
+          "sit": "testado",
+          "evidencia": "Ida e volta testada; 7 incompatibilidades registradas em RESULTADOS §11 e em Ajuda › Limitações."
+        },
+        {
+          "item": "Preservar estilos, tabelas, imagens, seções, notas e comentários",
+          "sit": "testado",
+          "evidencia": "Comparação estrutural e visual antes e depois de salvar (RESULTADOS §11), com as diferenças conhecidas listadas."
+        },
+        {
+          "item": "Aviso de incompatibilidade antes de salvar em formato com perdas",
+          "sit": "testado",
+          "evidencia": "Aviso de perdas ao salvar em DOCX validado pela interface (botão Salvar, Salvar como e fechar › Salvar)."
+        },
+        {
+          "item": "Salvar uma cópia com o aviso de perdas",
+          "sit": "parcial",
+          "evidencia": "Usa o mesmo código de Salvar como (testado), mas não tem teste próprio."
+        },
+        {
+          "item": "Desfazer e refazer",
+          "sit": "testado",
+          "evidencia": "Confiabilidade 19/19; formatação acadêmica desfaz e refaz por inteiro (38/38)."
+        },
+        {
+          "item": "Recuperação após falha e salvamento seguro",
+          "sit": "testado",
+          "evidencia": "Recuperação 7/7 (queda forçada do motor); salvamento seguro com falha e interrupção da gravação (19/19)."
+        },
+        {
+          "item": "Substituição de fontes informada",
+          "sit": "testado",
+          "evidencia": "Aviso de fontes substituídas validado pela interface."
+        },
+        {
+          "item": "Não executar macros nem carregar recursos externos",
+          "sit": "testado",
+          "evidencia": "Segurança 4/4 (macro não executa, com controle positivo; imagem remota não é baixada)."
+        },
+        {
+          "item": "Não enviar documentos a servidores sem autorização",
+          "sit": "testado",
+          "evidencia": "0 conexões externas nos testes pela interface; a IA roda em 127.0.0.1 com chave e modo offline (RESULTADOS §5.5)."
+        }
+      ]
+    },
+    {
+      "titulo": "Janela principal e faixa de opções",
+      "itens": [
+        {
+          "item": "Faixa por abas na ordem pedida (11 abas)",
+          "sit": "testado",
+          "evidencia": "Cada botão encontrado na aba certa pela interface (RESULTADOS §4); detalhes por função abaixo."
+        },
+        {
+          "item": "Abas contextuais de Tabela e Imagem",
+          "sit": "testado",
+          "evidencia": "Aparecem ao selecionar tabela ou imagem e foram acionadas pela interface."
+        },
+        {
+          "item": "Abas contextuais de Forma e Visualizar impressão",
+          "sit": "parcial",
+          "evidencia": "Conferidas só visualmente (capturas), sem clique automatizado."
+        },
+        {
+          "item": "Barra de título, acesso rápido, réguas, páginas com limites, navegação e barra de status (páginas, palavras, idioma, zoom)",
+          "sit": "testado",
+          "evidencia": "Presentes na janela (capturas); régua, zoom e navegação acionados pela interface."
+        },
+        {
+          "item": "Grupos da faixa se recolhem em janelas estreitas",
+          "sit": "pendente",
+          "evidencia": "Em janelas estreitas alguns botões ficam fora da área visível (Ajuda › Limitações)."
+        },
+        {
+          "item": "Usar todas as ferramentas da faixa sem queda do motor",
+          "sit": "parcial",
+          "evidencia": "Defeito da base (LibreOffice 26.8.1) reproduzido: Galeria do Fontwork e depois Link fecha o aplicativo (3 em 3, também sem a extensão do AY). A recuperação após queda protege o que não foi salvo. RESULTADOS §9."
+        }
+      ]
+    },
+    {
+      "titulo": "Entregas de assistência à escrita",
+      "itens": [
+        {
+          "item": "Confiabilidade (0.3.0): recuperação, salvamento seguro, desfazer/refazer, TXT",
+          "sit": "testado",
+          "evidencia": "Confiabilidade 19/19, recuperação 7/7."
+        },
+        {
+          "item": "A (0.3.0): revisão de texto, dicionário pessoal, painel Assistente AY",
+          "sit": "testado",
+          "evidencia": "Regras 31/31; pela interface 31/31 (digitação real, proteções, desfazer, painel, documento longo)."
+        },
+        {
+          "item": "B (0.4.0): formatar trabalho acadêmico numa cópia, relatório de conformidade, modelo da instituição",
+          "sit": "testado",
+          "evidencia": "38/38 e 18/18 pela interface. O relatório não atesta conformidade completa: os textos oficiais das normas não foram consultados."
+        },
+        {
+          "item": "B (0.4.0): galeria de modelos e Salvar como modelo",
+          "sit": "testado",
+          "evidencia": "33/33."
+        },
+        {
+          "item": "C (0.5.0): IA local — revisar, mais claro, mais formal, simplificar, resumir, com comparação, aceitar/rejeitar e desfazer",
+          "sit": "testado",
+          "evidencia": "12/12 sem modelo, 21/21 no editor com o modelo real, 32/32 na fase 9 pela interface (inclui escala e atualizações)."
+        },
+        {
+          "item": "C: download do modelo pelo botão Baixar (progresso, cancelar, continuar, falhas)",
+          "sit": "testado",
+          "evidencia": "Download real pela interface (11/11): 3,4 GB dos endereços oficiais, cancelar, continuar de onde parou, fechar no meio, SHA-256, usar e remover. Falhas simuladas (13/13): queda, servidor sem retomada, arquivo adulterado, 404, 500."
+        },
+        {
+          "item": "D: revisão do documento inteiro, referências, sugestões de títulos, explicações e inconsistências",
+          "sit": "testado",
+          "evidencia": "Regras de referências e consistência 21/21; no editor com o modelo real 12/12; pela interface 12/12. \"Apontar inconsistências\" pela IA é um apoio fraco (às vezes só repete o trecho; um falso alarme medido)."
+        },
+        {
+          "item": "E: verificar atualizações com confirmação, preservando documentos e preferências",
+          "sit": "parcial",
+          "evidencia": "Assinatura e conferências 16/16; documentos não salvos bloqueiam 2/2; atualização de ponta a ponta pelo próprio AY 8/8; pela interface 4/4. Falta publicar o arquivo de versões assinado no site (decisão sua): até lá, \"Verificar agora\" responde que não há informação publicada."
+        }
+      ]
+    },
+    {
+      "titulo": "Distribuição",
+      "itens": [
+        {
+          "item": "Instalador Windows 11 x64 por usuário, sem administrador",
+          "sit": "testado",
+          "evidencia": "Instalação 19/19 (0.5.0)."
+        },
+        {
+          "item": "Atualizar uma instalação anterior preservando documentos e preferências",
+          "sit": "testado",
+          "evidencia": "Atualização 0.2.0 → 0.5.0 e 0.4.0 → 0.5.0: 14/14."
+        },
+        {
+          "item": "Atualização pelo próprio AY (Ajuda › Verificar atualizações)",
+          "sit": "parcial",
+          "evidencia": "Funciona de ponta a ponta com o instalador conferido; depende de publicar atualizacoes.json assinado no site oficial (docs/ATUALIZACOES.md)."
+        },
+        {
+          "item": "Site oficial com download e SHA-256",
+          "sit": "testado",
+          "evidencia": "Publicado (versão 0.2.0); fluxo acessar → baixar → conferir → instalar 25/25."
+        },
+        {
+          "item": "Assinatura digital do instalador",
+          "sit": "pendente",
+          "evidencia": "Sem certificado de assinatura de código; o SmartScreen pode avisar."
+        },
+        {
+          "item": "Pacote MSI para empresas",
+          "sit": "pendente",
+          "evidencia": "Não feito."
+        }
+      ]
+    }
+  ],
+  "instalador_sha256": "a4d4653b8cd994f7e20216773085df2f4703cff4c960ab313f4c06b7535bf14d"
+}

@@ -19,7 +19,7 @@ a{color:var(--verde)}
 </head>
 <body>
 <header><h1>Guia do AY ESCREVA</h1><p>Versão inicial de testes para Windows 11 x64 · funciona sem internet</p></header>
-<nav><a href="#comecar">Começar</a><a href="#faixa">Faixa de opções</a><a href="#revisao">Revisão e Assistente AY</a><a href="#ia">Revisão com IA</a><a href="#academico">Trabalho acadêmico</a><a href="#modelos">Modelos</a><a href="#salvar">Salvar e formatos</a><a href="#pdf">PDF e impressão</a><a href="#seguranca">Segurança</a><a href="#recuperar">Recuperar</a><a href="#teclado">Teclado e acessibilidade</a><a href="atalhos.html">Atalhos</a><a href="limitacoes.html">Limitações</a></nav>
+<nav><a href="#comecar">Começar</a><a href="#faixa">Faixa de opções</a><a href="#revisao">Revisão e Assistente AY</a><a href="#ia">Revisão com IA</a><a href="#conferir">Conferir referências</a><a href="#academico">Trabalho acadêmico</a><a href="#modelos">Modelos</a><a href="#salvar">Salvar e formatos</a><a href="#pdf">PDF e impressão</a><a href="#seguranca">Segurança</a><a href="#atualizacoes">Atualizações</a><a href="#recuperar">Recuperar</a><a href="#teclado">Teclado e acessibilidade</a><a href="atalhos.html">Atalhos</a><a href="limitacoes.html">Limitações</a></nav>
 <main>
 
 <h2 id="comecar">Começar</h2>
@@ -56,16 +56,26 @@ a{color:var(--verde)}
 <tr><td><strong>Gramática e pontuação</strong></td><td>Sublinha em azul problemas como crase, concordância, "há/a", "mal/mau", porquês, espaços e pontuação, com uma explicação curta (clique com o botão direito no trecho ou veja no painel).</td></tr>
 <tr><td><strong>Estilo</strong> (opcional)</td><td>Sugere frases mais claras e concisas, aponta marcas de oralidade, repetições e parágrafos longos. Nada é aplicado sozinho.</td></tr>
 </table>
-<p><strong>Verificar documento</strong> lista as ocorrências no painel enquanto você continua escrevendo; <strong>Cancelar</strong> interrompe. Para cada ocorrência: <strong>Aplicar</strong> (com a sugestão escolhida), <strong>Ignorar</strong>, <strong>Adicionar ao dicionário</strong> ou <strong>Não corrigir novamente</strong>. O botão <strong>Dicionário pessoal…</strong> mostra e remove palavras guardadas.</p>
+<p><strong>Verificar documento</strong> lista as ocorrências no painel enquanto você continua escrevendo; <strong>Cancelar</strong> interrompe. Para cada ocorrência: <strong>Aplicar</strong> (com a sugestão escolhida), <strong>Ignorar</strong>, <strong>Pôr no dicionário</strong> (guarda a palavra no seu dicionário pessoal) ou <strong>Não corrigir mais</strong>. O botão <strong>Dicionário pessoal…</strong> mostra e remove palavras guardadas.</p>
 <h2 id="ia">Revisão com IA (local e opcional)</h2>
 <p>O AY funciona inteiro <strong>sem IA</strong>. Se quiser, a IA local revisa um trecho selecionado <strong>neste computador</strong>: nada é enviado para a internet, não há conta, assinatura nem chave.</p>
 <ol>
-<li><strong>Instalar (uma vez):</strong> <strong>Revisão › Gerenciar IA local</strong>. O diálogo mostra cada modelo com licença, tamanho, origem e o espaço livre na pasta escolhida. <strong>Baixar…</strong> pergunta antes e baixa só o motor e o modelo, dos endereços oficiais, conferindo o SHA-256; dá para cancelar. Depois, <strong>Usar este modelo</strong>.</li>
-<li><strong>Pedir:</strong> selecione o trecho (texto comum, até cerca de 6.000 caracteres), abra <strong>Revisão › Revisão com IA</strong>, escolha o pedido — Revisar, Mais claro, Mais formal, Simplificar ou Resumir — e clique em <strong>Revisar seleção</strong>. A sugestão aparece aos poucos; você pode continuar escrevendo ou clicar em <strong>Cancelar</strong>.</li>
+<li><strong>Instalar (uma vez):</strong> <strong>Revisão › Gerenciar IA local</strong>. O diálogo mostra cada modelo com licença, tamanho, origem e o espaço livre na pasta escolhida. <strong>Baixar…</strong> pergunta antes e baixa só o motor e o modelo, dos endereços oficiais, conferindo o SHA-256. Dá para cancelar ou fechar o diálogo: o que já veio fica guardado, e <strong>Baixar o restante…</strong> continua de onde parou (se a conexão cair, o AY tenta de novo sozinho). <strong>Remover</strong> apaga o modelo ou o download incompleto. Depois de baixar, <strong>Usar este modelo</strong>.</li>
+<li><strong>Pedir:</strong> selecione o trecho (texto comum, até cerca de 6.000 caracteres), abra <strong>Revisão › Revisão com IA</strong>, escolha o pedido — Revisar, Mais claro, Mais formal, Simplificar, Resumir, Sugerir títulos, Explicar ou Apontar inconsistências — e clique em <strong>Pedir à IA</strong>. A sugestão aparece aos poucos; você pode continuar escrevendo ou clicar em <strong>Cancelar</strong>.</li>
 <li><strong>Conferir:</strong> o painel mostra o <strong>original</strong> e a <strong>sugestão</strong>. O AY confere se números, datas, citações, endereços, siglas e nomes foram preservados e se "Revisar" não apagou nem reescreveu o texto além de corrigir; se algo falhar, <strong>Aceitar</strong> fica bloqueado e o motivo aparece.</li>
-<li><strong>Aceitar ou rejeitar:</strong> <strong>Aceitar</strong> troca só as palavras que mudaram (a formatação do resto fica), numa única ação de <kbd>Ctrl</kbd>+<kbd>Z</kbd>; com "Aplicar como alteração controlada" (padrão), cada troca aparece em <strong>Revisão › Alterações</strong> para aceitar ou rejeitar. <strong>Rejeitar</strong> descarta a sugestão. "Resumir" nunca substitui o trecho.</li>
+<li><strong>Aceitar ou rejeitar:</strong> <strong>Aceitar</strong> troca só as palavras que mudaram (a formatação do resto fica), numa única ação de <kbd>Ctrl</kbd>+<kbd>Z</kbd>; com "Aplicar como alteração controlada" (padrão), cada troca aparece em <strong>Revisão › Alterações</strong> para aceitar ou rejeitar. <strong>Rejeitar</strong> descarta a sugestão. "Resumir", "Explicar" e "Apontar inconsistências" só mostram a resposta: nunca alteram o texto.</li>
+<li><strong>Sugerir títulos:</strong> a IA propõe até três títulos usando só o que está no trecho (título com número ou sigla que não estão no trecho é recusado). Escolha um e clique em <strong>Inserir título</strong>: se o trecho começa num título, ele é trocado; senão, um título é criado antes do trecho, no estilo dos títulos do documento. <kbd>Ctrl</kbd>+<kbd>Z</kbd> desfaz.</li>
+<li><strong>Revisar o documento inteiro:</strong> a IA revisa parágrafo por parágrafo em segundo plano (títulos, referências, campos e notas ficam de fora); cada sugestão entra na lista <strong>Sugestões do documento</strong>. Escolha uma para ver original × sugestão, <strong>Ir ao parágrafo</strong>, <strong>Aceitar</strong> ou <strong>Rejeitar</strong>. Nada muda sem você aceitar; <strong>Cancelar</strong> para a revisão e mantém o que já veio.</li>
 </ol>
 <p class="caixa">Se o trecho mudar enquanto a IA trabalha, a sugestão não é aplicada: peça de novo. O texto do documento é tratado como conteúdo, não como ordem — frases como "ignore as instruções" não comandam o AY nem a IA. A IA erra: confira sempre antes de aceitar.</p>
+
+<h2 id="conferir">Conferir referências e consistência</h2>
+<p>Em <strong>Referências › Trabalho acadêmico</strong>, sem IA e sem mudar o texto:</p>
+<ul>
+<li><strong>Conferir referências</strong> compara as citações do texto (sistema autor-data, como "Silva (2019)" e "(SILVA, 2019, p. 12)") com a lista depois do título REFERÊNCIAS e aponta: citação sem referência, referência não citada, entrada sem ano, documento on-line sem "Disponível em:" ou "Acesso em:", entradas repetidas, fora da ordem alfabética ou do mesmo autor e ano sem letra (2019a, 2019b). <strong>O AY não cria, completa nem corrige referências</strong>: os dados vêm da obra consultada.</li>
+<li><strong>Conferir consistência</strong> aponta o mesmo termo escrito de jeitos diferentes ("e-mail" e "email"), siglas usadas antes de serem definidas ou definidas de dois jeitos, numeração de figuras e tabelas com salto ou citada sem legenda, e datas, porcentagens e aspas em formatos misturados.</li>
+</ul>
+<p>Escolha um apontamento e clique em <strong>Ir para o trecho</strong>: o AY seleciona o lugar no documento, e a correção fica com você.</p>
 
 <h2 id="academico">Formatar trabalho acadêmico (ABNT)</h2>
 <p>Em <strong>Referências › Formatar trabalho acadêmico</strong>, escolha o tipo de trabalho:</p>
@@ -115,6 +125,15 @@ a{color:var(--verde)}
 <li>Macros de documentos <strong>nunca</strong> são executadas.</li>
 <li>Imagens e outros conteúdos vinculados a endereços da internet <strong>não</strong> são baixados ao abrir.</li>
 <li>O AY não envia conteúdo de documentos a servidores e não pede conta. Não há relatório automático de falhas.</li>
+</ul>
+
+<h2 id="atualizacoes">Verificar atualizações</h2>
+<p>Em <strong>Ajuda › Verificar atualizações</strong>, o AY só consulta o site oficial quando você clica em <strong>Verificar agora</strong>. É enviado apenas o pedido do arquivo de versões — nenhum documento, nenhum dado pessoal.</p>
+<ul>
+<li>Escolha o canal: <strong>versões de testes</strong> ou <strong>versões estáveis</strong>.</li>
+<li>Se houver versão nova, o AY mostra o número, a data, o tamanho e as novidades. <strong>Baixar e instalar…</strong> pergunta antes, baixa (com progresso, cancelamento e continuação de onde parou) e confere o arquivo (SHA-256).</li>
+<li>Antes de instalar, salve os documentos: com alterações não salvas, o AY não fecha e avisa quais são. Depois, o AY fecha, instala a versão nova por cima e abre de novo. <strong>Seus documentos e preferências são mantidos.</strong></li>
+<li>Segurança: o arquivo de versões precisa estar <strong>assinado pelo projeto</strong>, e o instalador só pode vir das versões publicadas do AY ESCREVA no GitHub. Se algo não confere, nada é baixado: instale só pelo site oficial.</li>
 </ul>
 
 <h2 id="recuperar">Recuperar documentos</h2>

@@ -19,6 +19,7 @@ import socket
 import subprocess
 import threading
 import time
+import urllib.error
 import urllib.request
 import zipfile
 
@@ -37,9 +38,13 @@ def pasta_padrao():
 
 
 def espaco_livre(pasta):
-    alvo = pasta
+    """Espaço livre no disco da pasta (ou da pasta existente mais próxima). Unidade inexistente: ValueError."""
+    alvo = os.path.abspath(pasta)
     while not os.path.exists(alvo):
-        alvo = os.path.dirname(alvo)
+        acima = os.path.dirname(alvo)
+        if acima == alvo:
+            raise ValueError(f'a unidade de {pasta} não existe')
+        alvo = acima
     return shutil.disk_usage(alvo).free
 
 
@@ -47,18 +52,135 @@ class Cancelado(Exception):
     pass
 
 
+class FalhaDownload(Exception):
+    """Falha explicada para a pessoa; `guardado` = bytes que ficaram na parte baixada (para continuar depois)."""
+
+    def __init__(self, mensagem, guardado=0):
+        super().__init__(mensagem)
+        self.guardado = guardado
+
+
+class _ErroRede(Exception):
+    """Falha passageira (servidor 5xx, conexão caída): o download tenta de novo sozinho, continuando de onde parou."""
+
+
+TENTATIVAS = 3
+
+
+def tamanho_parcial(destino):
+    """Bytes já baixados de um download interrompido ou cancelado (0 se não há)."""
+    try:
+        return os.path.getsize(destino + '.parcial')
+    except OSError:
+        return 0
+
+
+def _mb(n):
+    return f'{n / 2**30:.1f} GB'.replace('.', ',') if n >= 2**30 else f'{n / 2**20:.0f} MB'
+
+
 def baixar(url, destino, sha256, tamanho=None, progresso=None, cancelar=None, tempo_limite=60):
-    """Baixa para destino + '.parcial', confere o SHA-256 e só então dá o nome final. progresso(feito, total)."""
+    """Baixa um arquivo do catálogo (só https) — ver _baixar."""
     if not url.startswith('https://'):
         raise ValueError('só endereços https do catálogo')
+    return _baixar(url, destino, sha256, tamanho, progresso, cancelar, tempo_limite, exigir_https=True)
+
+
+def _baixar(url, destino, sha256, tamanho=None, progresso=None, cancelar=None, tempo_limite=60, exigir_https=True, espera=2.0):
+    """Baixa para destino + '.parcial' e só dá o nome final depois de conferir tamanho e SHA-256.
+
+    - Retomada: se já existe uma parte (download cancelado ou interrompido), os bytes dela são conferidos de novo
+      (o SHA-256 é recalculado) e só o restante é pedido (cabeçalho Range). Se o servidor não aceitar retomar, o
+      download recomeça do zero, sem misturar pedaços.
+    - Cancelar, queda da conexão ou disco cheio: a parte baixada fica guardada para continuar depois.
+    - Até TENTATIVAS retomadas automáticas quando a conexão cai ou o servidor falha (5xx).
+    - Tamanho ou SHA-256 diferentes do catálogo: a parte é apagada (nunca vira o arquivo final).
+    progresso(feito, total, fase), com fase 'conferindo' (relendo a parte já baixada) ou 'baixando'."""
     os.makedirs(os.path.dirname(destino), exist_ok=True)
     parcial = destino + '.parcial'
+    if tamanho and tamanho_parcial(destino) > tamanho:
+        os.remove(parcial)
+    feito, h = _conferir_parcial(parcial, progresso, cancelar)
+    tentativas = 0
+    while not (tamanho and feito == tamanho):          # parte já completa (cancelada no fim): só falta conferir
+        try:
+            feito, h = _transferir(url, parcial, h, feito, tamanho, progresso, cancelar, tempo_limite, exigir_https)
+            break
+        except (_ErroRede, http.client.HTTPException, OSError) as e:
+            if isinstance(e, OSError) and getattr(e, 'errno', None) == 28:          # ENOSPC
+                raise FalhaDownload(f'Disco cheio. {_mb(tamanho_parcial(destino))} ficaram guardados: libere espaço e '
+                                    'clique em "Baixar o restante".', tamanho_parcial(destino))
+            tentativas += 1
+            registrar(f'IA: download interrompido ({type(e).__name__}: {e}); tentativa {tentativas} de {TENTATIVAS}')
+            if tentativas > TENTATIVAS:
+                guardado = tamanho_parcial(destino)
+                if guardado:
+                    raise FalhaDownload(f'A conexão falhou ({e}). {_mb(guardado)} ficaram guardados: clique em '
+                                        '"Baixar o restante" para continuar de onde parou.', guardado)
+                raise FalhaDownload(f'Não foi possível baixar ({e}). Confira a conexão e tente de novo mais tarde.')
+            time.sleep(espera * tentativas)
+            feito, h = _conferir_parcial(parcial, progresso, cancelar)        # o que ficou gravado de fato
+    if tamanho and feito != tamanho:
+        os.remove(parcial)
+        raise FalhaDownload(f'O arquivo veio com {feito} bytes, mas devia ter {tamanho}; ele foi apagado. Baixe de novo.')
+    if h.hexdigest().lower() != sha256.lower():
+        os.remove(parcial)
+        raise FalhaDownload('O arquivo baixado não confere com o SHA-256 do catálogo (veio diferente do oficial); ele foi '
+                            'apagado. Baixe de novo.')
+    os.replace(parcial, destino)
+    return destino
+
+
+def _conferir_parcial(parcial, progresso, cancelar):
+    """(bytes, hash) da parte já baixada, relendo-a do disco."""
     h = hashlib.sha256()
-    req = urllib.request.Request(url, headers={'User-Agent': 'AY-ESCREVA'})
+    if not os.path.exists(parcial):
+        return 0, h
+    total = os.path.getsize(parcial)
+    lido = 0
+    with open(parcial, 'rb') as f:
+        while True:
+            if cancelar is not None and cancelar.is_set():
+                raise Cancelado()
+            bloco = f.read(1 << 22)
+            if not bloco:
+                break
+            h.update(bloco)
+            lido += len(bloco)
+            if progresso:
+                progresso(lido, total, 'conferindo')
+    return lido, h
+
+
+def _transferir(url, parcial, h, feito, tamanho, progresso, cancelar, tempo_limite, exigir_https):
+    cab = {'User-Agent': 'AY-ESCREVA'}
+    if feito:
+        cab['Range'] = f'bytes={feito}-'
     try:
-        with urllib.request.urlopen(req, timeout=tempo_limite) as r, open(parcial, 'wb') as f:
-            total = int(r.headers.get('Content-Length') or tamanho or 0)
-            feito = 0
+        r = urllib.request.urlopen(urllib.request.Request(url, headers=cab), timeout=tempo_limite)
+    except urllib.error.HTTPError as e:
+        if e.code == 416 and feito:                  # o servidor não reconhece o pedaço guardado: recomeça do zero
+            os.remove(parcial)
+            return _transferir(url, parcial, hashlib.sha256(), 0, tamanho, progresso, cancelar, tempo_limite, exigir_https)
+        if e.code >= 500:
+            raise _ErroRede(f'servidor respondeu {e.code}')
+        raise FalhaDownload(f'O servidor respondeu {e.code} ({e.reason}); nada foi alterado.', feito)
+    with r:
+        if exigir_https and not r.geturl().startswith('https://'):
+            raise FalhaDownload('O endereço redirecionou para uma conexão sem https; o download foi recusado.', feito)
+        modo = 'ab'
+        if feito:
+            inicio = None
+            cr = r.headers.get('Content-Range') or ''
+            if r.status == 206 and cr.startswith('bytes '):
+                inicio = int(cr[6:].split('-')[0])
+            if inicio != feito:                          # servidor mandou o arquivo inteiro: recomeça do zero
+                registrar(f'IA: o servidor não continuou de {feito} bytes (status {r.status}); recomeçando do zero')
+                feito, h, modo = 0, hashlib.sha256(), 'wb'
+            else:
+                registrar(f'IA: download retomado a partir de {_mb(feito)}')
+        total = tamanho or (feito + int(r.headers.get('Content-Length') or 0))
+        with open(parcial, modo) as f:
             while True:
                 if cancelar is not None and cancelar.is_set():
                     raise Cancelado()
@@ -68,18 +190,15 @@ def baixar(url, destino, sha256, tamanho=None, progresso=None, cancelar=None, te
                 f.write(bloco)
                 h.update(bloco)
                 feito += len(bloco)
+                if tamanho and feito > tamanho:
+                    f.close()
+                    os.remove(parcial)
+                    raise FalhaDownload('O servidor mandou mais dados do que o esperado; o arquivo foi apagado.')
                 if progresso:
-                    progresso(feito, total)
-        if h.hexdigest().lower() != sha256.lower():
-            raise ValueError(f'SHA-256 não confere: {h.hexdigest()}')
-        os.replace(parcial, destino)
-        return destino
-    except BaseException:
-        try:
-            os.remove(parcial)
-        except OSError:
-            pass
-        raise
+                    progresso(feito, total, 'baixando')
+    if tamanho and feito < tamanho:
+        raise _ErroRede(f'conexão terminou em {_mb(feito)} de {_mb(tamanho)}')
+    return feito, h
 
 
 def extrair_motor(zip_caminho, pasta, arquivos):
