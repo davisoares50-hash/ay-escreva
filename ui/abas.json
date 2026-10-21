@@ -1277,6 +1277,28 @@
           ]
         },
         {
+          "rotulo": "IA local",
+          "itens": [
+            {
+              "funcao": "Revisão com IA",
+              "comando": null,
+              "comandoAY": "ayescreva:RevisaoIA",
+              "grande": true,
+              "icone": "cmd/lc_spellonline.png",
+              "prioridade": "P1",
+              "criterio": "Abre o painel da IA local (opcional): original × sugestão, aceitar como alteração controlada ou rejeitar; nada sai do computador"
+            },
+            {
+              "funcao": "Gerenciar IA local",
+              "comando": null,
+              "comandoAY": "ayescreva:GerenciarIA",
+              "icone": "cmd/lc_optionstreedialog.png",
+              "prioridade": "P1",
+              "criterio": "Mostra modelos, licença, tamanho e espaço livre; o download só acontece quando o usuário pede"
+            }
+          ]
+        },
+        {
           "rotulo": "Revisão de texto",
           "itens": [
             {

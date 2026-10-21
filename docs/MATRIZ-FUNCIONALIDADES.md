@@ -1,6 +1,6 @@
 # Matriz de funcionalidades do AY ESCREVA
 
-> Gerado por `tests/uno/comandos.py` a partir de `ui/abas.json`, do mapa da faixa e do teste pela interface de 2026-10-21T07:51:48, em 2026-10-21. Não editar à mão.
+> Gerado por `tests/uno/comandos.py` a partir de `ui/abas.json`, do mapa da faixa e do teste pela interface de 2026-10-21T13:04:30, em 2026-10-21. Não editar à mão.
 
 **Como ler as colunas**
 
@@ -9,7 +9,7 @@
 - **Funcionamento validado**: *Pela interface* = o teste clicou no botão da faixa, confirmou o comando disparado e conferiu o efeito no documento ou na exibição. *Acionado pela interface* = o clique disparou o comando certo (e o diálogo/lista que abriu foi registrado), mas o efeito não tem verificação automática. *Por API* = a função foi exercitada de ponta a ponta pelos testes de documento, sem clicar no botão.
 - **Prioridade**: P0 = Etapas 1-2, P1 = Etapa 3, P2 = Etapa 4, P3 = avaliar.
 
-**Resumo** (245 funções): comando encontrado 240 · implementadas 240 (botão confirmado pela interface: 217) · validadas pela interface 38 · só acionadas pela interface 117 · validadas por API 49 · pendentes 5
+**Resumo** (247 funções): comando encontrado 242 · implementadas 242 (botão confirmado pela interface: 219) · validadas pela interface 38 · só acionadas pela interface 119 · validadas por API 49 · pendentes 5
 
 
 ## Arquivo
@@ -207,6 +207,8 @@
 | Assistente AY | Assistente AY | `ayescreva:Assistente` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Pela interface (teste de revisão): Painel Assistente AY abre pela aba Revisão (comando "Assistente AY"); Acessibilidade: listas anunciadas pelo próprio rótulo (não pelo título do painel); Acessibilidade: controles do painel com nome ac · Acionado pela interface (efeito não conferido) | P0 | Abre o painel lateral com revisão de ortografia, gramática e estilo (offline) |  |
 | Assistente AY | Verificar documento | `ayescreva:VerificarDocumento` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Pela interface (teste de revisão): Verificar documento pelo teclado: erro de ortografia listado com sugestões; Cancelar interrompe a verificação; Documento longo verificado por completo · Acionado pela interface (efeito não conferido) | P0 | Lista ocorrências de ortografia, gramática e estilo no painel, em segundo plano, com cancelamento |  |
 | Assistente AY | Correção automática | `ayescreva:CorrecaoAutomatica` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Pela interface (teste de revisão): Correção automática ao digitar (nao, voce, tambem); Ctrl+Z desfaz só a correção (o espaço digitado fica); Proteções: nome próprio, sigla, grafia mista, data, palavra com número e citação não mudam; Co · Acionado pela interface (efeito não conferido) | P0 | Liga/desliga a correção de casos inequívocos ao digitar; Ctrl+Z desfaz cada correção |  |
+| IA local | Revisão com IA | `ayescreva:RevisaoIA` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P1 | Abre o painel da IA local (opcional): original × sugestão, aceitar como alteração controlada ou rejeitar; nada sai do computador |  |
+| IA local | Gerenciar IA local | `ayescreva:GerenciarIA` | Sim (extensão AY) | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Gerenciar IA local" (fechado pelo teste) (efeito não conferido) | P1 | Mostra modelos, licença, tamanho e espaço livre; o download só acontece quando o usuário pede |  |
 | Revisão de texto | Ortografia e gramática | `.uno:SpellingAndGrammarDialog` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu janela não modal "" (fechado pelo teste) (efeito não conferido) | P0 | Dicionário pt-BR offline (VERO) |  |
 | Revisão de texto | Revisão automática | `.uno:SpellOnline` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface (efeito não conferido) | P0 | Sublinha erros durante a digitação |  |
 | Revisão de texto | Sinônimos | `.uno:ThesaurusDialog` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Dicionário de sinônimos (Português (Brasil))" (fechado pelo teste) (efeito não conferido) | P1 | Dicionário de sinônimos pt-BR |  |

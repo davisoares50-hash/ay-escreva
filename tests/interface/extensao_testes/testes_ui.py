@@ -29,6 +29,7 @@ import zipfile
 import uno
 import unohelper
 from testes_academico import AcademicoMixin
+from testes_ia import IAMixin
 from testes_revisao import RevisaoMixin
 from com.sun.star.awt import XCallback
 from com.sun.star.beans import PropertyValue
@@ -113,7 +114,7 @@ class Executor(unohelper.Base, XJob):
         return None
 
 
-class Teste(RevisaoMixin, AcademicoMixin):
+class Teste(RevisaoMixin, AcademicoMixin, IAMixin):
     def __init__(self, ctx, spec, modelo):
         self.ctx = ctx
         self.doc = modelo
@@ -391,7 +392,10 @@ class Teste(RevisaoMixin, AcademicoMixin):
                            'revisao_integridade': [(self.revisao_integridade, 6.0)],
                            # Entrega B: formatar trabalho acadêmico (cópia, prévia, relatório, desfazer) e galeria de modelos
                            'academico': [(self.academico_formatar, 6.0), (self.academico_instituicao, 0.5), (self.academico_galeria, 0.5),
-                                         (self.academico_salvar_modelo, 0.5)]}
+                                         (self.academico_salvar_modelo, 0.5)],
+                           # Entrega C: IA local — sem modelo, fluxo completo com o modelo e Gerenciar IA local
+                           'ia': [(self.ia_sem_modelo, 1.0), (self.ia_fluxo, 1.0), (self.ia_gerenciar, 0.5)],
+                           'ia_basico': [(self.ia_sem_modelo, 1.0), (self.ia_gerenciar, 0.5)]}
             for nome in somente:
                 passos.extend(mapa_passos[nome])
             return passos

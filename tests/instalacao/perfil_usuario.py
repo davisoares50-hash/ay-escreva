@@ -101,8 +101,14 @@ def main():
         try:
             cmds = config(ctx, '/org.openoffice.Office.UI.GenericCommands/UserInterface/Commands')
             r['comandos_entrega_b'] = all(cmds.hasByName(n) for n in ('ayescreva:FormatarTrabalho', 'ayescreva:Galeria', 'ayescreva:Conformidade'))
+            r['comandos_entrega_c'] = all(cmds.hasByName(n) for n in ('ayescreva:RevisaoIA', 'ayescreva:GerenciarIA'))
         except Exception:
-            r['comandos_entrega_b'] = False
+            r['comandos_entrega_b'] = r['comandos_entrega_c'] = False
+        try:
+            # configuração da IA local presente no perfil antigo, sem modelo escolhido (a IA continua opcional)
+            r['ia_sem_modelo'] = config(ctx, '/br.ayescreva.Configuracao/IA').getPropertyValue('Modelo') == ''
+        except Exception:
+            r['ia_sem_modelo'] = None
         info = ctx.getValueByName('/singletons/com.sun.star.deployment.PackageInformationProvider')
         r['versao_extensao'] = next((v for i, v in info.getExtensionList() if i == 'br.ayescreva.extensao'), None)
     finally:

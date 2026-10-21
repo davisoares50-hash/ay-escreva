@@ -19,7 +19,7 @@ a{color:var(--verde)}
 </head>
 <body>
 <header><h1>Guia do AY ESCREVA</h1><p>Versão inicial de testes para Windows 11 x64 · funciona sem internet</p></header>
-<nav><a href="#comecar">Começar</a><a href="#faixa">Faixa de opções</a><a href="#revisao">Revisão e Assistente AY</a><a href="#academico">Trabalho acadêmico</a><a href="#modelos">Modelos</a><a href="#salvar">Salvar e formatos</a><a href="#pdf">PDF e impressão</a><a href="#seguranca">Segurança</a><a href="#recuperar">Recuperar</a><a href="#teclado">Teclado e acessibilidade</a><a href="atalhos.html">Atalhos</a><a href="limitacoes.html">Limitações</a></nav>
+<nav><a href="#comecar">Começar</a><a href="#faixa">Faixa de opções</a><a href="#revisao">Revisão e Assistente AY</a><a href="#ia">Revisão com IA</a><a href="#academico">Trabalho acadêmico</a><a href="#modelos">Modelos</a><a href="#salvar">Salvar e formatos</a><a href="#pdf">PDF e impressão</a><a href="#seguranca">Segurança</a><a href="#recuperar">Recuperar</a><a href="#teclado">Teclado e acessibilidade</a><a href="atalhos.html">Atalhos</a><a href="limitacoes.html">Limitações</a></nav>
 <main>
 
 <h2 id="comecar">Começar</h2>
@@ -42,7 +42,7 @@ a{color:var(--verde)}
 <tr><td>Layout</td><td>Margens, orientação, tamanho do papel, colunas, quebras, hifenização, numeração de linhas, parágrafo e organização de objetos.</td></tr>
 <tr><td>Referências</td><td><a href="#academico">Formatar trabalho acadêmico</a> e relatório de conformidade (ABNT), sumário e índices (sumário, bibliografia, ilustrações, remissivo), notas de rodapé e de fim, citações, legendas, referência cruzada e campos.</td></tr>
 <tr><td>Correspondência</td><td>Envelopes, etiquetas e mala direta (destinatários de planilha ou CSV, campos, prévia e geração dos documentos).</td></tr>
-<tr><td>Revisão</td><td><a href="#revisao">Assistente AY</a> (ortografia, gramática e estilo, com correção automática configurável), ortografia em português do Brasil, sinônimos, contagem de palavras, verificação de acessibilidade, comentários, controle de alterações (aceitar, rejeitar) e comparação de documentos.</td></tr>
+<tr><td>Revisão</td><td><a href="#revisao">Assistente AY</a> (ortografia, gramática e estilo, com correção automática configurável), <a href="#ia">revisão com IA local</a> (opcional), ortografia em português do Brasil, sinônimos, contagem de palavras, verificação de acessibilidade, comentários, controle de alterações (aceitar, rejeitar) e comparação de documentos.</td></tr>
 <tr><td>Exibir</td><td>Layout de impressão, web, tela inteira, zoom, uma ou várias páginas, régua, navegador, barra lateral, nova janela e tema claro/escuro.</td></tr>
 <tr><td>Ajuda</td><td>Este guia, atalhos, ajuda detalhada do motor, limitações conhecidas, sobre, licenças e diagnóstico.</td></tr>
 </table>
@@ -57,7 +57,15 @@ a{color:var(--verde)}
 <tr><td><strong>Estilo</strong> (opcional)</td><td>Sugere frases mais claras e concisas, aponta marcas de oralidade, repetições e parágrafos longos. Nada é aplicado sozinho.</td></tr>
 </table>
 <p><strong>Verificar documento</strong> lista as ocorrências no painel enquanto você continua escrevendo; <strong>Cancelar</strong> interrompe. Para cada ocorrência: <strong>Aplicar</strong> (com a sugestão escolhida), <strong>Ignorar</strong>, <strong>Adicionar ao dicionário</strong> ou <strong>Não corrigir novamente</strong>. O botão <strong>Dicionário pessoal…</strong> mostra e remove palavras guardadas.</p>
-<p class="caixa">O assistente de IA local ainda não está nesta versão de testes. Quando vier, será opcional, rodará no próprio computador e mostrará o original e a proposta antes de mudar o texto.</p>
+<h2 id="ia">Revisão com IA (local e opcional)</h2>
+<p>O AY funciona inteiro <strong>sem IA</strong>. Se quiser, a IA local revisa um trecho selecionado <strong>neste computador</strong>: nada é enviado para a internet, não há conta, assinatura nem chave.</p>
+<ol>
+<li><strong>Instalar (uma vez):</strong> <strong>Revisão › Gerenciar IA local</strong>. O diálogo mostra cada modelo com licença, tamanho, origem e o espaço livre na pasta escolhida. <strong>Baixar…</strong> pergunta antes e baixa só o motor e o modelo, dos endereços oficiais, conferindo o SHA-256; dá para cancelar. Depois, <strong>Usar este modelo</strong>.</li>
+<li><strong>Pedir:</strong> selecione o trecho (texto comum, até cerca de 6.000 caracteres), abra <strong>Revisão › Revisão com IA</strong>, escolha o pedido — Revisar, Mais claro, Mais formal, Simplificar ou Resumir — e clique em <strong>Revisar seleção</strong>. A sugestão aparece aos poucos; você pode continuar escrevendo ou clicar em <strong>Cancelar</strong>.</li>
+<li><strong>Conferir:</strong> o painel mostra o <strong>original</strong> e a <strong>sugestão</strong>. O AY confere se números, datas, citações, endereços, siglas e nomes foram preservados e se "Revisar" não apagou nem reescreveu o texto além de corrigir; se algo falhar, <strong>Aceitar</strong> fica bloqueado e o motivo aparece.</li>
+<li><strong>Aceitar ou rejeitar:</strong> <strong>Aceitar</strong> troca só as palavras que mudaram (a formatação do resto fica), numa única ação de <kbd>Ctrl</kbd>+<kbd>Z</kbd>; com "Aplicar como alteração controlada" (padrão), cada troca aparece em <strong>Revisão › Alterações</strong> para aceitar ou rejeitar. <strong>Rejeitar</strong> descarta a sugestão. "Resumir" nunca substitui o trecho.</li>
+</ol>
+<p class="caixa">Se o trecho mudar enquanto a IA trabalha, a sugestão não é aplicada: peça de novo. O texto do documento é tratado como conteúdo, não como ordem — frases como "ignore as instruções" não comandam o AY nem a IA. A IA erra: confira sempre antes de aceitar.</p>
 
 <h2 id="academico">Formatar trabalho acadêmico (ABNT)</h2>
 <p>Em <strong>Referências › Formatar trabalho acadêmico</strong>, escolha o tipo de trabalho:</p>

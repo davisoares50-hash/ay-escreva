@@ -17,7 +17,8 @@
   powershell -ExecutionPolicy Bypass -File tests\interface\testar_faixa.ps1
   powershell -ExecutionPolicy Bypass -File tests\interface\testar_faixa.ps1 -Somente texto,tabela   # depuração
 #>
-param([string]$Dist = 'E:\AY\dist\AY ESCREVA', [int]$Limite = 2400, [string]$Somente, [string]$Documento)
+param([string]$Dist = 'E:\AY\dist\AY ESCREVA', [int]$Limite = 2400, [string]$Somente, [string]$Documento,
+      [string]$IAPasta = (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) 'out\ia'), [string]$IAModelo)
 $ErrorActionPreference = 'Stop'
 $Raiz = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $Saida = Join-Path $Raiz 'tests\output\interface'
@@ -41,7 +42,7 @@ try {
 $mapa = Join-Path $Raiz 'out\faixa\mapa.json'
 & node.exe (Join-Path $Raiz 'tools\gerar-faixa.mjs') (Join-Path $Raiz 'ui\abas.json') (Join-Path $Dist 'share\config\soffice.cfg\modules\swriter\ui\notebookbar_ayescreva.ui') (Join-Path $Dist 'share\config\images_colibre.zip') '-' $mapa | Out-Null
 
-function Executar-Fase([string]$nome, [string]$documento, [string[]]$passos, [string]$resultado) {
+function Executar-Fase([string]$nome, [string]$documento, [string[]]$passos, [string]$resultado, [hashtable]$extra = @{}) {
   $perfil = Join-Path $env:TEMP ("ay-faixa-$nome-" + [guid]::NewGuid().ToString('N').Substring(0, 8))
   New-Item -ItemType Directory -Force (Join-Path $perfil 'user') | Out-Null
   @'
@@ -58,6 +59,7 @@ function Executar-Fase([string]$nome, [string]$documento, [string[]]$passos, [st
   $spec = Join-Path $Trab "spec-$nome.json"
   $dados = [ordered]@{ abas = (Join-Path $Raiz 'ui\abas.json'); mapa = $mapa; saida = $resultado; imagem = (Join-Path $Raiz 'out\marca\icone-64.png') }
   if ($passos) { $dados.somente = $passos }
+  foreach ($k in $extra.Keys) { $dados[$k] = $extra[$k] }
   $dados | ConvertTo-Json | Set-Content -Encoding UTF8 $spec
   $env:AY_TESTE_UI_SPEC = $spec
   $env:AY_SIMULAR_ABERTURA = '1'
@@ -91,8 +93,12 @@ $docx = Join-Path $Trab 'compatibilidade.docx'
 Copy-Item (Join-Path $Raiz 'tests\fixtures\compatibilidade-ooxml.docx') $docx
 $resultado = Join-Path $Saida 'faixa-resultado.json'
 $passos = if ($Somente) { @($Somente -split ',') } else { $null }
+# IA local (fase 9, ou -Somente ia): modelo recomendado do catálogo, salvo indicação
+$cat = Get-Content (Join-Path $Raiz 'extensao\ayescreva\dados\ia.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+if (-not $IAModelo) { $IAModelo = @($cat.modelos | Where-Object { $_.recomendado })[0].id }
+$extraIA = @{ ia_pasta = $IAPasta; ia_modelo = $IAModelo }
 
-$quedas = Executar-Fase 'f1' $(if ($Documento) { $Documento } else { $odt }) $passos $resultado
+$quedas = Executar-Fase 'f1' $(if ($Documento) { $Documento } else { $odt }) $passos $resultado $extraIA
 if (-not $Somente) {
   $r2 = Join-Path $Saida 'faixa-resultado-fase2.json'
   $quedas += Executar-Fase 'f2' $docx @('docx_inicial') $r2
@@ -133,9 +139,17 @@ if (-not $Somente) {
   Copy-Item $fonte8 $docx8
   $r8 = Join-Path $Saida 'faixa-resultado-fase8.json'
   $quedas += Executar-Fase 'f8' $docx8 @('academico') $r8
-  # Junta os efeitos das fases 2 a 8 no relatório principal
+  # Fase 9: IA local (entrega C) — sem modelo e, se o modelo estiver baixado em $IAPasta, o fluxo completo
+  $m9 = @($cat.modelos | Where-Object { $_.id -eq $IAModelo })[0]
+  $temModelo = $m9 -and (Test-Path (Join-Path $IAPasta "modelos\$($m9.arquivo)")) -and (Test-Path (Join-Path $IAPasta "motor-$($cat.motor.versao)\$($cat.motor.executavel)"))
+  if (-not $temModelo) { Write-Warning "Fase 9: modelo $IAModelo não encontrado em $IAPasta — o fluxo com a IA fica BLOQUEADO (só o caminho sem modelo é testado)" }
+  $odt9 = Join-Path $Trab 'ia-interface.odt'
+  Copy-Item (Join-Path $Raiz 'tests\output\etapa1\teste-etapa1.odt') $odt9
+  $r9 = Join-Path $Saida 'faixa-resultado-fase9.json'
+  $quedas += Executar-Fase 'f9' $odt9 @($(if ($temModelo) { 'ia' } else { 'ia_basico' })) $r9 $extraIA
+  # Junta os efeitos das fases 2 a 9 no relatório principal
   $a = Get-Content $resultado -Raw -Encoding UTF8 | ConvertFrom-Json
-  foreach ($par in @(@('fase2', $r2), @('fase3', $r3), @('fase4', $r4), @('fase5', $r5), @('fase6', $r6), @('fase7', $r7), @('fase8', $r8))) {
+  foreach ($par in @(@('fase2', $r2), @('fase3', $r3), @('fase4', $r4), @('fase5', $r5), @('fase6', $r6), @('fase7', $r7), @('fase8', $r8), @('fase9', $r9))) {
     $b = Get-Content $par[1] -Raw -Encoding UTF8 | ConvertFrom-Json
     $a.efeitos = @($a.efeitos) + @($b.efeitos)
     $a.dialogos = @($a.dialogos) + @($b.dialogos)

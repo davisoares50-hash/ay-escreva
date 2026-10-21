@@ -439,6 +439,9 @@ class Fabrica(unohelper.Base, XUIElementFactory, XServiceInfo):
     def createUIElement(self, url, args):
         d = {a.Name: a.Value for a in args}
         try:
+            if url.endswith('/IA'):
+                import ay_ia_painel
+                return ay_ia_painel.PainelIA(self.ctx, d.get('Frame'), d.get('ParentWindow'), url)
             return Painel(self.ctx, d.get('Frame'), d.get('ParentWindow'), url)
         except Exception:
             ay_revisao.registrar('fábrica do painel: ' + traceback.format_exc())

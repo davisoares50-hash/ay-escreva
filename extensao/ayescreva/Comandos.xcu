@@ -51,6 +51,14 @@
         <prop oor:name="Label"><value xml:lang="pt-BR">Relatório de conformidade</value><value xml:lang="en-US">Conformity Report</value></prop>
         <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Confere o documento regra a regra, com norma, edição e origem de cada regra</value><value xml:lang="en-US">Check the document rule by rule</value></prop>
       </node>
+      <node oor:name="ayescreva:RevisaoIA" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Revisão com IA</value><value xml:lang="en-US">AI Review</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Abre o painel da IA local (opcional): revisar, deixar mais claro, formal ou simples, resumir o trecho selecionado</value><value xml:lang="en-US">Open the optional local AI panel</value></prop>
+      </node>
+      <node oor:name="ayescreva:GerenciarIA" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Gerenciar IA local</value><value xml:lang="en-US">Manage Local AI</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Baixar (opcional), escolher ou remover o modelo de IA local</value><value xml:lang="en-US">Download, choose or remove the local AI model</value></prop>
+      </node>
       <node oor:name="ayescreva:Galeria" oor:op="replace">
         <prop oor:name="Label"><value xml:lang="pt-BR">Galeria de modelos</value><value xml:lang="en-US">Template Gallery</value></prop>
         <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Cria documento novo de um modelo: ofício, memorando, relatório, currículo, carta, ata, proposta ou modelo pessoal</value><value xml:lang="en-US">Create a new document from a template</value></prop>

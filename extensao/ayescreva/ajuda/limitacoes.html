@@ -38,7 +38,6 @@ h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:32px}li{
 <li><strong>Exibir:</strong> modo de leitura dedicado (use Tela inteira e Exibição de livro).</li>
 <li><strong>Inserir:</strong> galeria de capas prontas (o botão Capa abre o diálogo de páginas de rosto).</li>
 <li><strong>Design:</strong> galeria visual de conjuntos de estilos (o botão importa estilos de um modelo).</li>
-<li><strong>Revisão:</strong> assistente de IA local (previsto para uma próxima versão de testes).</li>
 <li><strong>Ajuda:</strong> verificação de atualizações.</li>
 <li>Em janelas estreitas, os grupos da faixa de opções não se recolhem automaticamente: alguns botões ficam fora da área visível.</li>
 </ul>
@@ -49,6 +48,15 @@ h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:32px}li{
 <li>As regras de gramática e estilo vêm de verificadores automáticos e podem apontar trechos corretos; confira antes de aplicar.</li>
 <li>O painel verifica o corpo do texto e as tabelas. Cabeçalhos, rodapés, notas e caixas de texto continuam com o sublinhado, mas não entram na lista do painel; ocorrências encostadas em campos ou notas podem não ser marcadas.</li>
 <li>Em documentos muito longos a verificação completa leva alguns minutos (ela roda enquanto você escreve e pode ser cancelada).</li>
+</ul>
+
+<h2>Revisão com IA (local)</h2>
+<ul>
+<li>Opcional: exige baixar o motor (llama.cpp, cerca de 23 MB) e o modelo Gemma 4 E2B (3,1 GB). Sem isso, o restante do AY funciona normalmente.</li>
+<li>Roda só no processador (CPU) nesta versão; o tempo de resposta depende do computador. No computador de testes (Intel Core i5-8500, 16 GB, sem placa de vídeo dedicada) uma frase leva alguns segundos; textos longos, bem mais. O primeiro pedido também espera o modelo carregar.</li>
+<li>Durante o uso, o modelo ocupa vários GB de memória; o AY encerra o motor depois de 10 minutos sem pedidos e quando o aplicativo fecha.</li>
+<li>A IA pode errar, inclusive em crase, regência e "há/a". As conferências automáticas pegam números, datas, citações, endereços, siglas e nomes perdidos ou inventados e frases apagadas em "Revisar"; não garantem que o sentido foi mantido.</li>
+<li>Só texto comum: trechos com tabela, campo, nota, imagem, marcador ou alteração controlada são recusados. Uma seleção por vez, até cerca de 6.000 caracteres.</li>
 </ul>
 
 <h2>Formatar trabalho acadêmico e galeria de modelos</h2>

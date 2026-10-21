@@ -81,10 +81,11 @@ try {
     $reg = Get-ItemProperty $ChaveDesinst -ErrorAction SilentlyContinue
     $ext = Join-Path $PastaApp 'share\extensions\ayescreva'
     $verExt = ([xml](Get-Content (Join-Path $ext 'description.xml') -Raw -Encoding UTF8)).description.version.value
-    $novas = @('pythonpath\ay_academico.py', 'pythonpath\ay_formatar.py', 'pythonpath\ay_modelos.py', 'pythonpath\ay_galeria.py', 'dados\normas.json') | Where-Object { -not (Test-Path (Join-Path $ext $_)) }
+    $novas = @('pythonpath\ay_academico.py', 'pythonpath\ay_formatar.py', 'pythonpath\ay_modelos.py', 'pythonpath\ay_galeria.py', 'dados\normas.json',
+               'pythonpath\ay_ia.py', 'pythonpath\ay_ia_painel.py', 'pythonpath\ay_ia_texto.py', 'IA.xdl', 'dados\ia.json') | Where-Object { -not (Test-Path (Join-Path $ext $_)) }
     Verificar "$($versao): atualização instalada por cima (código 0, versão no registro e na extensão, peças novas presentes)" ($c -eq 0 -and $reg.DisplayVersion -like "$VersaoNova*" -and $verExt -eq $VersaoNova -and $novas.Count -eq 0) "código $c; registro $($reg.DisplayVersion); extensão $verExt; faltam: $($novas -join ', ')"
     $k = Perfil-Uno 'conferir' $versao
-    $ok = $k -and $k.dicionario -and $k.unidade_mm -and $k.comandos_entrega_b -and $k.versao_extensao -eq $VersaoNova
+    $ok = $k -and $k.dicionario -and $k.unidade_mm -and $k.comandos_entrega_b -and $k.comandos_entrega_c -and $k.ia_sem_modelo -and $k.versao_extensao -eq $VersaoNova
     if ($g.nao_corrigir -eq $true) { $ok = $ok -and ($k.lista_nao_corrigir -contains 'nao') }
     Verificar "$($versao): preferências preservadas e recursos novos registrados no perfil antigo" $ok ($k | ConvertTo-Json -Compress)
     Verificar "$($versao): documentos do usuário intactos depois da atualização" ((Compare-Object $hashes (Hashes)) -eq $null)

@@ -34,5 +34,19 @@
         <value/>
       </prop>
     </group>
+    <group oor:name="IA">
+      <prop oor:name="Pasta" oor:type="xs:string">
+        <info><desc>Pasta do motor e dos modelos da IA local (vazia: %LOCALAPPDATA%\AYEscreva\IA).</desc></info>
+        <value/>
+      </prop>
+      <prop oor:name="Modelo" oor:type="xs:string">
+        <info><desc>Modelo em uso (id de dados/ia.json); vazio: IA local não configurada.</desc></info>
+        <value/>
+      </prop>
+      <prop oor:name="ComoAlteracaoControlada" oor:type="xs:boolean">
+        <info><desc>Aplicar sugestões da IA como alterações controladas.</desc></info>
+        <value>true</value>
+      </prop>
+    </group>
   </component>
 </oor:component-schema>

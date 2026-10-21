@@ -1,0 +1,39 @@
+{
+  "descricao": "Catálogo da IA local do AY ESCREVA (entrega C). Endereços fixos e conferidos: o download só vem daqui, confere o SHA-256 e é feito só quando o usuário pede. Licenças conferidas nas páginas oficiais em 21/10/2026. Modelo escolhido pelos testes de tests/ia/avaliar_modelos.py (docs/REVISAO-E-IA.md §5).",
+  "verificado_em": "2026-10-21",
+  "motor": {
+    "nome": "llama.cpp (llama-server), compilação para CPU x64",
+    "versao": "b11790",
+    "licenca": "MIT",
+    "origem": "https://github.com/ggml-org/llama.cpp/releases/tag/b11790",
+    "url": "https://github.com/ggml-org/llama.cpp/releases/download/b11790/llama-b11790-bin-win-cpu-x64.zip",
+    "sha256": "ba2c73962b3574eae851f931f61316fce6e9a531aae14dbd6082c270fe35c73d",
+    "tamanho": 24015232,
+    "executavel": "llama-server.exe"
+  },
+  "modelos": [
+    {
+      "id": "gemma4-e2b",
+      "nome": "Gemma 4 E2B (Q4_0, QAT)",
+      "editor": "Google",
+      "licenca": "Apache-2.0",
+      "origem": "https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf",
+      "url": "https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf/resolve/675cff42a74c774d6cb76f76d8eacb49b48c9b93/gemma-4-E2B_q4_0-it.gguf",
+      "arquivo": "gemma-4-E2B_q4_0-it.gguf",
+      "sha256": "fa401b55b07ee70a54c6dae3903c783a6e65064312529ea57175cb5f8dec6634",
+      "tamanho": 3349516256,
+      "sem_pensar": true,
+      "recomendado": true
+    }
+  ],
+  "avaliados_e_nao_oferecidos": [
+    {
+      "id": "qwen3-4b",
+      "motivo": "8/12 no teste do AY em pt-BR (errou crase e há/a; apagou a frase do usuário para obedecer a uma instrução escrita no texto); 4,6 GB de memória"
+    },
+    {
+      "id": "gemma4-e4b",
+      "motivo": "10/12, duas vezes mais lento (7,3 s por pedido curto) e 5,2 GB de memória, sem ganho de qualidade no teste"
+    }
+  ]
+}

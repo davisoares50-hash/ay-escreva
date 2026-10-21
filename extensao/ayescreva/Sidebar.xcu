@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Painel lateral "Assistente AY". SPDX-License-Identifier: MPL-2.0 -->
+<!-- Painéis laterais "Assistente AY" e "Revisão com IA". SPDX-License-Identifier: MPL-2.0 -->
 <oor:component-data xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema" oor:name="Sidebar" oor:package="org.openoffice.Office.UI">
   <node oor:name="Content">
     <node oor:name="DeckList">
@@ -10,6 +10,13 @@
         <prop oor:name="ContextList"><value oor:separator=";">WriterVariants, any, visible ;</value></prop>
         <prop oor:name="OrderIndex" oor:type="xs:int"><value>50</value></prop>
       </node>
+      <node oor:name="RevisaoIADeck" oor:op="replace">
+        <prop oor:name="Title" oor:type="xs:string"><value>Revisão com IA</value></prop>
+        <prop oor:name="Id" oor:type="xs:string"><value>RevisaoIADeck</value></prop>
+        <prop oor:name="IconURL" oor:type="xs:string"><value>private:graphicrepository/cmd/lc_spellonline.png</value></prop>
+        <prop oor:name="ContextList"><value oor:separator=";">WriterVariants, any, visible ;</value></prop>
+        <prop oor:name="OrderIndex" oor:type="xs:int"><value>51</value></prop>
+      </node>
     </node>
     <node oor:name="PanelList">
       <node oor:name="AssistenteAYPainel" oor:op="replace">
@@ -18,6 +25,14 @@
         <prop oor:name="DeckId" oor:type="xs:string"><value>AssistenteAYDeck</value></prop>
         <prop oor:name="ContextList"><value oor:separator=";">WriterVariants, any, visible ;</value></prop>
         <prop oor:name="ImplementationURL" oor:type="xs:string"><value>private:resource/toolpanel/AYPaineis/Assistente</value></prop>
+        <prop oor:name="OrderIndex" oor:type="xs:int"><value>100</value></prop>
+      </node>
+      <node oor:name="RevisaoIAPainel" oor:op="replace">
+        <prop oor:name="Title" oor:type="xs:string"><value>Revisão com IA (local, opcional)</value></prop>
+        <prop oor:name="Id" oor:type="xs:string"><value>RevisaoIAPainel</value></prop>
+        <prop oor:name="DeckId" oor:type="xs:string"><value>RevisaoIADeck</value></prop>
+        <prop oor:name="ContextList"><value oor:separator=";">WriterVariants, any, visible ;</value></prop>
+        <prop oor:name="ImplementationURL" oor:type="xs:string"><value>private:resource/toolpanel/AYPaineis/IA</value></prop>
         <prop oor:name="OrderIndex" oor:type="xs:int"><value>100</value></prop>
       </node>
     </node>

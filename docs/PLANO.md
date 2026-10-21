@@ -2,7 +2,7 @@
 
 Legenda: ✅ concluído e validado · 🟡 em andamento / parcial · ⬜ não iniciado
 
-Versão pública: **0.2.0, versão inicial de testes para Windows 11 x64** (validada somente nesse sistema). Versões de testes locais: **0.3.0** (confiabilidade + entrega A) e **0.4.0** (entrega B). Em desenvolvimento: **0.5.0** (entrega C, IA local).
+Versão pública: **0.2.0, versão inicial de testes para Windows 11 x64** (validada somente nesse sistema). Versões de testes locais: **0.3.0** (confiabilidade + entrega A), **0.4.0** (entrega B) e **0.5.0** (entrega C, IA local opcional).
 
 ## Etapa 1 — Base técnica compilável e prova de edição real ✅
 
@@ -103,7 +103,7 @@ disponível até a avaliação da seguinte.
 | Confiabilidade | 0.3.0 | recuperação após falha, salvamento seguro, desfazer/refazer, TXT UTF-8/Windows-1252, Salvar como com aviso de perdas pela interface | ✅ testes automatizados (versão de testes local) |
 | **A** | 0.3.0 | correção ortográfica configurável (detecção + correção automática de casos inequívocos com proteções, desfazer, "não corrigir novamente"), dicionário pessoal, gramática e pontuação (Lightproof com explicação), estilo opcional, painel **Assistente AY** e grupo na aba Revisão | ✅ implementada e testada (versão de testes local, ainda não publicada) |
 | **B** | 0.4.0 | assistente "Formatar trabalho acadêmico" (TCC, artigo, projeto, relatório, modelo da instituição) com regras registradas por norma/edição/origem/data, prévia e relatório de conformidade; galeria de modelos (ofício, memorando, relatório, currículo, carta, ata, proposta, personalizado); salvar como modelo | ✅ implementada e testada (versão de testes local 0.4.0, ainda não publicada); formatação sempre numa cópia (no original o motor apagaria o histórico de desfazer); textos oficiais das normas não consultados (regras de guias universitários, com a fonte em cada item) |
-| **C** | 0.5.0 | IA local opcional (llama.cpp + modelo com licença permissiva, escolhido por testes em pt-BR): revisar trecho, clareza, formalidade, simplificar, resumir, títulos, explicar, inconsistências; original × proposta; aplicação reversível como alteração controlada | 🟡 em andamento |
+| **C** | 0.5.0 | IA local opcional (llama.cpp + modelo com licença permissiva, escolhido por testes em pt-BR): revisar trecho, clareza, formalidade, simplificar, resumir, títulos, explicar, inconsistências; original × proposta; aplicação reversível como alteração controlada | ✅ fluxo completo implementado e testado (versão de testes local 0.5.0): revisar, mais claro, mais formal, simplificar e resumir com Gemma 4 E2B (escolhido por testes em pt-BR) e llama.cpp; títulos, explicar e inconsistências ficam para a entrega D |
 | **D** | 0.6.0 | análise de documentos longos em segundo plano, referências estruturadas (sem inventar dados), importação de documento de referência para extrair estilos, mais modelos | ⬜ |
 | **E** | 0.7.0 | "Verificar atualizações" (Ajuda): consulta iniciada pelo usuário, canais estável/testes, manifesto assinado, SHA-256, instalação só com confirmação; sem infraestrutura de assinatura, instalação manual pelo site | ⬜ |
 
@@ -126,9 +126,13 @@ numa cópia sem título, com desfazer/refazer íntegros, relatório de conformid
 instituição, preferência, não avaliado) e galeria de modelos com "Salvar como modelo". Resultados em
 [RESULTADOS-TESTES.md](RESULTADOS-TESTES.md) §5.3 e §5.4.
 
-**0.5.0 — entrega C (em andamento)**: IA local opcional — selecionar trecho → pedir revisão → original × sugestão →
-aceitar (alteração controlada) ou rejeitar → desfazer; download do modelo opcional e informado. Continuam previstos
-em paralelo: clique automatizado nas abas Forma e Visualizar impressão; validação com
+**0.5.0 — entrega C: pronta como versão de testes local, aguardando avaliação**: IA local opcional — selecionar
+trecho → pedir → original × sugestão com conferência de preservação → aceitar (alteração controlada, uma ação de
+desfazer) ou rejeitar; download do modelo opcional e informado; servidor local fechado (127.0.0.1, chave, offline).
+Resultados em [RESULTADOS-TESTES.md](RESULTADOS-TESTES.md) §5.5; decisões em [REVISAO-E-IA.md](REVISAO-E-IA.md) §5.
+
+**Próxima: entrega D (0.6.0)** — análise de documentos longos, referências estruturadas, mais pedidos de IA
+(títulos, explicar, inconsistências). Continuam previstos em paralelo: clique automatizado nas abas Forma e Visualizar impressão; validação com
 NVDA e Narrador; recolhimento dos grupos em janelas estreitas; teste em Windows 10 limpo.
 
 Ainda pendente depois disso (resumo das etapas acima):

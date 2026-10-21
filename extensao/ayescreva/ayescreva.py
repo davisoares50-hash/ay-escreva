@@ -700,7 +700,7 @@ class Inicio(unohelper.Base, XJob, XServiceInfo):
 class Comandos(unohelper.Base, XDispatchProvider, XDispatch, XInitialization, XServiceInfo):
     ACOES = ('PaginaEmBranco', 'Recuperacao', 'Guia', 'Atalhos', 'Limitacoes', 'Diagnostico', 'DetalhesFontes',
              'Assistente', 'VerificarDocumento', 'CorrecaoAutomatica', 'NaoCorrigir',
-             'FormatarTrabalho', 'Conformidade', 'Galeria', 'SalvarModelo')
+             'FormatarTrabalho', 'Conformidade', 'Galeria', 'SalvarModelo', 'RevisaoIA', 'GerenciarIA')
 
     def __init__(self, ctx, *args):
         self.ctx = ctx
@@ -821,6 +821,14 @@ class Comandos(unohelper.Base, XDispatchProvider, XDispatch, XInitialization, XS
 
     def _Assistente(self):
         self._executar(ay_painel.COMANDO_DECK)
+
+    def _RevisaoIA(self):
+        import ay_ia_painel
+        self._executar(ay_ia_painel.COMANDO_DECK)
+
+    def _GerenciarIA(self):
+        import ay_ia_painel
+        ay_ia_painel.gerenciar(self.ctx, self.frame)
 
     def _VerificarDocumento(self):
         revisao = Revisao.obter(self.ctx)

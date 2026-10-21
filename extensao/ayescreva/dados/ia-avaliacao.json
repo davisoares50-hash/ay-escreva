@@ -1,0 +1,21 @@
+{
+  "descricao": "Medidas da avaliação dos modelos (tests/ia/avaliar_modelos.py) num único computador; outros podem ser mais lentos.",
+  "medido_em": "2026-10-21",
+  "modelos": [
+    {
+      "id": "qwen3-4b",
+      "computador": "Intel(R) Core(TM) i5-8500 CPU @ 3.00GHz, 6 núcleos lógicos, 16 GB de RAM, sem GPU dedicada",
+      "resumo": "8/12 casos do teste do AY em pt-BR; pedido curto em ~5,5 s; ~8,9 tokens/s; memória ~4,5 GB; carga 157 s no primeiro uso"
+    },
+    {
+      "id": "gemma4-e2b",
+      "computador": "Intel(R) Core(TM) i5-8500 CPU @ 3.00GHz, 6 núcleos lógicos, 16 GB de RAM, sem GPU dedicada",
+      "resumo": "12/12 casos do teste do AY em pt-BR; pedido curto em ~3,3 s; ~15,4 tokens/s; memória ~2,6 GB; carga 90 s no primeiro uso"
+    },
+    {
+      "id": "gemma4-e4b",
+      "computador": "Intel(R) Core(TM) i5-8500 CPU @ 3.00GHz, 6 núcleos lógicos, 16 GB de RAM, sem GPU dedicada",
+      "resumo": "10/12 casos do teste do AY em pt-BR; pedido curto em ~7,3 s; ~8,0 tokens/s; memória ~5,1 GB; carga 129 s no primeiro uso"
+    }
+  ]
+}
