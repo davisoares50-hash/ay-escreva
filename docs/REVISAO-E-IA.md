@@ -149,13 +149,41 @@ modelo de ~2–4 B quantizado (Q4), com opção "leve" menor; o AY não promete 
 
 ## 6. Formatação ABNT (entrega B) — como as regras serão registradas
 
-Normas a conferir no catálogo oficial da ABNT antes de implementar (edição vigente, data, situação):
-NBR 14724 (trabalhos acadêmicos), 6023 (referências), 10520 (citações), 6024 (numeração progressiva),
-6027 (sumário), 6028 (resumo), 15287 (projeto de pesquisa), 6022 (artigo), 10719 (relatório técnico/científico)
-e 12225 (lombada). Os textos completos das normas são **pagos e protegidos**: o AY registra, para cada regra, a
-norma, a edição, a origem da informação e a data da verificação, separa **requisito da norma**, **exigência da
-instituição** e **preferência do usuário**, e permite carregar o manual da instituição. Onde o texto da norma
-não puder ser conferido, a regra fica marcada "confirmar com a norma ou o manual".
+Conferência das normas feita em 20/10/2026 no catálogo oficial da ABNT: edições, datas, fontes e o que não pôde
+ser conferido estão em [NORMAS.md](NORMAS.md). Os textos completos das normas são **pagos e protegidos**: o AY
+registra, para cada regra, a norma, a edição, a origem da informação e a data da verificação, e separa
+**norma**, **instituição** e **preferência** (`dados/perfis_formatacao.json`).
+
+Desenho (0.4.0):
+
+- **Motor** `ay_academico.py` (sem interface, testado por UNO): *analisar* identifica as partes do documento
+  (títulos com estilo ou com número digitado, títulos sem indicativo, citações já recuadas, referências,
+  legendas e fontes de ilustrações e tabelas, início da parte textual); *planejar* lista o que vai mudar (de →
+  para, regra, camada, origem); *aplicar* faz tudo numa única ação de desfazer; *conferir* gera o relatório de
+  conformidade (conforme, não conforme, aviso, não verificável, não se aplica).
+- **Estilos e campos reais:** página (A4, margens, cabeçalho com campo de número de página), estilos de parágrafo
+  (corpo, títulos 1–5 com destaque gradativo, citação, nota, legenda, referência, títulos sem indicativo),
+  numeração de capítulos do documento e sumário automático. A formatação direta que contraria a regra (fonte,
+  tamanho, entrelinhas, recuo, alinhamento) é removida; negrito, itálico e sublinhado de trechos ficam.
+- **O texto não muda:** nenhuma palavra é inserida, apagada ou trocada; títulos com número digitado mantêm o
+  número (a numeração automática fica desligada nesses títulos); maiúsculas dos títulos são só de exibição.
+  Exceção declarada: ao inserir o sumário automático, o AY cria um parágrafo vazio para ele.
+- **Cópia:** opção "trabalhar numa cópia" (marcada por padrão) abre uma cópia sem título e formata a cópia.
+- **Modelo da instituição:** troca parâmetros (fonte, recuo, alinhamento, margens, destaques, ponto depois do
+  indicativo) e registra o manual (título, edição, endereço ou arquivo). Quando a instituição diverge da norma, o
+  relatório mostra as duas.
+- **Galeria de modelos** `ay_modelos.py`: modelos montados pelo próprio AY em código (sem arquivos binários no
+  repositório), com estilos reais e campos de preenchimento como **controles de conteúdo** (no DOCX viram o espaço
+  reservado do Word; o campo "JumpEdit" do motor some ao salvar em DOCX, conferido por teste). "Salvar como modelo"
+  grava um `.ott` na pasta de modelos do perfil. Modelo (aparência e estrutura) e formato do arquivo (ODT ou DOCX
+  ao salvar) aparecem separados na galeria.
+- **Achados do motor (testes de 20/10/2026):** ligar o cabeçalho ou mudar um estilo de página existente pela API
+  apaga todo o histórico de desfazer; criar um estilo de página novo com as propriedades já definidas não apaga.
+  Recomeçar a numeração de páginas com paridade trocada faz o motor inserir uma página em branco automática (não
+  vai para o PDF; o DOCX guarda só o recomeço). O refazer não restaura o recomeço da numeração. Ao dividir um
+  parágrafo, o objeto UNO antigo fica com a parte nova. Nas versões novas, `ListFormat` vale sobre prefixo e sufixo
+  da numeração. O AY trata cada um (ver `ay_academico.py`) e o relatório de conformidade aponta o que não dá para
+  evitar.
 
 ## 7. Atualizações (entrega E) — como garantir a autenticidade
 

@@ -36,6 +36,8 @@ ID_EXTENSAO = 'br.ayescreva.extensao'
 _PYTHONPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pythonpath')
 if _PYTHONPATH not in sys.path:
     sys.path.insert(0, _PYTHONPATH)
+import ay_formatar  # noqa: E402
+import ay_galeria  # noqa: E402
 import ay_painel  # noqa: E402
 import ay_revisao  # noqa: E402
 from ay_revisao import Revisao  # noqa: E402
@@ -653,6 +655,8 @@ class Inicio(unohelper.Base, XJob, XServiceInfo):
     def execute(self, args):
         try:
             ay_revisao.registrar = _log
+            ay_formatar.registrar = _log
+            ay_galeria.registrar = _log
             revisao = Revisao.obter(self.ctx)
             revisao.aplicar_niveis()
             difusor = self.ctx.getValueByName('/singletons/com.sun.star.frame.theGlobalEventBroadcaster')
@@ -684,7 +688,8 @@ class Inicio(unohelper.Base, XJob, XServiceInfo):
 # ---------------------------------------------------------------------------------------------
 class Comandos(unohelper.Base, XDispatchProvider, XDispatch, XInitialization, XServiceInfo):
     ACOES = ('PaginaEmBranco', 'Recuperacao', 'Guia', 'Atalhos', 'Limitacoes', 'Diagnostico', 'DetalhesFontes',
-             'Assistente', 'VerificarDocumento', 'CorrecaoAutomatica', 'NaoCorrigir')
+             'Assistente', 'VerificarDocumento', 'CorrecaoAutomatica', 'NaoCorrigir',
+             'FormatarTrabalho', 'Conformidade', 'Galeria', 'SalvarModelo')
 
     def __init__(self, ctx, *args):
         self.ctx = ctx
@@ -831,6 +836,18 @@ class Comandos(unohelper.Base, XDispatchProvider, XDispatch, XInitialization, XS
                      'Para desfazer, use Assistente AY › Dicionário pessoal.')
         except Exception:
             _log('não corrigir: ' + traceback.format_exc())
+
+    def _FormatarTrabalho(self):
+        ay_formatar.formatar(self.ctx, self.frame)
+
+    def _Conformidade(self):
+        ay_formatar.relatorio_comando(self.ctx, self.frame)
+
+    def _Galeria(self):
+        ay_galeria.galeria(self.ctx, self.frame)
+
+    def _SalvarModelo(self):
+        ay_galeria.salvar_modelo(self.ctx, self.frame)
 
     def _DetalhesFontes(self):
         doc = self.frame.getController().getModel()

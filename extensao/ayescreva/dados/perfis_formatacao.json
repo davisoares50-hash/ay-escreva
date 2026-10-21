@@ -1,0 +1,137 @@
+{
+  "descricao": "Perfis do assistente \"Formatar trabalho acadêmico\". Cada regra diz a camada (norma, instituicao, preferencia), a norma de origem (ver normas.json) e os guias consultados. 'parametros' são os valores que o AY aplica; o modelo da instituição pode trocar parâmetros, e o relatório mostra quando a instituição diverge da norma.",
+  "verificado_em": "2026-10-20",
+  "parametros_base": {
+    "papel": {"largura_cm": 21.0, "altura_cm": 29.7},
+    "margens_cm": {"superior": 3.0, "esquerda": 3.0, "inferior": 2.0, "direita": 2.0},
+    "fonte_tamanho": 12,
+    "fonte_menor_tamanho": 10,
+    "fonte_familia": "Times New Roman",
+    "entrelinhas": 1.5,
+    "recuo_paragrafo_cm": 1.25,
+    "alinhamento": "justificado",
+    "espaco_titulo_pt": 18,
+    "secao_primaria_pagina_nova": true,
+    "frente_e_verso": false,
+    "capa_fora_da_contagem": true,
+    "ficha_fora_da_contagem": false,
+    "paginacao": {"posicao": "superior_direita", "distancia_borda_cm": 2.0, "inicio": "parte_textual"},
+    "citacao_recuo_cm": 4.0,
+    "nota_filete_cm": 5.0,
+    "referencias_espaco_depois_pt": 12,
+    "ilustracao_alinhamento": "centralizado",
+    "numeracao_titulos": "automatica_ou_digitada",
+    "ponto_apos_indicativo": false,
+    "destaques": [
+      {"nivel": 1, "maiusculas": true, "negrito": true, "italico": false},
+      {"nivel": 2, "maiusculas": true, "negrito": false, "italico": false},
+      {"nivel": 3, "maiusculas": false, "negrito": true, "italico": false},
+      {"nivel": 4, "maiusculas": false, "negrito": false, "italico": true},
+      {"nivel": 5, "maiusculas": false, "negrito": false, "italico": false}
+    ]
+  },
+  "regras_base": [
+    {"id": "papel", "titulo": "Papel A4", "camada": "norma", "norma": "NBR14724", "fontes": ["pucsp2025", "ufu2025"],
+     "regra": "Formato A4 (21 cm × 29,7 cm).", "aplica": true, "confere": true},
+    {"id": "margens", "titulo": "Margens", "camada": "norma", "norma": "NBR14724", "fontes": ["pucsp2025", "ufu2025"],
+     "regra": "Anverso: superior e esquerda 3 cm; inferior e direita 2 cm. Em frente e verso, no verso: superior e direita 3 cm; inferior e esquerda 2 cm.", "aplica": true, "confere": true},
+    {"id": "fonte_tamanho", "titulo": "Tamanho da letra do texto", "camada": "norma", "norma": "NBR14724", "fontes": ["pucsp2025", "ufu2025"],
+     "regra": "Tamanho 12 para o texto.", "aplica": true, "confere": true},
+    {"id": "fonte_menor", "titulo": "Letra menor e uniforme nas exceções", "camada": "norma", "norma": "NBR14724", "fontes": ["pucsp2025", "ufu2025"],
+     "regra": "Citações com mais de três linhas, notas de rodapé, paginação, legendas e fontes das ilustrações e das tabelas em tamanho menor e uniforme.", "aplica": true, "confere": true},
+    {"id": "fonte_menor_tamanho", "titulo": "Tamanho da letra menor", "camada": "preferencia", "norma": null, "fontes": [],
+     "regra": "A norma pede tamanho menor e uniforme, sem fixar o número. O AY usa 10.", "aplica": true, "confere": false},
+    {"id": "fonte_familia", "titulo": "Família da fonte", "camada": "preferencia", "norma": null, "fontes": ["pucsp2025"],
+     "regra": "A norma não define a família da fonte. Muitas instituições pedem Arial ou Times New Roman (ex.: PUC-SP). O AY propõe Times New Roman.", "aplica": true, "confere": true},
+    {"id": "cor_texto", "titulo": "Texto em preto", "camada": "norma", "norma": "NBR14724", "fontes": ["ufu2025"],
+     "regra": "Texto na cor preta; outras cores só nas ilustrações.", "aplica": false, "confere": true},
+    {"id": "entrelinhas", "titulo": "Entrelinhas 1,5 no texto", "camada": "norma", "norma": "NBR14724", "fontes": ["pucsp2025", "ufu2025"],
+     "regra": "Espaçamento de 1,5 entre as linhas no texto.", "aplica": true, "confere": true},
+    {"id": "entrelinhas_excecoes", "titulo": "Espaço simples nas exceções", "camada": "norma", "norma": "NBR14724", "fontes": ["pucsp2025", "ufu2025"],
+     "regra": "Espaço simples em citações com mais de três linhas, notas de rodapé, referências, legendas das ilustrações e das tabelas e natureza do trabalho.", "aplica": true, "confere": true},
+    {"id": "recuo_paragrafo", "titulo": "Recuo da primeira linha", "camada": "preferencia", "norma": null, "fontes": ["pucsp2025"],
+     "regra": "A norma não fixa o recuo do parágrafo. O AY usa 1,25 cm (valor do guia da PUC-SP).", "aplica": true, "confere": false},
+    {"id": "alinhamento", "titulo": "Alinhamento do texto", "camada": "preferencia", "norma": null, "fontes": ["pucsp2025"],
+     "regra": "A norma não fixa o alinhamento do texto. O AY usa justificado (como o guia da PUC-SP).", "aplica": true, "confere": false},
+    {"id": "titulos_espaco", "titulo": "Espaço antes e depois dos títulos", "camada": "norma", "norma": "NBR14724", "fontes": ["ufu2025"],
+     "regra": "Títulos das seções separados do texto que os precede e que os sucede por um espaço de 1,5 em branco. O AY usa 18 pt antes e depois do título (uma linha de 1,5 com letra 12).", "aplica": true, "confere": true},
+    {"id": "secao_primaria_pagina", "titulo": "Seção primária em página nova", "camada": "norma", "norma": "NBR14724", "fontes": ["pucsp2025", "ufu2025"],
+     "regra": "Seções primárias começam em página nova; em frente e verso, no anverso (página ímpar).", "aplica": true, "confere": true},
+    {"id": "indicativo_numerico", "titulo": "Indicativo numérico das seções", "camada": "norma", "norma": "NBR6024", "fontes": ["pucsp2025"],
+     "regra": "Algarismos arábicos, alinhados à esquerda, separados do título por um espaço; sem ponto, hífen, travessão, parênteses ou outro sinal entre o indicativo e o título; até a seção quinária.", "aplica": true, "confere": true},
+    {"id": "destaque_gradativo", "titulo": "Destaque gradativo dos títulos", "camada": "norma", "norma": "NBR6024", "fontes": ["pucsp2025"],
+     "regra": "Títulos das seções com destaque tipográfico diferente por nível, idêntico no sumário.", "aplica": true, "confere": true},
+    {"id": "destaques_escolhidos", "titulo": "Destaques usados em cada nível", "camada": "preferencia", "norma": null, "fontes": [],
+     "regra": "A norma pede destaque gradativo sem fixar qual. O AY usa: 1 MAIÚSCULAS e negrito; 2 MAIÚSCULAS; 3 negrito; 4 itálico; 5 normal. As maiúsculas são só de exibição: o texto digitado não muda.", "aplica": true, "confere": false},
+    {"id": "titulos_sem_indicativo", "titulo": "Títulos sem indicativo numérico centralizados", "camada": "norma", "norma": "NBR14724", "fontes": ["pucsp2025", "ufu2025"],
+     "regra": "Errata, agradecimentos, listas, resumos, sumário, referências, glossário, apêndices, anexos e índices: títulos centralizados, sem indicativo numérico. Os elementos pré-textuais não entram no sumário.", "aplica": true, "confere": true},
+    {"id": "paginacao", "titulo": "Paginação", "camada": "norma", "norma": "NBR14724", "fontes": ["pucsp2025", "pucpr2025", "ufu2025"],
+     "regra": "Folhas pré-textuais contadas a partir da folha de rosto, mas não numeradas; número em algarismos arábicos a partir da primeira folha da parte textual, no canto superior direito, a 2 cm da borda superior e com o último algarismo a 2 cm da borda direita; em frente e verso, no verso, no canto superior esquerdo. O verso da folha de rosto com a ficha catalográfica não é contado.", "aplica": true, "confere": true},
+    {"id": "notas_rodape", "titulo": "Notas de rodapé", "camada": "norma", "norma": "NBR14724", "fontes": ["pucsp2025"],
+     "regra": "Letra menor e espaço simples; separadas do texto por filete de 5 cm a partir da margem esquerda; a partir da segunda linha, alinhadas abaixo da primeira letra da primeira palavra.", "aplica": true, "confere": true},
+    {"id": "citacao_longa", "titulo": "Citação direta com mais de três linhas", "camada": "norma", "norma": "NBR10520", "fontes": ["pucsp2025"],
+     "regra": "Recuo de 4 cm da margem esquerda (recomendado), letra menor, espaço simples, sem aspas. O AY formata os parágrafos já marcados como citação (estilo Citação ou recuo à esquerda de 3 cm ou mais) e aponta parágrafos longos entre aspas que podem ser citações longas.", "aplica": true, "confere": true},
+    {"id": "ilustracoes", "titulo": "Ilustrações e tabelas: identificação e fonte", "camada": "norma", "norma": "NBR14724", "fontes": ["pucsp2025", "pucpr2025", "ufu2025"],
+     "regra": "Identificação acima (palavra designativa, número, travessão e título); fonte abaixo, obrigatória mesmo quando a produção é do autor; letra menor; alinhamento uniforme em todo o trabalho. Tabelas conforme as normas de apresentação tabular do IBGE. O AY formata as legendas e aponta ilustrações e tabelas sem identificação acima ou sem fonte abaixo; não move objetos.", "aplica": true, "confere": true},
+    {"id": "referencias_apresentacao", "titulo": "Lista de referências", "camada": "norma", "norma": "NBR14724", "fontes": ["pucsp2025", "ufu2025"],
+     "regra": "Referências alinhadas à esquerda, em espaço simples, separadas entre si por um espaço simples em branco.", "aplica": true, "confere": true},
+    {"id": "referencias_conteudo", "titulo": "Conteúdo das referências", "camada": "norma", "norma": "NBR6023", "fontes": [],
+     "regra": "Elementos de cada referência conforme a NBR 6023:2025. O AY não cria, completa nem corrige dados de referências: confira cada uma.", "aplica": false, "confere": false},
+    {"id": "sumario", "titulo": "Sumário", "camada": "norma", "norma": "NBR6027", "fontes": ["pucsp2025", "ufu2025"],
+     "regra": "Último elemento pré-textual; títulos na mesma ordem e com o mesmo destaque do texto, com a página. O AY insere o sumário automático (campo do documento) quando há o título SUMÁRIO sem sumário depois dele, e atualiza os índices.", "aplica": true, "confere": true}
+  ],
+  "perfis": {
+    "trabalho": {
+      "nome": "Trabalho acadêmico (TCC, monografia, dissertação, tese)",
+      "norma": "NBR14724",
+      "descricao": "Regras gerais da NBR 14724:2024 com numeração das seções (NBR 6024), sumário (NBR 6027), citações (NBR 10520) e referências (NBR 6023).",
+      "estrutura": {
+        "obrigatorios": [["RESUMO"], ["ABSTRACT", "RESUMEN", "RÉSUMÉ", "RESUMO EM LÍNGUA ESTRANGEIRA"], ["SUMÁRIO"], ["REFERÊNCIAS"]],
+        "nao_verificaveis": ["capa", "folha de rosto", "folha de aprovação (dissertações e teses)"]
+      },
+      "fontes_estrutura": ["pucsp2025"],
+      "parametros": {}
+    },
+    "projeto": {
+      "nome": "Projeto de pesquisa",
+      "norma": "NBR15287",
+      "descricao": "NBR 15287:2025. Regras gerais de apresentação iguais às da NBR 14724, conforme o guia da UFU (maio/2025). Capa e lombada são opcionais.",
+      "estrutura": {
+        "obrigatorios": [["SUMÁRIO"], ["REFERÊNCIAS"]],
+        "nao_verificaveis": ["folha de rosto"]
+      },
+      "fontes_estrutura": ["ufu2025"],
+      "parametros": {"capa_fora_da_contagem": false}
+    },
+    "artigo": {
+      "nome": "Artigo científico",
+      "norma": "NBR6022",
+      "descricao": "NBR 6022:2018 define a estrutura do artigo; a aparência costuma ser definida pelo periódico. Os valores de página e letra abaixo são preferências do AY: siga as normas do periódico (crie um modelo da instituição com elas).",
+      "estrutura": {
+        "obrigatorios": [["RESUMO"], ["PALAVRAS-CHAVE"], ["REFERÊNCIAS"]],
+        "nao_verificaveis": ["título e autoria", "resumo em língua estrangeira (quando exigido pelo periódico)"]
+      },
+      "fontes_estrutura": ["ufsc2023"],
+      "camada_aparencia": "preferencia",
+      "parametros": {"secao_primaria_pagina_nova": false, "capa_fora_da_contagem": false, "paginacao": {"posicao": "superior_direita", "distancia_borda_cm": 2.0, "inicio": "primeira_pagina"}}
+    },
+    "relatorio": {
+      "nome": "Relatório técnico e/ou científico",
+      "norma": "NBR10719",
+      "descricao": "NBR 10719:2025 (em vigor desde 05/12/2025). Nenhum guia público consultado descreve esta edição: o AY aplica as regras gerais de apresentação da NBR 14724:2024 como preferência e não confere requisitos próprios da NBR 10719:2025.",
+      "estrutura": {
+        "obrigatorios": [["SUMÁRIO"], ["REFERÊNCIAS"]],
+        "nao_verificaveis": ["requisitos próprios da NBR 10719:2025"]
+      },
+      "fontes_estrutura": [],
+      "camada_aparencia": "preferencia",
+      "parametros": {"capa_fora_da_contagem": false}
+    }
+  },
+  "titulos_sem_indicativo": {
+    "pre_textuais": ["ERRATA", "AGRADECIMENTOS", "AGRADECIMENTO", "RESUMO", "ABSTRACT", "RESUMEN", "RÉSUMÉ", "LISTA DE ILUSTRAÇÕES", "LISTA DE FIGURAS", "LISTA DE GRÁFICOS", "LISTA DE QUADROS", "LISTA DE TABELAS", "LISTA DE ABREVIATURAS E SIGLAS", "LISTA DE ABREVIATURAS", "LISTA DE SIGLAS", "LISTA DE SÍMBOLOS", "SUMÁRIO"],
+    "pos_textuais": ["REFERÊNCIAS", "GLOSSÁRIO", "APÊNDICE", "APÊNDICES", "ANEXO", "ANEXOS", "ÍNDICE", "ÍNDICES", "ÍNDICE REMISSIVO"],
+    "prefixos_pos_textuais": ["APÊNDICE ", "ANEXO "]
+  },
+  "designativas": ["Figura", "Tabela", "Quadro", "Gráfico", "Fotografia", "Mapa", "Desenho", "Esquema", "Fluxograma", "Organograma", "Ilustração", "Imagem", "Diagrama", "Planta", "Retrato", "Lâmina", "Prancha"]
+}

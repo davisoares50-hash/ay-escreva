@@ -1,0 +1,148 @@
+{
+  "descricao": "Normas e manuais usados pelo assistente \"Formatar trabalho acadêmico\" e pela galeria de modelos. Edição e situação conferidas no catálogo oficial da ABNT; o conteúdo das regras vem de guias públicos de bibliotecas universitárias e de manuais oficiais gratuitos, porque o texto das normas ABNT é vendido pela ABNT e não acompanha o AY. Ver docs/NORMAS.md.",
+  "verificado_em": "2026-10-20",
+  "fontes": {
+    "abntcatalogo": {
+      "nome": "ABNTCatálogo — catálogo oficial da ABNT (edição, data de publicação e situação)",
+      "url": "https://www.abntcatalogo.com.br/",
+      "consultado_em": "2026-10-20"
+    },
+    "pucsp2025": {
+      "nome": "PUC-SP, Sistema de Bibliotecas. Como aplicar as normas ABNT de acordo com as orientações da NBR 14724/2024 (tutorial atualizado em 20/01/2025)",
+      "url": "https://www.pucsp.br/sites/default/files/download/biblioteca/2025/tutorial-de-normas-abnt-para-trabalhos-academicos-utilizando-o-microsoft-word.pdf",
+      "consultado_em": "2026-10-20"
+    },
+    "pucpr2025": {
+      "nome": "PUCPR. ABNT NBR 14.724 atualizada: descubra o que mudou",
+      "url": "https://www.pucpr.br/noticias/abnt-nbr-14-724-atualizada-descubra-o-que-mudou/",
+      "consultado_em": "2026-10-20"
+    },
+    "ufu2025": {
+      "nome": "UFU, Sistema de Bibliotecas. Apresentação de projeto de pesquisa — ABNT NBR 15287/2025 (maio de 2025)",
+      "url": "https://bibliotecas.ufu.br/sites/bibliotecas.ufu.br/files/media/imagem/projeto_de_pesquisa_maio_25.pdf",
+      "consultado_em": "2026-10-20"
+    },
+    "ufes": {
+      "nome": "UFES, Biblioteca Central. Normalização (lista de normas e datas de atualização)",
+      "url": "https://biblioteca.ufes.br/normalizacao",
+      "consultado_em": "2026-10-20"
+    },
+    "ufsc2023": {
+      "nome": "UFSC Joinville, Secretaria Acadêmica. Modelo de artigo conforme ABNT NBR 6022:2018 (DOCX, 2023)",
+      "url": "https://secretariaacademica.joinville.ufsc.br/files/2023/08/artigo_modelo_abntnbr6022_2018.docx",
+      "consultado_em": "2026-10-20"
+    },
+    "mrpr2018": {
+      "nome": "Presidência da República. Manual de redação da Presidência da República. 3. ed. rev., atual. e ampl. Brasília, 2018 (aprovado pela Portaria nº 1.369, de 27/12/2018). Cópia consultada no portal do ICMBio (gov.br)",
+      "url": "https://ava.icmbio.gov.br/pluginfile.php/4592/mod_data/content/16325/Manual-de-redacao%20oficial%20_3%C2%AA%20EDI%C3%87%C3%83O%202018.pdf",
+      "consultado_em": "2026-10-20"
+    }
+  },
+  "normas": {
+    "NBR14724": {
+      "titulo": "ABNT NBR 14724 — Informação e documentação — Trabalhos acadêmicos — Apresentação",
+      "rotulo": "NBR 14724:2024",
+      "edicao": "4ª edição, 2024; versão corrigida 2025 (incorpora a Errata 1, de 01/04/2025)",
+      "publicacao": "2024-12-16",
+      "situacao": "Em vigor",
+      "substitui": "ABNT NBR 14724:2011",
+      "conferido_em": ["abntcatalogo"],
+      "conteudo": ["pucsp2025", "pucpr2025"]
+    },
+    "NBR6023": {
+      "titulo": "ABNT NBR 6023 — Informação e documentação — Referências — Elaboração",
+      "rotulo": "NBR 6023:2025",
+      "edicao": "2025 (equivale ao conjunto NBR 6023:2018 + Emenda 1, de 21/05/2025)",
+      "publicacao": "2025-05-21",
+      "situacao": "Em vigor",
+      "substitui": "ABNT NBR 6023:2018",
+      "conferido_em": ["abntcatalogo"],
+      "conteudo": ["pucsp2025"]
+    },
+    "NBR10520": {
+      "titulo": "ABNT NBR 10520 — Informação e documentação — Citações em documentos — Apresentação",
+      "rotulo": "NBR 10520:2023",
+      "edicao": "2023",
+      "publicacao": "2023-07-19",
+      "situacao": "Em vigor",
+      "conferido_em": ["abntcatalogo"],
+      "conteudo": ["pucsp2025"]
+    },
+    "NBR6024": {
+      "titulo": "ABNT NBR 6024 — Informação e documentação — Numeração progressiva das seções de um documento — Apresentação",
+      "rotulo": "NBR 6024:2012",
+      "edicao": "2012 (confirmada em 09/08/2022)",
+      "publicacao": "2012-02-01",
+      "situacao": "Em vigor",
+      "conferido_em": ["abntcatalogo"],
+      "conteudo": ["pucsp2025"]
+    },
+    "NBR6027": {
+      "titulo": "ABNT NBR 6027 — Informação e documentação — Sumário — Apresentação",
+      "rotulo": "NBR 6027:2012",
+      "edicao": "2012 (confirmada em 09/08/2022)",
+      "publicacao": "2012-12-11",
+      "situacao": "Em vigor",
+      "conferido_em": ["abntcatalogo"],
+      "conteudo": ["pucsp2025"]
+    },
+    "NBR6028": {
+      "titulo": "ABNT NBR 6028 — Informação e documentação — Resumo, resenha e recensão — Apresentação",
+      "rotulo": "NBR 6028:2021",
+      "edicao": "2021",
+      "publicacao": "2021-05-18",
+      "situacao": "Em vigor",
+      "conferido_em": ["abntcatalogo"],
+      "conteudo": []
+    },
+    "NBR6022": {
+      "titulo": "ABNT NBR 6022 — Informação e documentação — Artigo em publicação periódica técnica e/ou científica — Apresentação",
+      "rotulo": "NBR 6022:2018",
+      "edicao": "2018 (confirmada em 13/12/2023)",
+      "publicacao": "2018-05-16",
+      "situacao": "Em vigor",
+      "conferido_em": ["abntcatalogo"],
+      "conteudo": ["ufsc2023"],
+      "observacao": "A estrutura (título, autoria, resumo e palavras-chave, texto, referências) vem do modelo da UFSC. A aparência (fonte, entrelinhas, margens) costuma ser definida pelo periódico; o modelo da UFSC, por exemplo, usa espaço simples e ponto depois do número da seção, escolhas da instituição."
+    },
+    "NBR15287": {
+      "titulo": "ABNT NBR 15287 — Informação e documentação — Projeto de pesquisa — Apresentação",
+      "rotulo": "NBR 15287:2025",
+      "edicao": "2025",
+      "publicacao": "2025-03-18",
+      "situacao": "Em vigor",
+      "conferido_em": ["abntcatalogo", "ufes"],
+      "conteudo": ["ufu2025"]
+    },
+    "NBR10719": {
+      "titulo": "ABNT NBR 10719 — Informação e documentação — Relatório técnico e/ou científico — Apresentação",
+      "rotulo": "NBR 10719:2025",
+      "edicao": "2025",
+      "publicacao": "2025-12-05",
+      "situacao": "Em vigor",
+      "substitui": "ABNT NBR 10719:2011 + Emenda 1:2015 (cancelada em 05/12/2025)",
+      "conferido_em": ["abntcatalogo"],
+      "conteudo": [],
+      "observacao": "Nenhum guia público consultado descreve a edição de 2025. O AY não confere requisitos próprios desta edição; aplica as regras gerais de apresentação (as mesmas da NBR 14724:2024) como preferência, indicada como tal no relatório. Para relatórios administrativos ou de atividades, a própria norma diz que sua aplicação é opcional (resumo do catálogo da ABNT)."
+    },
+    "MRPR": {
+      "titulo": "Manual de Redação da Presidência da República — padrão ofício",
+      "rotulo": "Manual de Redação da Presidência da República, 3ª ed. (2018)",
+      "edicao": "3ª edição, revista, atualizada e ampliada (2018)",
+      "publicacao": "2018-12-27",
+      "situacao": "Em vigor para a administração pública federal (Portaria nº 1.369/2018)",
+      "conferido_em": ["mrpr2018"],
+      "conteudo": ["mrpr2018"],
+      "observacao": "Texto oficial gratuito. A 3ª edição aboliu a distinção entre ofício, aviso e memorando: o termo ofício passou a valer para os três (item 5)."
+    },
+    "IBGE_TABULAR": {
+      "titulo": "IBGE — Normas de apresentação tabular",
+      "rotulo": "IBGE, Normas de apresentação tabular (3. ed., 1993)",
+      "edicao": "3ª edição, 1993",
+      "situacao": "Citada pelos guias de 2025 como referência para tabelas",
+      "conferido_em": [],
+      "conteudo": ["pucsp2025", "ufu2025"],
+      "observacao": "Edição citada pelos guias; o texto do IBGE não foi consultado diretamente."
+    }
+  }
+}

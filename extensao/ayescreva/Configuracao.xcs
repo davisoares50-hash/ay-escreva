@@ -20,5 +20,23 @@
         <value/>
       </prop>
     </group>
+    <group oor:name="Academico">
+      <prop oor:name="Perfil" oor:type="xs:string">
+        <info><desc>Último perfil escolhido em "Formatar trabalho acadêmico" (trabalho, projeto, artigo, relatorio, instituicao).</desc></info>
+        <value>trabalho</value>
+      </prop>
+      <prop oor:name="Opcoes" oor:type="xs:string">
+        <info><desc>Preferências escolhidas no assistente (JSON: fonte, recuo, alinhamento, frente e verso, contagem).</desc></info>
+        <value>{}</value>
+      </prop>
+      <prop oor:name="Instituicao" oor:type="xs:string">
+        <info><desc>Modelo da instituição (JSON: nome, manual e parâmetros que trocam os da norma ou as preferências).</desc></info>
+        <value/>
+      </prop>
+      <prop oor:name="TrabalharNaCopia" oor:type="xs:boolean">
+        <info><desc>Formatar uma cópia sem título em vez do documento aberto.</desc></info>
+        <value>true</value>
+      </prop>
+    </group>
   </component>
 </oor:component-schema>

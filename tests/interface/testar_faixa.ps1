@@ -126,9 +126,16 @@ if (-not $Somente) {
   Copy-Item (Join-Path $Raiz 'tests\fixtures\compatibilidade-ooxml.docx') $docx7
   $r7 = Join-Path $Saida 'faixa-resultado-fase7.json'
   $quedas += Executar-Fase 'f7' $docx7 @('revisao_integridade') $r7
-  # Junta os efeitos das fases 2 a 7 no relatório principal
+  # Fase 8: formatar trabalho acadêmico e galeria de modelos (entrega B), sobre o TCC gerado por tests\uno\academico.py
+  $fonte8 = Join-Path $Raiz 'tests\output\academico\tcc-word.docx'
+  if (-not (Test-Path $fonte8)) { throw 'Rode antes tests\uno\academico.py: ele gera o TCC de teste usado na fase 8.' }
+  $docx8 = Join-Path $Trab 'tcc-interface.docx'
+  Copy-Item $fonte8 $docx8
+  $r8 = Join-Path $Saida 'faixa-resultado-fase8.json'
+  $quedas += Executar-Fase 'f8' $docx8 @('academico') $r8
+  # Junta os efeitos das fases 2 a 8 no relatório principal
   $a = Get-Content $resultado -Raw -Encoding UTF8 | ConvertFrom-Json
-  foreach ($par in @(@('fase2', $r2), @('fase3', $r3), @('fase4', $r4), @('fase5', $r5), @('fase6', $r6), @('fase7', $r7))) {
+  foreach ($par in @(@('fase2', $r2), @('fase3', $r3), @('fase4', $r4), @('fase5', $r5), @('fase6', $r6), @('fase7', $r7), @('fase8', $r8))) {
     $b = Get-Content $par[1] -Raw -Encoding UTF8 | ConvertFrom-Json
     $a.efeitos = @($a.efeitos) + @($b.efeitos)
     $a.dialogos = @($a.dialogos) + @($b.dialogos)

@@ -43,6 +43,22 @@
       <node oor:name="ayescreva:NaoCorrigir" oor:op="replace">
         <prop oor:name="Label"><value xml:lang="pt-BR">Não corrigir novamente</value><value xml:lang="en-US">Do Not Correct Again</value></prop>
       </node>
+      <node oor:name="ayescreva:FormatarTrabalho" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Formatar trabalho acadêmico</value><value xml:lang="en-US">Format Academic Work</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Aplica as regras da ABNT ou do modelo da instituição, com prévia, cópia opcional e uma ação de desfazer</value><value xml:lang="en-US">Apply ABNT or institution rules with preview, optional copy and single undo</value></prop>
+      </node>
+      <node oor:name="ayescreva:Conformidade" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Relatório de conformidade</value><value xml:lang="en-US">Conformity Report</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Confere o documento regra a regra, com norma, edição e origem de cada regra</value><value xml:lang="en-US">Check the document rule by rule</value></prop>
+      </node>
+      <node oor:name="ayescreva:Galeria" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Galeria de modelos</value><value xml:lang="en-US">Template Gallery</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Cria documento novo de um modelo: ofício, memorando, relatório, currículo, carta, ata, proposta ou modelo pessoal</value><value xml:lang="en-US">Create a new document from a template</value></prop>
+      </node>
+      <node oor:name="ayescreva:SalvarModelo" oor:op="replace">
+        <prop oor:name="Label"><value xml:lang="pt-BR">Salvar como modelo</value><value xml:lang="en-US">Save as Template</value></prop>
+        <prop oor:name="TooltipLabel"><value xml:lang="pt-BR">Grava o documento atual como modelo pessoal; o documento aberto não muda</value><value xml:lang="en-US">Save the current document as a personal template</value></prop>
+      </node>
     </node>
   </node>
 </oor:component-data>

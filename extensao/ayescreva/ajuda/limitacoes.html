@@ -13,7 +13,7 @@ h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:32px}li{
 </style>
 </head>
 <body>
-<header><h1>Limitações conhecidas</h1><div>AY ESCREVA 0.3.0 · versão de testes para Windows 11 x64</div></header>
+<header><h1>Limitações conhecidas</h1><div>AY ESCREVA 0.4.0 · versão de testes para Windows 11 x64</div></header>
 <main>
 <h2>Sistemas</h2>
 <ul>
@@ -49,6 +49,19 @@ h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:32px}li{
 <li>As regras de gramática e estilo vêm de verificadores automáticos e podem apontar trechos corretos; confira antes de aplicar.</li>
 <li>O painel verifica o corpo do texto e as tabelas. Cabeçalhos, rodapés, notas e caixas de texto continuam com o sublinhado, mas não entram na lista do painel; ocorrências encostadas em campos ou notas podem não ser marcadas.</li>
 <li>Em documentos muito longos a verificação completa leva alguns minutos (ela roda enquanto você escreve e pode ser cancelada).</li>
+</ul>
+
+<h2>Formatar trabalho acadêmico e galeria de modelos</h2>
+<ul>
+<li>As regras vêm de guias públicos de bibliotecas universitárias atualizados para as normas vigentes; o texto oficial das normas ABNT (vendido pela ABNT) não foi conferido. Confira com a norma e com o manual da sua instituição.</li>
+<li>NBR 10719:2025 (relatório técnico ou científico): nenhum guia público consultado descreve esta edição. O AY aplica as regras gerais da NBR 14724 como preferência e não confere requisitos próprios da NBR 10719:2025.</li>
+<li>Capa, folha de rosto e resumo recebem só a fonte e o tamanho; alinhamento, negrito e espaços desses elementos não são conferidos.</li>
+<li>Citações longas só são formatadas quando já estão marcadas (estilo Citação ou recuo à esquerda); parágrafos longos entre aspas são apontados, mas não mudados. Legendas e fontes são formatadas, mas o AY não move figuras nem tabelas.</li>
+<li>Com a capa fora da contagem, a numeração recomeça em 1 na folha de rosto. O motor mostra na tela uma página em branco automática depois da capa (o verso da capa, certo na impressão em frente e verso). Em impressão só de frente ela não é impressa, e o PDF não a inclui; o Word não a mostra.</li>
+<li>Formatando o próprio documento (sem cópia), o motor apaga o histórico de desfazer anterior ao criar o número de página. A formatação em si é desfeita com um Ctrl+Z. Depois de desfazer, o refazer (Ctrl+Y) não restaura o recomeço da contagem de páginas; o relatório de conformidade aponta isso, e basta formatar de novo.</li>
+<li>Em DOCX, o filete das notas de rodapé é o separador padrão do Word, sem comprimento gravado no arquivo; o relatório avisa em vez de conferir.</li>
+<li>O conteúdo das referências (NBR 6023:2025) não é conferido nem completado.</li>
+<li>Modelos da galeria: o Brasão de Armas da República não acompanha o modelo de ofício (insira a imagem oficial). Ata, carta, currículo, proposta e relatório administrativo não têm norma oficial; a aparência é preferência do AY.</li>
 </ul>
 
 <h2>Acessibilidade</h2>

@@ -28,6 +28,7 @@ import zipfile
 
 import uno
 import unohelper
+from testes_academico import AcademicoMixin
 from testes_revisao import RevisaoMixin
 from com.sun.star.awt import XCallback
 from com.sun.star.beans import PropertyValue
@@ -112,7 +113,7 @@ class Executor(unohelper.Base, XJob):
         return None
 
 
-class Teste(RevisaoMixin):
+class Teste(RevisaoMixin, AcademicoMixin):
     def __init__(self, ctx, spec, modelo):
         self.ctx = ctx
         self.doc = modelo
@@ -387,7 +388,9 @@ class Teste(RevisaoMixin):
                            'revisao_longo': [(self.revisao_longo, 8.0)],
                            'revisao_perfil': [(self.revisao_perfil, 8.0)],
                            'revisao_captura': [(self.revisao_captura, 6.0)],
-                           'revisao_integridade': [(self.revisao_integridade, 6.0)]}
+                           'revisao_integridade': [(self.revisao_integridade, 6.0)],
+                           # Entrega B: formatar trabalho acadêmico (cópia, prévia, relatório, desfazer) e galeria de modelos
+                           'academico': [(self.academico_formatar, 6.0), (self.academico_galeria, 0.5), (self.academico_salvar_modelo, 0.5)]}
             for nome in somente:
                 passos.extend(mapa_passos[nome])
             return passos

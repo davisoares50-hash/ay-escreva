@@ -17,10 +17,27 @@
               "criterio": "Abre documento de texto em branco"
             },
             {
+              "funcao": "Galeria de modelos",
+              "comando": null,
+              "comandoAY": "ayescreva:Galeria",
+              "grande": true,
+              "icone": "cmd/lc_templatemanager.png",
+              "prioridade": "P1",
+              "criterio": "Cria documento novo a partir de um modelo do AY (ofício, memorando, relatório, currículo, carta, ata, proposta) ou de um modelo pessoal; mostra a origem de cada modelo e separa modelo de formato"
+            },
+            {
               "funcao": "Modelos",
               "comando": ".uno:NewDoc",
               "prioridade": "P1",
               "criterio": "Abre o gerenciador de modelos e cria documento a partir de um modelo"
+            },
+            {
+              "funcao": "Salvar como modelo",
+              "comando": null,
+              "comandoAY": "ayescreva:SalvarModelo",
+              "icone": "cmd/lc_saveastemplate.png",
+              "prioridade": "P1",
+              "criterio": "Grava o documento atual como modelo pessoal (.ott) na pasta de modelos do AY; o documento aberto não muda"
             }
           ]
         },
@@ -953,6 +970,28 @@
       "rotulo": "Referências",
       "mnemonico": "R",
       "grupos": [
+        {
+          "rotulo": "Trabalho acadêmico",
+          "itens": [
+            {
+              "funcao": "Formatar trabalho acadêmico",
+              "comando": null,
+              "comandoAY": "ayescreva:FormatarTrabalho",
+              "grande": true,
+              "icone": "cmd/lc_autoformat.png",
+              "prioridade": "P1",
+              "criterio": "Aplica as regras da ABNT (NBR 14724, 15287, 6022 ou 10719) ou do modelo da instituição com estilos e campos reais, prévia, cópia opcional e uma única ação de desfazer"
+            },
+            {
+              "funcao": "Relatório de conformidade",
+              "comando": null,
+              "comandoAY": "ayescreva:Conformidade",
+              "icone": "cmd/lc_dbviewreports.png",
+              "prioridade": "P1",
+              "criterio": "Confere o documento regra a regra (conforme, não conforme, aviso, não verificável) com norma, edição, camada e origem"
+            }
+          ]
+        },
         {
           "rotulo": "Sumário",
           "itens": [
