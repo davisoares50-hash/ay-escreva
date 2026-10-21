@@ -59,7 +59,7 @@ aceite com o motor instalado 40/40.
 
 **Atualização de uma instalação anterior — `tests/instalacao/testar_atualizacao.ps1` (0.4.0, 21/10/2026): 14/14.**
 Para cada versão anterior (0.2.0 pública e 0.3.0 local): instala, grava preferências no perfil real
-(`%APPDATA%AYEscreva`) pelo próprio motor instalado — palavra no dicionário pessoal, unidade de medida em mm e,
+(`%APPDATA%\AYEscreva`) pelo próprio motor instalado — palavra no dicionário pessoal, unidade de medida em mm e,
 na 0.3.0, a lista "não corrigir" —, instala a 0.4.0 por cima, confere versão, peças novas, preferências e os
 comandos da entrega B no perfil antigo, compara por SHA-256 os documentos do usuário (DOCX e ODT em Documentos) e
 desinstala. O perfil que já existia na máquina é guardado antes e devolvido no fim.
