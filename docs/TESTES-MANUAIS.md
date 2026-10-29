@@ -9,6 +9,9 @@ Use o instalador da versão em teste e um documento qualquer com algumas página
 
 ## 1. Escalas de 125 %, 150 % e 200 % (≈15 min por escala)
 
+> **Situação em 29/10/2026:** 125 % e 150 % conferidos e aprovados pela pessoa responsável (RESULTADOS-TESTES.md §14.1).
+> Falta só **200 %**.
+
 **Trocar a escala:** Configurações do Windows › Sistema › Tela › **Escala** › escolha 125 %. Feche e abra o AY de
 novo depois de trocar (o AY lê a escala ao abrir). No fim, volte para a escala de antes.
 
@@ -74,12 +77,14 @@ pessoa conferir (anote **sim/não**):
 | 4 | O mesmo em Referências › Conferir referências e em Ajuda › Verificar atualizações | idem |
 | 5 | Página Inicial › Caractere e Parágrafo (diálogos); Ctrl+Page Down troca de guia; Tab percorre a guia; Esc | idem |
 | 6 | Ctrl+K (Link); Tab pelos campos; Esc | idem |
-| 7 | Nos diálogos do AY (Galeria, Formatar, Verificar atualizações): o botão com foco tem contorno visível? | sim — nas capturas automáticas o contorno não apareceu, então esta conferência é importante |
+| 7 | Nos diálogos do AY (Galeria, Formatar, Verificar atualizações): o botão com foco aparece realçado? | sim — desde 29/10/2026 o botão com foco fica com o rótulo sublinhado (antes, o contorno não aparecia) |
 
 **Registrar:** em `docs/RESULTADOS-TESTES.md` §14: data, itens 1 a 7 (sim/não) e o que estiver difícil de usar só com
 o teclado.
 
 ## 4. Duas ferramentas que o teste automático não consegue conferir (≈3 min)
+
+> **Situação em 29/10/2026:** as duas conferidas pela pessoa responsável — funcionaram, sem queda.
 
 No teste automático, escolher o valor nestas duas ferramentas derrubou o motor (a escolha é feita por entrada
 simulada; §9 de RESULTADOS-TESTES). Com o mouse ou o teclado de verdade, confira:

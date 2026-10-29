@@ -56,14 +56,25 @@ O mesmo teste roda com o motor **instalado** pelo instalador (§3).
 
 ## 3. Instalador e instalação — `tests/instalacao/testar_instalacao.ps1`
 
-**0.7.0 final (local, 22/10/2026): 20/20** — `out\instalador\AYEscreva-0.7.0-teste-windows11-x64.exe` · 208 MB
-(218.457.871 bytes) · SHA-256 `3c84f90a4a674eb53a688c1ad7a90b8e13aef47a6e9b5e8555b4826b07a26f95` · sem assinatura digital do
-Windows. As verificações de antes e uma nova: a pasta instalada (13.960 arquivos, 847 MB) não contém a chave privada de
-assinatura (procurada sem exibi-la) e o AY leva só a chave pública (§13). Instalado: 808 MB. (Instalador de 21/10,
-substituído: 19/19, SHA-256 `a4d4653b…bf14d`.)
+**0.7.0 final (local, 29/10/2026): 20/20** — `out\instalador\AYEscreva-0.7.0-teste-windows11-x64.exe` · 208 MB
+(218.118.208 bytes) · SHA-256 `10624b07a6c9941b2bb85baea826d03392419a3bbce66ad7e09ccbcdb2a059c4` · sem assinatura digital do
+Windows. Refeito depois do teste manual de 29/10 (§14.1), com o realce do foco nos diálogos do AY. A pasta instalada
+(13.933 arquivos, 847 MB) não contém a chave privada de assinatura (procurada sem exibi-la) e o AY leva só a chave
+pública (§13). Instalado: 807 MB.
+
+Achado ao refazer: o instalador de 22/10 levava, por acaso, 14 pastas `__pycache__` criadas na distribuição pelos testes
+(320 KB). Retiradas do instalador, a primeira execução deu **19/20**: o Python embutido grava esses caches na pasta do
+programa durante o uso (instalação por usuário), o desinstalador não os conhecia e a pasta do programa ficava para trás
+com 89 arquivos `.pyc`. Corrigido no desinstalador (`installer/ayescreva.iss`, seção `[Code]`: apaga só as pastas
+`__pycache__` dentro da pasta do programa, sem seguir atalhos de pasta, antes de remover os arquivos). Nova execução:
+20/20, pasta do programa removida. (Instaladores substituídos: 22/10, 20/20, SHA-256 `3c84f90a…26f95`; 21/10, 19/19,
+SHA-256 `a4d4653b…bf14d`.)
 
 **Atualização para a 0.7.0 final — `tests/instalacao/testar_atualizacao.ps1`: 14/14**, a partir da 0.2.0 (pública) e da
-0.5.0 (22/10/2026).
+0.5.0, com o instalador de 29/10 (também 14/14 com o de 22/10).
+
+**Regressão depois do realce do foco (29/10/2026)**, pela interface, com a distribuição montada: revisão de texto e
+captura 25/25, formatação acadêmica 18/18, IA (sem modelo), escala e atualizações 23/23, foco visível 2/2; nenhum erro.
 
 | Verificação | Resultado |
 |---|---|
@@ -1167,3 +1178,26 @@ Três níveis, que não se confundem:
 Com o teclado real já foi conferido, no diagnóstico do §9: Esc fecha a Galeria do Fontwork, o diálogo de Link (aberto
 com Ctrl+K) e Propriedades, sem queda, em 9 execuções. Escalas de 125 %, 150 % e 200 %: não aprovadas (só houve teste
 em 100 %); instruções em `docs/TESTES-MANUAIS.md` §1.
+
+### 14.1 Teste manual de 29/10/2026 (pessoa responsável, instalador final da 0.7.0)
+
+| Item | Resultado |
+|---|---|
+| Escala de 125 % e de 150 %: faixa, diálogos Formatar, Galeria e Verificar atualizações, painéis Assistente AY e Revisão com IA | **aprovado**: nada cortado, botões visíveis |
+| Página Inicial › Espaçamento entre linhas › Duplo e Ctrl+Z | **funcionou**, sem queda (com uso real) |
+| Design › Cor e bordas da página › Bordas, borda predefinida e Ctrl+Z | **funcionou**, sem queda (com uso real) |
+| Teclado: F6, Tab até "Negrito", Espaço; Esc; Tab num diálogo do AY | funcionou, mas **não deu para ver o contorno do botão com foco** |
+| Escala de 200 % e leitor de tela | ainda não feitos |
+
+**Correção do foco visível (mesmo dia):** nos diálogos e painéis do próprio AY (todos os montados por
+`ay_dialogos.Dialogo`, os painéis Assistente AY e Revisão com IA, o dicionário pessoal e o aviso de perdas ao salvar),
+o botão ou caixa de marcação com foco ganha **sublinhado grosso** no rótulo, que sai quando o foco sai. O sublinhado
+não muda a largura do texto (nada é cortado), não muda o nome lido pelo leitor de tela e funciona em tema claro e escuro.
+Teste `-Somente foco_visivel`: o foco é posto em cada botão de "Galeria de modelos" e "Verificar atualizações" pela API e
+só o botão com foco fica sublinhado — **2/2**; capturas `tests/output/interface/foco-*.png` conferidas (a primeira versão
+deixava o sublinhado no botão anterior; corrigido antes da entrega).
+
+**Faixa e diálogos do motor:** são desenhados pelo LibreOffice. Com teclas reais, depois do F6 a faixa inteira ganha um
+contorno azul-claro, mas a aba e o botão com foco não se destacam nas capturas; o AY não muda esse desenho sem compilar
+o motor (Nível 2). Alternativa com realce bem visível: a **barra de menus** (botão ≡ no canto direito da faixa › Barra
+de menus; depois Alt e as setas).

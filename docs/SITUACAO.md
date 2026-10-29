@@ -1,6 +1,6 @@
 # Situação do projeto AY ESCREVA — lista única
 
-> Gerado por `tools/gerar-situacao.mjs` em 22/10/2026, a partir de `docs/situacao-base.json` (itens do
+> Gerado por `tools/gerar-situacao.mjs` em 29/10/2026, a partir de `docs/situacao-base.json` (itens do
 > pedido original e das entregas, com a evidência de cada um) e de `docs/MATRIZ-FUNCIONALIDADES.md` (ferramentas da faixa,
 > geradas pelos testes). Não editar à mão.
 
@@ -9,11 +9,12 @@ Versão pública: **0.2.0**. Versão de testes local mais recente: **0.7.0**
 
 | Situação | Requisitos e entregas | Ferramentas da faixa |
 |---|---|---|
-| ✅ Concluído e testado | 31 | 172 |
+| ✅ Concluído e testado | 32 | 172 |
 | 🟡 Implementado sem validação completa | 12 | 73 |
 | ⬜ Ainda não implementado | 10 | 4 |
 
-Legenda: **concluído e testado** = há teste automatizado que conferiu o efeito (pela interface ou pela API do motor);
+Legenda: **concluído e testado** = há teste automatizado que conferiu o efeito (pela interface ou pela API do motor) ou,
+quando a evidência diz, conferência manual registrada (escalas de tela);
 **implementado sem validação completa** = existe e foi acionado ou conferido só em parte; **ainda não implementado** =
 não existe nesta versão.
 
@@ -46,11 +47,12 @@ Só há uma máquina disponível (Windows 11 Pro x64, Intel Core i5-8500). Teste
 |---|---|---|
 | Navegação por teclado nos diálogos e painéis do AY | ✅ Concluído e testado | Foco inicial, Tab e Shift+Tab e teclas de acesso sem repetição conferidos nos diálogos Formatar, Modelo da instituição e Gerenciar IA local; botões dos painéis acionados pelo teclado. Esses testes usam teclas SIMULADAS pelo motor (robô de teclas), não o teclado do Windows (RESULTADOS §4, §5.3, §5.5, §14). |
 | Navegação por teclado nos painéis de IA e diálogos novos (D e E) | ✅ Concluído e testado | Botões acionados pelo teclado; Tab/Shift+Tab e teclas de acesso conferidos em Gerenciar IA local, Conferir referências e Verificar atualizações, com teclas simuladas pelo motor (robô de teclas) (RESULTADOS §14). |
-| Navegação por teclado na faixa de opções e nos diálogos com o teclado real (F6, setas, Tab, Esc, foco visível) | 🟡 Implementado sem validação completa | Teclado real do Windows (fase 11, RESULTADOS §14): F6 leva às abas da faixa (1 toque); setas trocam de aba; Esc fecha 8 diálogos (4 do AY e 4 do motor) e o foco volta ao texto; ordem do Tab/Shift+Tab conferida em Propriedades, Galeria de modelos e Verificar atualizações. Achado: na faixa, Esc não devolve o foco ao texto (F6 continua o ciclo e volta). Inconclusivo, para conferência manual: Tab dentro da aba até os botões; ordem em Formatar, Conferir referências, Caractere, Parágrafo e Link; foco visível nos botões dos diálogos do AY (não aparece nas capturas). Roteiro: docs/TESTES-MANUAIS.md. |
+| Navegação por teclado na faixa de opções e nos diálogos com o teclado real (F6, setas, Tab, Esc, foco visível) | 🟡 Implementado sem validação completa | Teclado real do Windows (fase 11, RESULTADOS §14): F6 leva às abas da faixa (1 toque); setas trocam de aba; Esc fecha 8 diálogos (4 do AY e 4 do motor) e o foco volta ao texto; ordem do Tab/Shift+Tab conferida em Propriedades, Galeria de modelos e Verificar atualizações. Achado: na faixa, Esc não devolve o foco ao texto (F6 continua o ciclo e volta). Inconclusivo, para conferência manual: Tab dentro da aba até os botões; ordem em Formatar, Conferir referências, Caractere, Parágrafo e Link; foco visível nos botões dos diálogos do AY (não aparece nas capturas). Roteiro: docs/TESTES-MANUAIS.md. Teste manual de 29/10/2026: o contorno do foco não aparecia; corrigido nos diálogos e painéis do AY (sublinhado grosso no botão com foco, teste 2/2 com capturas). Na faixa e nos diálogos do motor o realce continua fraco (desenho do motor); alternativa: barra de menus com Alt. |
 | Leitor de tela: Narrador (Windows) | 🟡 Implementado sem validação completa | Conferido só o que o leitor RECEBE: com o Narrador ligado, nomes, papéis e foco de botões, campos e listas (5/5, lidos pela árvore de acessibilidade). Ninguém usou o AY de fato com o Narrador e ouviu o resultado: roteiro manual em docs/TESTES-MANUAIS.md §2. |
 | Leitores de tela NVDA e JAWS | ⬜ Ainda não implementado | Não instalados neste computador; instalar programas de terceiros depende de autorização. Teste pendente. |
 | Escala de exibição 100 % (a deste computador) | ✅ Concluído e testado | Diálogos e painéis sem texto cortado, sem sobreposição e cabendo na tela (8/8, fase 9). Textos apertados encontrados e corrigidos (Cancelar download; botões do Assistente AY). |
-| Escalas de exibição 125 %, 150 % e 200 % | ⬜ Ainda não implementado | Não aprovado: só houve teste em 100 % (a escala deste computador). Instruções curtas para o teste manual em 125 %, 150 % e 200 % em docs/TESTES-MANUAIS.md §1 (o roteiro tests/interface/conferir_escala.ps1 ajuda, mas não substitui a conferência visual). |
+| Escalas de exibição 125 % e 150 % | ✅ Concluído e testado | Conferência manual pela pessoa responsável em 29/10/2026, com o instalador final da 0.7.0: faixa, diálogos e painéis sem textos cortados (RESULTADOS §14). Não há teste automatizado nessas escalas (trocar a escala é configuração do Windows). |
+| Escala de exibição 200 % | ⬜ Ainda não implementado | Ainda sem conferência; instruções em docs/TESTES-MANUAIS.md §1. |
 
 ## Documentos e confiabilidade
 
@@ -97,8 +99,8 @@ Só há uma máquina disponível (Windows 11 Pro x64, Intel Core i5-8500). Teste
 
 | Item | Situação | Evidência ou pendência |
 |---|---|---|
-| Instalador Windows 11 x64 por usuário, sem administrador | ✅ Concluído e testado | Instalação 20/20 com o instalador final da 0.7.0 (22/10/2026), inclusive a varredura da chave privada na pasta instalada. |
-| Atualizar uma instalação anterior preservando documentos e preferências | ✅ Concluído e testado | Atualização 0.2.0 → 0.7.0 e 0.5.0 → 0.7.0 com o instalador final: 14/14 (preferências, dicionário pessoal e documentos preservados). |
+| Instalador Windows 11 x64 por usuário, sem administrador | ✅ Concluído e testado | Instalação 20/20 com o instalador final da 0.7.0 (29/10/2026), inclusive a varredura da chave privada na pasta instalada e a remoção completa da pasta do programa na desinstalação (corrigida em 29/10: os caches do Python ficavam para trás; RESULTADOS §3). |
+| Atualizar uma instalação anterior preservando documentos e preferências | ✅ Concluído e testado | Atualização 0.2.0 → 0.7.0 e 0.5.0 → 0.7.0 com o instalador final de 29/10/2026: 14/14 (preferências, dicionário pessoal e documentos preservados). |
 | Atualização pelo próprio AY (Ajuda › Verificar atualizações) | 🟡 Implementado sem validação completa | Funciona de ponta a ponta com o instalador conferido; depende de publicar atualizacoes.json assinado no site oficial (docs/ATUALIZACOES.md). |
 | Site oficial com download e SHA-256 | ✅ Concluído e testado | Publicado (versão 0.2.0); fluxo acessar → baixar → conferir → instalar 25/25. |
 | Chave privada de assinatura das atualizações protegida | ✅ Concluído e testado | Procurada byte a byte, sem exibi-la (tests/seguranca/procurar_chave_privada.py, com controle positivo): ausente do repositório e de todo o histórico do git, de dist (o que vira o instalador), de out (instaladores, site, prévias), de tests/output, dos registros em TEMP e das conversas de desenvolvimento; a instalação de teste também é varrida. Só a chave pública vai no AY. Cópia de segurança, perda e vazamento: docs/ATUALIZACOES.md. |
@@ -173,7 +175,7 @@ seção "Entregas de assistência à escrita" acima.
 | Parágrafo | Centralizar | ✅ Concluído e testado | Pela interface: ParaAdjust=3 depois do clique |
 | Parágrafo | Alinhar à direita | ✅ Concluído e testado | Pela interface: ParaAdjust=1 depois do clique |
 | Parágrafo | Justificar | ✅ Concluído e testado | Pela interface: ParaAdjust=2 depois do clique |
-| Parágrafo | Espaçamento entre linhas | 🟡 Implementado sem validação completa | botão acionado pela interface; efeito não conferido — escolher o valor na lista pelo teste automático derrubou o motor nas 3 tentativas (entrada simulada, RESULTADOS §9); conferência manual pendente |
+| Parágrafo | Espaçamento entre linhas | 🟡 Implementado sem validação completa | botão acionado pela interface; efeito não conferido — conferido manualmente em 29/10/2026 (Duplo e Ctrl+Z funcionaram, sem queda); o teste automático derruba o motor ao escolher o valor na lista (entrada simulada, RESULTADOS §9) |
 | Parágrafo | Aumentar espaço entre parágrafos | ✅ Concluído e testado | Pela interface (efeito real): espaço antes+depois do parágrafo: (0, 0) → (101, 101); desfazer ok, refazer ok; ODT: mantido ao salvar e reabrir; DOCX: mantido ao salvar e reabrir |
 | Parágrafo | Diminuir espaço entre parágrafos | ✅ Concluído e testado | Pela interface (efeito real): espaço antes+depois do parágrafo: (499, 499) → (399, 399); desfazer ok, refazer ok; ODT: mantido ao salvar e reabrir; DOCX: mantido ao salvar e reabrir |
 | Parágrafo | Parágrafo (diálogo) | ✅ Concluído e testado | Pela interface (efeito real): recuo à esquerda pelo diálogo Parágrafo (2 cm): 0 → 2000; desfazer ok, refazer ok; ODT: mantido ao salvar e reabrir; DOCX: mantido ao salvar e reabrir |
@@ -235,7 +237,7 @@ seção "Entregas de assistência à escrita" acima.
 | Formatação do documento | Conjuntos de estilos | 🟡 Implementado sem validação completa | botão acionado pela interface; efeito não conferido — A base importa estilos de modelos; a galeria visual de conjuntos (como no Word) será feita com modelos AY. |
 | Plano de fundo da página | Marca-d'água | 🟡 Implementado sem validação completa | Teste de efeito FALHOU: marca-d'água "RASCUNHO": None → 'RASCUNHO'; desfazer FALHOU, refazer ok; ODT: mantido ao salvar e reabrir; DOCX: mantido ao salvar e reabrir |
 | Plano de fundo da página | Cor e bordas da página | ✅ Concluído e testado | Pela interface (efeito real): cor de fundo da página (estilo de página): 'NONE' → 'SOLID'; desfazer ok, refazer ok; ODT: mantido ao salvar e reabrir; DOCX: mantido ao salvar e reabrir |
-| Plano de fundo da página | Bordas de página | 🟡 Implementado sem validação completa | botão presente; não validado — escolher a borda predefinida pelo teste automático derrubou o motor (entrada simulada, RESULTADOS §9); a cor da página, no mesmo diálogo, foi validada; conferência manual pendente |
+| Plano de fundo da página | Bordas de página | 🟡 Implementado sem validação completa | botão presente; não validado — conferido manualmente em 29/10/2026 (borda aplicada e Ctrl+Z, sem queda); o teste automático derruba o motor ao escolher a borda predefinida (entrada simulada, RESULTADOS §9); a cor da página foi validada |
 
 ### Layout — ✅ 16 · 🟡 4 · ⬜ 0
 

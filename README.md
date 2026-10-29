@@ -8,7 +8,7 @@ Versão de testes local mais recente, ainda não publicada: **0.7.0**, que reún
 revisão de texto e painel **Assistente AY** (0.3.0), formatação de trabalhos acadêmicos e galeria de modelos (0.4.0), IA
 local opcional (0.5.0), revisão do documento inteiro, referências, títulos, explicações e inconsistências (entrega D) e
 **Verificar atualizações** (entrega E). Instalador: `out\instalador\AYEscreva-0.7.0-teste-windows11-x64.exe` (208 MB,
-SHA-256 `3c84f90a4a674eb53a688c1ad7a90b8e13aef47a6e9b5e8555b4826b07a26f95`, de 22/10/2026), gerado por `scripts\instalador.ps1`. O modelo de IA não vem no instalador: o download (cerca de 3,4 GB; o
+SHA-256 `10624b07a6c9941b2bb85baea826d03392419a3bbce66ad7e09ccbcdb2a059c4`, de 29/10/2026), gerado por `scripts\instalador.ps1`. O modelo de IA não vem no instalador: o download (cerca de 3,4 GB; o
 Windows mostra 3,1 GB) é opcional e feito pelo próprio AY. O pacote de publicação da 0.7.0 (notas, SHA256SUMS, arquivo de
 versões assinado, site) está pronto em `out\` e **não foi publicado** ([docs/ATUALIZACOES.md](docs/ATUALIZACOES.md)).
 Situação de cada item do projeto: [docs/SITUACAO.md](docs/SITUACAO.md). Testes manuais pendentes (escalas de tela e

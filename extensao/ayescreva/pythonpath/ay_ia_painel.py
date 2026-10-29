@@ -337,6 +337,8 @@ class PainelIA(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent
         self.win.setPosSize(0, 0, LARGURA_MINIMA, self.altura, PS_SIZE)
         self.win.setVisible(True)
         self.c = {c.getModel().Name: c for c in self.win.getControls()}
+        import ay_dialogos
+        ay_dialogos.realcar_foco(self.win)              # foco visível nos botões e caixas
         self.ouvinte = _Ouvinte(self)
         for n in ('pedir', 'cancelar', 'aceitar', 'rejeitar', 'gerenciar', 'documento', 'ir'):
             self.c[n].setActionCommand(n)

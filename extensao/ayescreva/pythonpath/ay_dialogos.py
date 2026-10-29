@@ -5,9 +5,50 @@ Os testes pela interface encontram o diálogo aberto em ATUAL e acionam os contr
 SPDX-License-Identifier: MPL-2.0
 """
 import unohelper
-from com.sun.star.awt import XActionListener, XItemListener, XTextListener
+from com.sun.star.awt import XActionListener, XFocusListener, XItemListener, XTextListener
+from com.sun.star.awt.FontUnderline import BOLD as SUBLINHADO_GROSSO
 
 ATUAL = []          # diálogos abertos (o mais recente por último), para os testes pela interface
+
+# Controles que ganham realce ao receber o foco do teclado
+REALCE_TIPOS = ('com.sun.star.awt.UnoControlButtonModel', 'com.sun.star.awt.UnoControlCheckBoxModel',
+                'com.sun.star.awt.UnoControlRadioButtonModel')
+
+
+class _RealceFoco(unohelper.Base, XFocusListener):
+    """Foco visível: no tema do Windows 11, o motor quase não marca o botão com foco (teste manual de 29/10/2026,
+    RESULTADOS §14). Enquanto o controle tem o foco, o rótulo ganha sublinhado grosso; ao sair, volta ao normal.
+    O sublinhado não muda a largura do texto (nada é cortado), não muda o nome lido pelo leitor de tela e funciona em
+    tema claro e escuro."""
+
+    def __init__(self, modelo):
+        self.modelo = modelo
+
+    def focusGained(self, ev):
+        try:
+            self.modelo.FontUnderline = SUBLINHADO_GROSSO
+        except Exception:
+            pass
+
+    def focusLost(self, ev):
+        # sem sublinhado (FontUnderline.NONE); "voltar ao padrão" deixava o sublinhado desenhado no botão
+        try:
+            self.modelo.FontUnderline = 0
+        except Exception:
+            pass
+
+    def disposing(self, ev):
+        pass
+
+
+def realcar_foco(container):
+    """Liga o realce do foco aos botões e caixas de marcação de um diálogo ou painel do AY (XControlContainer)."""
+    for c in container.getControls():
+        try:
+            if any(c.getModel().supportsService(t) for t in REALCE_TIPOS):
+                c.addFocusListener(_RealceFoco(c.getModel()))
+        except Exception:
+            pass
 
 
 def servico(ctx, nome):
@@ -105,6 +146,7 @@ class Dialogo:
             else:
                 ctl.addTextListener(_Texto(f))
         self.dlg.createPeer(servico(self.ctx, 'com.sun.star.awt.Toolkit'), janela_pai)
+        realcar_foco(self.dlg)
         if ao_abrir:
             ao_abrir()
         ATUAL.append(self)

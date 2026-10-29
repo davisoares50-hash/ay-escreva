@@ -31,7 +31,7 @@ import unohelper
 from testes_academico import AcademicoMixin
 from testes_diagnostico import DiagnosticoMixin
 from testes_ferramentas import FerramentasMixin
-from testes_teclado import TecladoMixin
+from testes_teclado import FocoVisivelMixin, TecladoMixin
 from testes_escala import EscalaMixin
 from testes_ia import IAMixin
 from testes_revisao import RevisaoMixin
@@ -124,7 +124,8 @@ class Executor(unohelper.Base, XJob):
         return None
 
 
-class Teste(RevisaoMixin, AcademicoMixin, IAMixin, EscalaMixin, DiagnosticoMixin, FerramentasMixin, TecladoMixin):
+class Teste(RevisaoMixin, AcademicoMixin, IAMixin, EscalaMixin, DiagnosticoMixin, FerramentasMixin, TecladoMixin,
+            FocoVisivelMixin):
     def __init__(self, ctx, spec, modelo):
         self.ctx = ctx
         self.doc = modelo
@@ -429,7 +430,9 @@ class Teste(RevisaoMixin, AcademicoMixin, IAMixin, EscalaMixin, DiagnosticoMixin
                            # fase 12: ferramentas da faixa pelo efeito no documento, desfazer/refazer e ODT/DOCX
                            'ferramentas': [(self.preparar_texto, 0.2), (self.validar_ferramentas, 0.5)],
                            # navegação só pelo teclado, com teclas reais do Windows (faixa e diálogos)
-                           'teclado': [(self.preparar_texto, 0.2), (self.teclado_faixa, 0.5), (self.teclado_dialogos, 0.5)]}
+                           'teclado': [(self.preparar_texto, 0.2), (self.teclado_faixa, 0.5), (self.teclado_dialogos, 0.5)],
+                           'foco_visivel': [(self.preparar_texto, 0.2), (self.foco_visivel, 0.5)],
+                           'foco_faixa': [(self.preparar_texto, 0.2), (self.foco_faixa_capturas, 0.5)]}
             for nome in somente:
                 passos.extend(mapa_passos[nome])
             return passos

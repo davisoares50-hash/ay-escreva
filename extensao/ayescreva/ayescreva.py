@@ -341,6 +341,8 @@ def dialogo_perdas(ctx, frame, filtro, lista, salvar_como):
     dlg.getControl('cancelar').addActionListener(_Botao(dlg, 0))
     tk = _servico(ctx, 'com.sun.star.awt.Toolkit')
     dlg.createPeer(tk, frame.getContainerWindow() if frame else None)
+    import ay_dialogos
+    ay_dialogos.realcar_foco(dlg)                   # foco visível nos botões e na caixa de marcação
     r = dlg.execute()
     copia = dlg.getControl('copia').getState() == 1
     dlg.dispose()

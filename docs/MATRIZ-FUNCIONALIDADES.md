@@ -1,6 +1,6 @@
 # Matriz de funcionalidades do AY ESCREVA
 
-> Gerado por `tests/uno/comandos.py` a partir de `ui/abas.json`, do mapa da faixa e do teste pela interface de 2026-10-22T13:44:57, em 2026-10-22. Não editar à mão.
+> Gerado por `tests/uno/comandos.py` a partir de `ui/abas.json`, do mapa da faixa e do teste pela interface de 2026-10-22T13:44:57, em 2026-10-29. Não editar à mão.
 
 **Como ler as colunas**
 
@@ -70,7 +70,7 @@
 | Parágrafo | Centralizar | `.uno:CenterPara` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface: ParaAdjust=3 depois do clique · Por API: aceite_etapa1 | P0 | Preservado em ODT e DOCX |  |
 | Parágrafo | Alinhar à direita | `.uno:RightPara` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface: ParaAdjust=1 depois do clique | P0 | Preservado em ODT e DOCX |  |
 | Parágrafo | Justificar | `.uno:JustifyPara` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface: ParaAdjust=2 depois do clique · Por API: aceite_etapa1 | P0 | Preservado em ODT e DOCX |  |
-| Parágrafo | Espaçamento entre linhas | `.uno:LineSpacing` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu lista "" (fechado pelo teste) (efeito não conferido) | P0 | Simples, 1,15, 1,5, duplo e personalizado | escolher o valor na lista pelo teste automático derrubou o motor nas 3 tentativas (entrada simulada, RESULTADOS §9); conferência manual pendente |
+| Parágrafo | Espaçamento entre linhas | `.uno:LineSpacing` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu lista "" (fechado pelo teste) (efeito não conferido) | P0 | Simples, 1,15, 1,5, duplo e personalizado | conferido manualmente em 29/10/2026 (Duplo e Ctrl+Z funcionaram, sem queda); o teste automático derruba o motor ao escolher o valor na lista (entrada simulada, RESULTADOS §9) |
 | Parágrafo | Aumentar espaço entre parágrafos | `.uno:ParaspaceIncrease` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface (efeito real): espaço antes+depois do parágrafo: (0, 0) → (101, 101); desfazer ok, refazer ok; ODT: mantido ao salvar e reabrir; DOCX: mantido ao salvar e reabrir | P1 | Altera espaço antes/depois |  |
 | Parágrafo | Diminuir espaço entre parágrafos | `.uno:ParaspaceDecrease` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface (efeito real): espaço antes+depois do parágrafo: (499, 499) → (399, 399); desfazer ok, refazer ok; ODT: mantido ao salvar e reabrir; DOCX: mantido ao salvar e reabrir | P1 | Altera espaço antes/depois |  |
 | Parágrafo | Parágrafo (diálogo) | `.uno:ParagraphDialog` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface (efeito real): recuo à esquerda pelo diálogo Parágrafo (2 cm): 0 → 2000; desfazer ok, refazer ok; ODT: mantido ao salvar e reabrir; DOCX: mantido ao salvar e reabrir | P1 | Recuos, espaçamento, fluxo e tabulações |  |
@@ -132,7 +132,7 @@
 | Formatação do documento | Conjuntos de estilos | `.uno:LoadStyles` | Sim | Sim — botão na faixa (confirmado pela interface) | Acionado pela interface: abriu dialogo "Carregar estilos do modelo" (fechado pelo teste) (efeito não conferido) | P2 | Importa estilos de um modelo | A base importa estilos de modelos; a galeria visual de conjuntos (como no Word) será feita com modelos AY. |
 | Plano de fundo da página | Marca-d'água | `.uno:Watermark` | Sim | Sim — botão na faixa (confirmado pela interface) | Teste de efeito FALHOU: marca-d'água "RASCUNHO": None → 'RASCUNHO'; desfazer FALHOU, refazer ok; ODT: mantido ao salvar e reabrir; DOCX: mantido ao salvar e reabrir | P1 | Marca-d'água de texto preservada em DOCX | a marca-d'água é aplicada e mantida em ODT e DOCX, mas o Ctrl+Z não a remove (o motor não registra desfazer para ela); para tirar, abra Marca-d'água de novo e apague o texto |
 | Plano de fundo da página | Cor e bordas da página | `.uno:PageDialog` | Sim | Sim — botão na faixa (confirmado pela interface) | Pela interface (efeito real): cor de fundo da página (estilo de página): 'NONE' → 'SOLID'; desfazer ok, refazer ok; ODT: mantido ao salvar e reabrir; DOCX: mantido ao salvar e reabrir | P2 | Cor de fundo (aba Área) e bordas (aba Bordas) do estilo de página |  |
-| Plano de fundo da página | Bordas de página | `.uno:PageDialog` | Sim | Sim, por outro controle (botão Cor e bordas da página) | Não validado | P2 | Bordas do estilo de página | escolher a borda predefinida pelo teste automático derrubou o motor (entrada simulada, RESULTADOS §9); a cor da página, no mesmo diálogo, foi validada; conferência manual pendente |
+| Plano de fundo da página | Bordas de página | `.uno:PageDialog` | Sim | Sim, por outro controle (botão Cor e bordas da página) | Não validado | P2 | Bordas do estilo de página | conferido manualmente em 29/10/2026 (borda aplicada e Ctrl+Z, sem queda); o teste automático derruba o motor ao escolher a borda predefinida (entrada simulada, RESULTADOS §9); a cor da página foi validada |
 
 ## Layout
 

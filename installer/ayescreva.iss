@@ -70,7 +70,8 @@ Name: "desktopicon"; Description: "Criar atalho na área de trabalho"; GroupDesc
 Name: "associar"; Description: "Oferecer o AY ESCREVA em ""Abrir com"" para .docx, .odt, .doc, .rtf e .txt"; GroupDescription: "Arquivos:"
 
 [Files]
-Source: "{#Dist}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; caches do Python criados quando a distribuição é usada em testes não entram no instalador
+Source: "{#Dist}\*"; DestDir: "{app}"; Excludes: "__pycache__\*,*.pyc"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{autoprograms}\AY ESCREVA"; Filename: "{app}\AYEscreva.exe"; Comment: "Editor de textos AY ESCREVA"
@@ -96,3 +97,36 @@ Filename: "{app}\AYEscreva.exe"; Description: "Abrir o AY ESCREVA"; Flags: nowai
 
 ; O perfil do usuário (%APPDATA%\AYEscreva) guarda preferências, dicionário pessoal e cópias de recuperação.
 ; Ele NÃO é apagado na desinstalação, para não perder dados do usuário.
+
+[Code]
+// O Python embutido grava caches (__pycache__) ao lado dos módulos enquanto o AY é usado, quando a pasta do programa
+// permite escrita (instalação por usuário). Eles não vêm no instalador, então o desinstalador não os conhece e a pasta
+// do programa ficava para trás. Só pastas __pycache__ dentro de {app} são apagadas; atalhos de pasta (pontos de nova
+// análise) não são seguidos.
+procedure ApagarCachesPython(const Pasta: string);
+var
+  R: TFindRec;
+begin
+  if FindFirst(Pasta + '\*', R) then
+  try
+    repeat
+      if (R.Name <> '.') and (R.Name <> '..') and (R.Attributes and FILE_ATTRIBUTE_DIRECTORY <> 0)
+        and (R.Attributes and FILE_ATTRIBUTE_REPARSE_POINT = 0) then
+      begin
+        if CompareText(R.Name, '__pycache__') = 0 then
+          DelTree(Pasta + '\' + R.Name, True, True, True)
+        else
+          ApagarCachesPython(Pasta + '\' + R.Name);
+      end;
+    until not FindNext(R);
+  finally
+    FindClose(R);
+  end;
+end;
+
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+  // antes de o desinstalador remover os arquivos, para que as pastas fiquem vazias e sejam removidas também
+  if CurUninstallStep = usUninstall then
+    ApagarCachesPython(ExpandConstant('{app}'));
+end;

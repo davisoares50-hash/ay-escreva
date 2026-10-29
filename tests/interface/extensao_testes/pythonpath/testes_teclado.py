@@ -294,3 +294,65 @@ def _estado_titulo(j):
         return {p.Name: p.Value for p in j.getState()}.get('Text', '')
     except Exception:
         return ''
+
+
+class FocoVisivelMixin:
+    """Foco visível nos diálogos do AY: o foco é posto em cada botão pela API (sem teclas simuladas), o teste confere
+    o realce (sublinhado grosso no rótulo do controle com foco, e só nele) e grava capturas para conferência visual."""
+
+    def foco_visivel(self):
+        import ay_dialogos
+        casos = [('ayescreva:Galeria', 'Galeria de modelos', ('criar', 'salvar', 'fechar'), 'foco-galeria'),
+                 ('ayescreva:VerificarAtualizacoes', 'Verificar atualizações', ('verificar', 'fechar'), 'foco-atualizacoes')]
+        for cmd, titulo, botoes, nome in casos:
+            self._abrir_async(cmd)
+            fim = time.time() + 15
+            d = None
+            while time.time() < fim and d is None:
+                time.sleep(0.5)
+                d = next((x for x in list(ay_dialogos.ATUAL) if getattr(x, 'dlg', None) is not None), None)
+            if d is None:
+                self.efeito(f'Foco visível em "{titulo}": diálogo abre', False, 'não abriu')
+                continue
+            time.sleep(1.0)
+            resultados = []
+            for i, b in enumerate(botoes):
+                def focar(b=b):
+                    d.c(b).setFocus()
+                self.no_principal(focar)
+                time.sleep(0.6)
+
+                def ler():
+                    return {n: d.m(n).FontUnderline for n in botoes}
+                sub = self.no_principal(ler)
+                # o que tem o foco, com sublinhado grosso; os que já tiveram o foco, sem sublinhado (0 = FontUnderline.NONE);
+                # os que ainda não tiveram, no valor padrão (4 = DONTKNOW, sem sublinhado)
+                so_ele = sub[b] == ay_dialogos.SUBLINHADO_GROSSO and all(v in (0, 4, None) if n not in botoes[:i] else v == 0
+                                                                          for n, v in sub.items() if n != b)
+                resultados.append((b, so_ele, sub))
+                self._capturar(titulo, f'{nome}-{i + 1}-{b}')
+            self.no_principal(lambda: d.fechar(None))
+            time.sleep(1.0)
+            self.efeito(f'Foco visível em "{titulo}": só o botão com foco fica realçado (sublinhado grosso), em cada botão',
+                        all(ok for _b, ok, _s in resultados), str(resultados))
+
+    def foco_faixa_capturas(self):
+        """Faixa com teclas reais: F6 até as abas, Tab para dentro da aba e setas entre os botões, com capturas da janela
+        em cada passo, para ver se o botão com foco aparece realçado (a faixa é desenhada pelo motor)."""
+        if self.tela_bloqueada():
+            self.efeito('Foco visível na faixa (capturas)', False, 'BLOQUEADO: a tela do Windows estava bloqueada')
+            return
+        self.selecionar_texto('beta')
+        self.no_principal(lambda: self.frame.getContainerWindow().setFocus())
+        time.sleep(0.5)
+        passos = [('F6',), ('TAB',), ('TAB',), ('DIREITA',), ('DIREITA',)]
+        registro = []
+        for i, teclas in enumerate(passos, 1):
+            enviado = self._pressionar(*teclas)
+            time.sleep(0.6)
+            fo = self._foco()
+            registro.append((teclas[0], enviado, fo))
+            self._captura_janela(f'faixa-{i}-{teclas[0].lower()}')
+        self._pressionar('F6')
+        self.res.setdefault('teclado', {})['faixa_capturas'] = [str(x) for x in registro]
+        self.efeito('Foco visível na faixa: capturas de F6, Tab e setas (conferência visual)', all(x[1] for x in registro), str(registro))

@@ -66,7 +66,7 @@
         "Cerca de 850 MB livres em disco para o aplicativo",
         "Não precisa de internet nem de conta para escrever; a internet só é usada quando você pede (verificar atualizações e baixar a IA local)",
         "Memória para o editor: ainda não medida; testado em computador com 16 GB",
-        "Tela: testado em escala de 100%; 125%, 150% e 200% ainda sem teste manual"
+        "Tela: conferido nas escalas de 100% (teste automático), 125% e 150% (conferência manual); 200% ainda sem teste"
       ],
       "ia": [
         "Opcional: o editor funciona inteiro sem ela",

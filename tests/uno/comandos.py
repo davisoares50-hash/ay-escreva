@@ -208,10 +208,10 @@ LIMITACOES = {
 
 # Limitação de uma função específica quando o mesmo comando serve a outras funções já validadas
 LIMITACOES_FUNCAO = {
-    'Página Inicial › Espaçamento entre linhas': 'escolher o valor na lista pelo teste automático derrubou o motor nas 3 tentativas '
-                                                 '(entrada simulada, RESULTADOS §9); conferência manual pendente',
-    'Design › Bordas de página': 'escolher a borda predefinida pelo teste automático derrubou o motor (entrada simulada, RESULTADOS §9); '
-                                 'a cor da página, no mesmo diálogo, foi validada; conferência manual pendente',
+    'Página Inicial › Espaçamento entre linhas': 'conferido manualmente em 29/10/2026 (Duplo e Ctrl+Z funcionaram, sem queda); o teste '
+                                                 'automático derruba o motor ao escolher o valor na lista (entrada simulada, RESULTADOS §9)',
+    'Design › Bordas de página': 'conferido manualmente em 29/10/2026 (borda aplicada e Ctrl+Z, sem queda); o teste automático derruba '
+                                 'o motor ao escolher a borda predefinida (entrada simulada, RESULTADOS §9); a cor da página foi validada',
     "Design › Marca-d'água": "a marca-d'água é aplicada e mantida em ODT e DOCX, mas o Ctrl+Z não a remove (o motor não registra "
                               "desfazer para ela); para tirar, abra Marca-d'água de novo e apague o texto",
 }

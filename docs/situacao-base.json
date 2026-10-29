@@ -1,6 +1,6 @@
 {
   "descricao": "Itens do pedido original (19/10/2026) e das entregas, com a situação e a evidência. Situações: testado = concluído e testado; parcial = implementado sem validação completa; pendente = ainda não implementado. As ferramentas da faixa vêm de docs/MATRIZ-FUNCIONALIDADES.md. Gera docs/SITUACAO.md (node tools/gerar-situacao.mjs).",
-  "atualizado_em": "22/10/2026",
+  "atualizado_em": "29/10/2026",
   "versao_publica": "0.2.0",
   "versao_local": "0.7.0",
   "instalador_local": "out\\instalador\\AYEscreva-0.7.0-teste-windows11-x64.exe",
@@ -87,7 +87,7 @@
         {
           "item": "Navegação por teclado na faixa de opções e nos diálogos com o teclado real (F6, setas, Tab, Esc, foco visível)",
           "sit": "parcial",
-          "evidencia": "Teclado real do Windows (fase 11, RESULTADOS §14): F6 leva às abas da faixa (1 toque); setas trocam de aba; Esc fecha 8 diálogos (4 do AY e 4 do motor) e o foco volta ao texto; ordem do Tab/Shift+Tab conferida em Propriedades, Galeria de modelos e Verificar atualizações. Achado: na faixa, Esc não devolve o foco ao texto (F6 continua o ciclo e volta). Inconclusivo, para conferência manual: Tab dentro da aba até os botões; ordem em Formatar, Conferir referências, Caractere, Parágrafo e Link; foco visível nos botões dos diálogos do AY (não aparece nas capturas). Roteiro: docs/TESTES-MANUAIS.md."
+          "evidencia": "Teclado real do Windows (fase 11, RESULTADOS §14): F6 leva às abas da faixa (1 toque); setas trocam de aba; Esc fecha 8 diálogos (4 do AY e 4 do motor) e o foco volta ao texto; ordem do Tab/Shift+Tab conferida em Propriedades, Galeria de modelos e Verificar atualizações. Achado: na faixa, Esc não devolve o foco ao texto (F6 continua o ciclo e volta). Inconclusivo, para conferência manual: Tab dentro da aba até os botões; ordem em Formatar, Conferir referências, Caractere, Parágrafo e Link; foco visível nos botões dos diálogos do AY (não aparece nas capturas). Roteiro: docs/TESTES-MANUAIS.md. Teste manual de 29/10/2026: o contorno do foco não aparecia; corrigido nos diálogos e painéis do AY (sublinhado grosso no botão com foco, teste 2/2 com capturas). Na faixa e nos diálogos do motor o realce continua fraco (desenho do motor); alternativa: barra de menus com Alt."
         },
         {
           "item": "Leitor de tela: Narrador (Windows)",
@@ -105,9 +105,14 @@
           "evidencia": "Diálogos e painéis sem texto cortado, sem sobreposição e cabendo na tela (8/8, fase 9). Textos apertados encontrados e corrigidos (Cancelar download; botões do Assistente AY)."
         },
         {
-          "item": "Escalas de exibição 125 %, 150 % e 200 %",
+          "item": "Escalas de exibição 125 % e 150 %",
+          "sit": "testado",
+          "evidencia": "Conferência manual pela pessoa responsável em 29/10/2026, com o instalador final da 0.7.0: faixa, diálogos e painéis sem textos cortados (RESULTADOS §14). Não há teste automatizado nessas escalas (trocar a escala é configuração do Windows)."
+        },
+        {
+          "item": "Escala de exibição 200 %",
           "sit": "pendente",
-          "evidencia": "Não aprovado: só houve teste em 100 % (a escala deste computador). Instruções curtas para o teste manual em 125 %, 150 % e 200 % em docs/TESTES-MANUAIS.md §1 (o roteiro tests/interface/conferir_escala.ps1 ajuda, mas não substitui a conferência visual)."
+          "evidencia": "Ainda sem conferência; instruções em docs/TESTES-MANUAIS.md §1."
         }
       ]
     },
@@ -262,12 +267,12 @@
         {
           "item": "Instalador Windows 11 x64 por usuário, sem administrador",
           "sit": "testado",
-          "evidencia": "Instalação 20/20 com o instalador final da 0.7.0 (22/10/2026), inclusive a varredura da chave privada na pasta instalada."
+          "evidencia": "Instalação 20/20 com o instalador final da 0.7.0 (29/10/2026), inclusive a varredura da chave privada na pasta instalada e a remoção completa da pasta do programa na desinstalação (corrigida em 29/10: os caches do Python ficavam para trás; RESULTADOS §3)."
         },
         {
           "item": "Atualizar uma instalação anterior preservando documentos e preferências",
           "sit": "testado",
-          "evidencia": "Atualização 0.2.0 → 0.7.0 e 0.5.0 → 0.7.0 com o instalador final: 14/14 (preferências, dicionário pessoal e documentos preservados)."
+          "evidencia": "Atualização 0.2.0 → 0.7.0 e 0.5.0 → 0.7.0 com o instalador final de 29/10/2026: 14/14 (preferências, dicionário pessoal e documentos preservados)."
         },
         {
           "item": "Atualização pelo próprio AY (Ajuda › Verificar atualizações)",
@@ -307,5 +312,5 @@
       ]
     }
   ],
-  "instalador_sha256": "3c84f90a4a674eb53a688c1ad7a90b8e13aef47a6e9b5e8555b4826b07a26f95"
+  "instalador_sha256": "10624b07a6c9941b2bb85baea826d03392419a3bbce66ad7e09ccbcdb2a059c4"
 }

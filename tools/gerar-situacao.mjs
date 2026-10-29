@@ -55,7 +55,8 @@ out.push(`Versão pública: **${base.versao_publica}**. Versão de testes local 
   `(\`${base.instalador_local}\`).`, '');
 out.push('| Situação | Requisitos e entregas | Ferramentas da faixa |', '|---|---|---|');
 for (const k of Object.keys(SIT)) out.push(`| ${SIT[k]} | ${cbase[k]} | ${ctot[k]} |`);
-out.push('', 'Legenda: **concluído e testado** = há teste automatizado que conferiu o efeito (pela interface ou pela API do motor);',
+out.push('', 'Legenda: **concluído e testado** = há teste automatizado que conferiu o efeito (pela interface ou pela API do motor) ou,',
+  'quando a evidência diz, conferência manual registrada (escalas de tela);',
   '**implementado sem validação completa** = existe e foi acionado ou conferido só em parte; **ainda não implementado** =',
   'não existe nesta versão.', '');
 

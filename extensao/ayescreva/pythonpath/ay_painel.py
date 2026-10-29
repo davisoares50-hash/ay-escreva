@@ -11,6 +11,7 @@ from com.sun.star.awt import XActionListener, XItemListener, XWindowListener
 from com.sun.star.lang import XComponent, XServiceInfo
 from com.sun.star.ui import XSidebarPanel, XToolPanel, XUIElement, XUIElementFactory
 
+import ay_dialogos
 import ay_revisao
 from ay_revisao import Analise, Revisao, despachar, estado_comando
 
@@ -64,6 +65,7 @@ class Painel(unohelper.Base, XUIElement, XToolPanel, XSidebarPanel, XComponent):
         self.win.setPosSize(0, 0, LARGURA_MINIMA, self.altura, PS_SIZE)
         self.win.setVisible(True)
         self.c = {c.getModel().Name: c for c in self.win.getControls()}
+        ay_dialogos.realcar_foco(self.win)          # foco visível nos botões e caixas
         self.ouvinte = _Ouvinte(self)
         for nome in BOTOES:
             self.c[nome].setActionCommand(nome)
@@ -428,6 +430,7 @@ def dialogo_dicionario(ctx, frame, revisao):
     dlg.getControl('fechar').addActionListener(_Fechar(dlg, 1))
     preencher()
     dlg.createPeer(ay_revisao.servico(ctx, 'com.sun.star.awt.Toolkit'), frame.getContainerWindow())
+    ay_dialogos.realcar_foco(dlg)
     dlg.execute()
     dlg.dispose()
 
