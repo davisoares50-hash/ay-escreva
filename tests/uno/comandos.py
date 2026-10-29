@@ -138,8 +138,14 @@ def niveis(r, mapa, faixa):
     else:
         impl = 'Não — fora da faixa'
     val = []
-    if t.get('validado'):
+    fr = (faixa or {}).get('ferramentas', {}).get(chave)
+    if fr and fr.get('validado'):
+        # fase 12: efeito real, desfazer/refazer e salvar/reabrir em ODT e DOCX (tests/interface, testes_ferramentas.py)
+        val.append('Pela interface (efeito real): ' + fr.get('resumo', ''))
+    elif t.get('validado'):
         val.append('Pela interface: ' + '; '.join(d for d in t.get('detalhes', []) if not d.startswith(('na aba', 'clique na faixa', 'aba contextual')))[:160])
+    elif fr:
+        val.append('Teste de efeito FALHOU: ' + fr.get('resumo', ''))
     elif t.get('acionado'):
         det = next((d for d in t.get('detalhes', []) if d.startswith('abriu')), '')
         val.append('Acionado pela interface' + (f': {det}' if det else '') + ' (efeito não conferido)')
@@ -149,7 +155,7 @@ def niveis(r, mapa, faixa):
     if cmd in EVIDENCIA_REVISAO and not t.get('validado'):
         ok = [e for e in efeitos if any(e['funcao'].startswith(p) for p in EVIDENCIA_REVISAO[cmd]) and e['ok']]
         if ok:
-            val.insert(0, 'Pela interface (teste de revisão): ' + '; '.join(e['funcao'] for e in ok)[:200])
+            val.insert(0, 'Pela interface (teste dedicado): ' + '; '.join(e['funcao'] for e in ok)[:200])
     return encontrado, impl, ' · '.join(val) or 'Não validado'
 
 
@@ -159,6 +165,55 @@ EVIDENCIA_REVISAO = {
     'ayescreva:VerificarDocumento': ('Verificar documento pelo teclado', 'Documento longo verificado', 'Cancelar interrompe'),
     'ayescreva:CorrecaoAutomatica': ('Correção automática ao digitar', 'Correção automática pode ser desligada',
                                      'Ctrl+Z desfaz só a correção', 'Proteções'),
+    # entregas B a E: o teste dedicado abre pelo mesmo comando que o botão dispara (conferido na fase 1) e confere o efeito
+    'ayescreva:FormatarTrabalho': ('Formatar trabalho acadêmico abre', 'Prévia pelo teclado', 'Aplicar numa cópia',
+                                   'Ctrl+Z pelo teclado na cópia', 'Ctrl+Y pelo teclado refaz'),
+    'ayescreva:Galeria': ('Galeria de modelos abre', 'Galeria lista', 'Criar documento'),
+    'ayescreva:SalvarModelo': ('Salvar como modelo abre', 'Salvar como modelo:'),
+    'ayescreva:RevisaoIA': ('Painel Revisão com IA abre', 'Revisar seleção pelo teclado', 'Aceitar aplica como alteração',
+                            'Ctrl+Z desfaz a sugestão inteira', 'Revisar o documento inteiro'),
+    'ayescreva:GerenciarIA': ('Gerenciar IA local abre', 'Gerenciar IA local: modelos', 'Gerenciar IA local fecha'),
+    'ayescreva:ConferirReferencias': ('Conferir referências:',),
+    'ayescreva:ConferirConsistencia': ('Conferir consistência:',),
+    'ayescreva:VerificarAtualizacoes': ('Verificar atualizações abre', 'Verificar agora consulta'),
+}
+
+
+# Por que o efeito de uma ferramenta não tem conferência automática (aparece em "Pendências e observações")
+LIMITACOES = {
+    '.uno:FormatPaintbrush': 'o formato é aplicado na próxima seleção feita com o mouse; o teste não simula o arraste',
+    '.uno:Freeline_Unfilled': 'desenho à mão livre com o mouse; o teste não simula o traço',
+    '.uno:Freeline': 'desenho à mão livre com o mouse; o teste não simula o traço',
+    '.uno:Line': 'desenho com o mouse na página; o teste não simula o traço',
+    '.uno:Bezier_Unfilled': 'desenho com o mouse na página; o teste não simula o traço',
+    '.uno:BasicShapes': 'a forma é desenhada com o mouse depois da escolha; o teste não simula o traço',
+    '.uno:SelectObject': 'modo de seleção para o mouse',
+    '.uno:Crop': 'o recorte é feito com o mouse nas alças da imagem',
+    '.uno:ToggleObjectRotateMode': 'a rotação é feita com o mouse nas alças do objeto',
+    '.uno:Signature': 'exige um certificado digital instalado no Windows',
+    '.uno:BibliographyComponent': 'abre o banco de dados bibliográfico em outra janela; sem efeito no documento',
+    '.uno:SafeMode': 'reinicia o aplicativo; não pode ser conferido de dentro do teste',
+    '.uno:ChangeTheme': 'muda o tema de todo o aplicativo (preferência do usuário)',
+    '.uno:MailMergeWizard': 'exige uma fonte de dados (planilha ou banco) cadastrada',
+    '.uno:ChangeDatabaseField': 'exige uma fonte de dados cadastrada',
+    '.uno:ViewDataSourceBrowser': 'exige uma fonte de dados cadastrada',
+    '.uno:MailMergeFirstEntry': 'exige uma fonte de dados cadastrada', '.uno:MailMergePrevEntry': 'exige uma fonte de dados cadastrada',
+    '.uno:MailMergeNextEntry': 'exige uma fonte de dados cadastrada', '.uno:MailMergeLastEntry': 'exige uma fonte de dados cadastrada',
+    '.uno:MailMergeCreateDocuments': 'exige uma fonte de dados cadastrada',
+    '.uno:MailMergeSaveDocuments': 'exige uma fonte de dados cadastrada',
+    '.uno:MailMergePrintDocuments': 'exige uma fonte de dados cadastrada e uma impressora',
+    '.uno:MailMergeEmailDocuments': 'exige uma fonte de dados cadastrada e uma conta de e-mail configurada',
+}
+
+
+# Limitação de uma função específica quando o mesmo comando serve a outras funções já validadas
+LIMITACOES_FUNCAO = {
+    'Página Inicial › Espaçamento entre linhas': 'escolher o valor na lista pelo teste automático derrubou o motor nas 3 tentativas '
+                                                 '(entrada simulada, RESULTADOS §9); conferência manual pendente',
+    'Design › Bordas de página': 'escolher a borda predefinida pelo teste automático derrubou o motor (entrada simulada, RESULTADOS §9); '
+                                 'a cor da página, no mesmo diálogo, foi validada; conferência manual pendente',
+    "Design › Marca-d'água": "a marca-d'água é aplicada e mantida em ODT e DOCX, mas o Ctrl+Z não a remove (o motor não registra "
+                              "desfazer para ela); para tirar, abra Marca-d'água de novo e apague o texto",
 }
 
 
@@ -203,9 +258,11 @@ def gerar_matriz(res):
                     '| Grupo | Função | Comando | Comando encontrado | Funcionalidade implementada | Funcionamento validado | Prioridade | Critério de aceite | Pendências e observações |',
                     '|---|---|---|---|---|---|---|---|---|']
         cmd = r['comando'] or r.get('comandoAY')
+        lim = LIMITACOES_FUNCAO.get(f"{r['rotuloAba']} › {r['funcao']}") or LIMITACOES.get(cmd or '', '')
+        obs = '; '.join(x for x in (r.get('lacuna', ''), lim if not val.startswith('Pela interface') else '') if x)
         lin.append('| ' + ' | '.join([
             cel(r['grupo']), cel(r['funcao']), f'`{cmd}`' if cmd else '—', enc, cel(impl), cel(val), r['prioridade'],
-            cel(r['criterio']), cel(r.get('lacuna', ''))]) + ' |')
+            cel(r['criterio']), cel(obs)]) + ' |')
     destino = RAIZ / 'docs' / 'MATRIZ-FUNCIONALIDADES.md'
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_text(chr(10).join(lin) + chr(10), encoding='utf-8')

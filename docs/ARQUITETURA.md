@@ -80,7 +80,7 @@ O que muda em relação à base, sem tocar no código C++:
 | Macros nunca executadas | nível de segurança 3 travado + lista de locais confiáveis vazia e travada | `ayescreva.xcd` |
 | Sem recursos externos automáticos | bloqueio de links de documentos não confiáveis (travado); vínculos só sob pergunta | `ayescreva.xcd` |
 | Sem envio de dados | relatório de falhas desligado e travado; verificação de atualização da base removida (`onlineupdate.xcd`), sem URLs em `version.ini`; extensão de publicação em wiki removida | `ayescreva.xcd`, `montar.ps1` |
-| Recuperação e salvamento seguro | informação de recuperação a cada 5 min; cópia de segurança ao salvar | `ayescreva.xcd` |
+| Recuperação e salvamento seguro | informação de recuperação a cada 3 min (antes 5; ver RESULTADOS-TESTES.md §9); cópia de segurança ao salvar | `ayescreva.xcd` |
 | pt-BR | interface pt-BR, idioma padrão dos documentos pt-BR, ajuda offline pt-BR | `ayescreva.xcd`, helppack |
 | Interface por abas | faixa própria `notebookbar_ayescreva.ui`, gerada de `ui/abas.json` por `tools/gerar-faixa.mjs`, na ordem pedida; modo "AY ESCREVA" registrado em `ToolbarMode` e padrão | `ayescreva.xcd`, `ui/abas.json`, `tools/gerar-faixa.mjs` |
 | Compatibilidade Word | realce exportado como realce do Word, não sombreamento | `ayescreva.xcd` |

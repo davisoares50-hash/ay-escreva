@@ -19,7 +19,7 @@
 #>
 param([string]$Dist = 'E:\AY\dist\AY ESCREVA', [int]$Limite = 2400, [string]$Somente, [string]$Documento,
       [string]$IAPasta = (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) 'out\ia'), [string]$IAModelo,
-      [switch]$SoFase1)
+      [switch]$SoFase1, [switch]$ModoClassico)
 $ErrorActionPreference = 'Stop'
 $Raiz = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $Saida = Join-Path $Raiz 'tests\output\interface'
@@ -53,6 +53,12 @@ function Executar-Fase([string]$nome, [string]$documento, [string[]]$passos, [st
 <item oor:path="/org.openoffice.Setup/Office"><prop oor:name="ooSetupInstCompleted" oor:op="fuse"><value>true</value></prop></item>
 </oor:items>
 '@ | Set-Content -Encoding UTF8 (Join-Path $perfil 'user\registrymodifications.xcu')
+  if ($ModoClassico) {
+    # diagnóstico: barra de ferramentas clássica do motor em vez da faixa por abas
+    $xcu = Join-Path $perfil 'user\registrymodifications.xcu'
+    $item = '<item oor:path="/org.openoffice.Office.UI.ToolbarMode"><prop oor:name="ActiveWriter" oor:op="fuse"><value>Default</value></prop></item>'
+    Set-Content -Encoding UTF8 $xcu ((Get-Content $xcu -Raw).Replace('</oor:items>', $item + [Environment]::NewLine + '</oor:items>'))
+  }
   $url = 'file:///' + ($perfil -replace '\\', '/')
   & (Join-Path $Dist 'program\unopkg.com') add --suppress-license "-env:UserInstallation=$url" $oxt
   if ($LASTEXITCODE) { throw 'unopkg falhou ao instalar a extensão de testes' }
@@ -68,8 +74,12 @@ function Executar-Fase([string]$nome, [string]$documento, [string[]]$passos, [st
   $inicio = Get-Date
   Start-Process (Join-Path $Dist 'program\soffice.exe') -ArgumentList "-env:UserInstallation=$url", '--norestore', '--nologo', "`"$documento`"" | Out-Null
   $fim = (Get-Date).AddSeconds($Limite)
+  $processos = @{}       # cada processo do motor da fase, com o identificador aberto para ler o código de saída depois
   while ((Get-Date) -lt $fim -and -not (Test-Path $resultado)) {
     Start-Sleep -Seconds 2
+    foreach ($p in @(Get-Process soffice.bin -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -ge $inicio.AddSeconds(-2) })) {
+      if (-not $processos.ContainsKey($p.Id)) { try { $null = $p.Handle; $processos[$p.Id] = $p } catch {} }
+    }
     # Funcionamento offline: nenhuma conexão TCP do motor para fora do computador durante a fase
     $pids = @(Get-Process soffice.bin -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -ge $inicio.AddSeconds(-2) } | ForEach-Object Id)
     if (-not $pids.Count -and ((Get-Date) - $inicio).TotalSeconds -gt 30) { break }    # o motor da fase terminou ou caiu
@@ -78,20 +88,30 @@ function Executar-Fase([string]$nome, [string]$documento, [string[]]$passos, [st
     }
   }
   Start-Sleep -Seconds 5
-  Get-Process soffice.bin -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -ge $inicio.AddSeconds(-2) } | ForEach-Object { if (-not $_.WaitForExit(20000)) { $_.Kill() } }
+  $encerrados = @()
+  Get-Process soffice.bin -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -ge $inicio.AddSeconds(-2) } | ForEach-Object {
+    if (-not $_.WaitForExit(20000)) { $encerrados += $_.Id; $_.Kill() } }
   Remove-Item Env:\AY_TESTE_UI_SPEC, Env:\AY_SIMULAR_ABERTURA, Env:\AY_DEPURAR_REVISAO
-  $quedas = @(Get-WinEvent -FilterHashtable @{ LogName = 'Application'; ProviderName = 'Application Error'; StartTime = $inicio } -ErrorAction SilentlyContinue | Where-Object { $_.Message -like '*soffice*' })
+  # Queda = processo do motor que terminou com 0xC0000409 (encerramento forçado). O log de eventos do Windows não basta:
+  # ele deixa de registrar quedas repetidas com a mesma assinatura.
+  $codigos = @(foreach ($p in $processos.Values) { try { $p.WaitForExit(5000) | Out-Null; '{0:X8}' -f $p.ExitCode } catch {} })
+  $quedasCodigo = @($codigos | Where-Object { $_ -eq 'C0000409' }).Count
+  $eventos = @(Get-WinEvent -FilterHashtable @{ LogName = 'Application'; ProviderName = 'Application Error'; StartTime = $inicio } -ErrorAction SilentlyContinue | Where-Object { $_.Message -like '*soffice*' })
+  $nQuedas = [math]::Max($quedasCodigo, $eventos.Count)
   Remove-Item -Recurse -Force $perfil -ErrorAction SilentlyContinue
   if (-not (Test-Path $resultado)) {
     # o motor caiu ou travou: a fase vira uma falha registrada e as fases seguintes continuam (antes, o roteiro parava aqui)
-    $msg = "Fase ${nome}: sem relatório em $Limite s (quedas registradas: $($quedas.Count))"
+    $como = if ($nQuedas) { "queda do motor (códigos de saída: $($codigos -join ', '))" }
+            elseif ($encerrados.Count) { "tempo esgotado: o teste não terminou em $Limite s e o motor foi encerrado pelo roteiro" }
+            else { "o motor terminou sem relatório (códigos de saída: $($codigos -join ', '))" }
+    $msg = "Fase ${nome}: sem relatório em $Limite s — $como"
     Write-Warning $msg
     [ordered]@{ inicio = $inicio.ToString('s'); fim = (Get-Date).ToString('s'); abas = @(); funcoes = @{}; dialogos = @(); avisos = @()
                 efeitos = @([ordered]@{ funcao = $(if ($RotuloFalha) { $RotuloFalha } else { "Fase $nome completa (o motor terminou ou travou antes do fim)" }); ok = $false; detalhe = $msg })
                 erros = @($msg) } | ConvertTo-Json -Depth 5 | Set-Content -Encoding UTF8 $resultado
-    return [math]::Max(1, $quedas.Count)
+    return $nQuedas          # tempo esgotado não conta como queda (a fase já fica registrada como falha)
   }
-  return $quedas.Count
+  return $nQuedas
 }
 
 Remove-Item "$env:TEMP\ayescreva-extensao.log" -ErrorAction SilentlyContinue
@@ -165,13 +185,35 @@ if (-not $Somente -and -not $SoFase1) {
     $quedas += Executar-Fase 'f10' $odt10 @('ia_documento') $r10 $extraIA
     $fases += ,@('fase10', $r10)
   } else { Write-Warning 'Fase 10 (entrega D com a IA) BLOQUEADA: sem o modelo em $IAPasta' }
-  # Fase 11: falha conhecida do motor (Galeria do Fontwork e depois Link, como uma pessoa faria). Enquanto o motor cair,
-  # a fase vira FALHA CONHECIDA no relatório; quando uma versão do motor corrigir, ela passa sozinha (RESULTADOS §9)
+  # Fase 11: Galeria do Fontwork e depois Link pela faixa, fechando cada janela com Esc do teclado de verdade (teclas do
+  # Windows, como uma pessoa). Com teclas simuladas pelo motor (robô ou UITest) o motor cai às vezes, até sem o Fontwork;
+  # com o teclado real a sequência não reproduziu a queda (RESULTADOS §9). Se cair, a fase registra a queda.
   $odt11 = Join-Path $Trab 'falha-conhecida.odt'
   Copy-Item (Join-Path $Raiz 'tests\output\etapa1\teste-etapa1.odt') $odt11
   $r11 = Join-Path $Saida 'faixa-resultado-fase11.json'
-  $quedas += Executar-Fase 'f11' $odt11 @('seq_fontwork_como_pessoa') $r11 $extraIA 'FALHA CONHECIDA (defeito do motor LibreOffice 26.8.1): Galeria do Fontwork e depois Link fecham o aplicativo'
+  $quedas += Executar-Fase 'f11' $odt11 @('diag_real_faixa', 'teclado') $r11 $extraIA 'QUEDA do motor: Galeria do Fontwork e depois Link, com teclado real (RESULTADOS §9)'
   $fases += ,@('fase11', $r11)
+  # Fase 12: ferramentas da faixa pelo efeito no documento, com desfazer/refazer e salvar/reabrir em ODT e DOCX
+  $odt12 = Join-Path $Trab 'ferramentas.odt'
+  Copy-Item (Join-Path $Raiz 'tests\output\etapa1\teste-etapa1.odt') $odt12
+  $r12 = Join-Path $Saida 'faixa-resultado-fase12.json'
+  $isoladas = @(Get-Content (Join-Path $PSScriptRoot 'ferramentas-com-dialogo.txt') -Encoding UTF8 | Where-Object { $_ -and -not $_.StartsWith('#') })
+  $env:AY_FERRAMENTAS_EXCETO = $isoladas -join ','
+  $quedas += Executar-Fase 'f12' $odt12 @('ferramentas') $r12
+  Remove-Item Env:\AY_FERRAMENTAS_EXCETO
+  $fases += ,@('fase12', $r12)
+  # Fase 12b: ferramentas com diálogo, cada uma num aplicativo próprio (uma queda fica só naquela ferramenta)
+  $resultadoPrincipal = Get-Content $resultado -Raw -Encoding UTF8          # a 12b reescreve faixa-resultado.json a cada ferramenta
+  & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'testar_ferramentas_isoladas.ps1') -Dist $Dist
+  Set-Content -Encoding UTF8 $resultado $resultadoPrincipal
+  $iso = Get-Content (Join-Path $Saida 'ferramentas-isoladas.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+  $quedas += @($iso.execucoes | Where-Object { $_.queda }).Count
+  $efeitos12b = @(foreach ($p in $iso.ferramentas.PSObject.Properties) {
+    [ordered]@{ funcao = "$($p.Name) (efeito real, aplicativo isolado)"; ok = [bool]$p.Value.validado; detalhe = $p.Value.resumo } })
+  $r12b = Join-Path $Saida 'faixa-resultado-fase12b.json'
+  [ordered]@{ inicio = $iso.data; fim = $iso.data; efeitos = $efeitos12b; dialogos = @(); avisos = @(); erros = @()
+              ferramentas = $iso.ferramentas; funcoes = [ordered]@{} } | ConvertTo-Json -Depth 6 | Set-Content -Encoding UTF8 $r12b
+  $fases += ,@('fase12b', $r12b)
   # Junta os efeitos das fases 2 a 10 no relatório principal
   $a = Get-Content $resultado -Raw -Encoding UTF8 | ConvertFrom-Json
   foreach ($par in $fases) {
@@ -182,6 +224,25 @@ if (-not $Somente -and -not $SoFase1) {
     $a.erros = @($a.erros) + @($b.erros)
     $a | Add-Member -NotePropertyName $par[0] -NotePropertyValue @{ inicio = $b.inicio; fim = $b.fim } -Force
     if ($b.medidas) { $a | Add-Member -NotePropertyName ('medidas_' + $par[0]) -NotePropertyValue $b.medidas -Force }
+    # fase 12: o resultado por ferramenta (efeito, desfazer, ODT, DOCX) e a validação entram na matriz
+    if ($b.ferramentas) {
+      if (-not $a.ferramentas) { $a | Add-Member -NotePropertyName ferramentas -NotePropertyValue ([pscustomobject]@{}) -Force }
+      foreach ($p in $b.ferramentas.PSObject.Properties) {
+        $a.ferramentas | Add-Member -NotePropertyName $p.Name -NotePropertyValue $p.Value -Force
+        # a validação de cada ferramenta entra na lista de funções (base da matriz)
+        if ($p.Name -like '(queda)*') { continue }
+        $alvo = $a.funcoes.PSObject.Properties[$p.Name]
+        if (-not $alvo) {
+          $a.funcoes | Add-Member -NotePropertyName $p.Name -NotePropertyValue ([pscustomobject]@{ presente = $false; acionado = $false; validado = $false; detalhes = @() })
+          $alvo = $a.funcoes.PSObject.Properties[$p.Name]
+        }
+        if ($p.Value.disparado -eq $p.Value.comando) { $alvo.Value.acionado = $true }
+        if ($p.Value.validado) {
+          $alvo.Value.validado = $true
+          $alvo.Value.detalhes = @(@($alvo.Value.detalhes) + @($p.Value.resumo) | Select-Object -Unique)
+        }
+      }
+    }
   }
   $a | Add-Member -NotePropertyName conexoes_externas -NotePropertyValue @($script:Externas.Keys) -Force
   $a | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 $resultado

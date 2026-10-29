@@ -82,6 +82,12 @@ for (const f of readdirSync(join(capturas, 'abas')).filter((f) => f.endsWith('.p
 
 // ---- Downloads ----
 const atual = versoes.versoes.find((v) => v.versao === versoes.atual);
+// Uma versão preparada e ainda não enviada ao GitHub Releases só aparece na prévia local: publicar o site apontando
+// para arquivos que não existem (ou trocar a versão pública sem decisão) fica impossível por engano.
+if (modo === 'github' && !atual.publicada) {
+  throw new Error(`a versão ${atual.versao} ainda não está marcada como publicada em site/versoes.json; publique o instalador antes`);
+}
+const previa = modo === 'local' && !atual.publicada;
 const arqs = {};
 const linhasSums = [];
 for (const a of atual.arquivos) {
@@ -132,6 +138,20 @@ writeFileSync(join(RAIZ, 'out/publicacao', `v${atual.versao}`, 'NOTAS.md'), [
   'No PowerShell, na pasta Downloads:', '',
   ...Object.values(arqs).map((a) => `    Get-FileHash .\\${a.arquivo} -Algorithm SHA256`), '',
   'O resultado deve ser igual ao valor acima (maiúsculas e minúsculas não importam).', '',
+  '### Duas assinaturas diferentes', '',
+  '- **Assinatura digital do instalador** (certificado de editor, verificada pelo Windows): **ainda não existe**. Por isso o ' +
+  'SmartScreen pode avisar, e a conferência do instalador baixado pelo navegador é o SHA-256 acima.',
+  '- **Assinatura das atualizações** (Ed25519): quando você usa **Ajuda › Verificar atualizações**, o AY só oferece uma versão nova ' +
+  'se o arquivo de versões publicado no site oficial estiver assinado pela chave do projeto (a chave pública vai dentro do AY), se ' +
+  'o instalador estiver nesta página de versões do projeto e se o SHA-256 do arquivo baixado conferir. Ela protege a atualização ' +
+  'feita pelo próprio AY; não substitui a assinatura digital do instalador.', '',
+  '### IA local (opcional)', '',
+  '- O instalador não traz a IA. Ela é baixada só se você pedir (Revisão › Gerenciar IA local): cerca de 3,4 GB ' +
+  '(o AY e o Windows mostram 3,1 GB, em GiB), de endereços fixos, com SHA-256 conferido.',
+  '- Funciona no seu computador, sem conta e sem enviar o texto. Depende dela só o painel **Revisão com IA** (revisar, mais claro, ' +
+  'mais formal, simplificar, resumir, sugerir títulos, explicar, apontar inconsistências e revisar o documento inteiro). Assistente AY, ' +
+  'correção automática, formatação acadêmica e as conferências de referências e de consistência funcionam sem IA.',
+  '- Testada somente num Intel Core i5-8500 com 16 GB de RAM e sem placa de vídeo dedicada (até 2,6 GB de memória em uso).', '',
   '### Instalar e abrir', '',
   `1. Baixe \`${win0().arquivo}\` (${mb(win0().tamanho)}) e confira o SHA-256.`,
   '2. Abra o arquivo. Se aparecer "O Windows protegeu o computador", clique em **Mais informações** e depois em **Executar assim mesmo**.',
@@ -196,10 +216,13 @@ function versoesHtml() {
   const lim = (limHtml.match(/<main>([\s\S]*?)<\/main>/) || [, ''])[1]
     .replace(/<p><a href="guia.html">Voltar ao guia<\/a><\/p>/, '').replace(/<h2>/g, '<h3>').replace(/<\/h2>/g, '</h3>');
   const lista = versoes.versoes.map((v) => {
-    const d = v.publicada && v.versao === atual.versao
-      ? Object.values(arqs).map((a) => `<li><a href="${esc(a.url)}">${esc(a.arquivo)}</a> · ${mb(a.tamanho)} · SHA-256 <code>${a.hash}</code> · ${a.assinado ? 'assinado' : 'sem assinatura digital'}</li>`).join('')
-      : '';
-    return `<article class="cartao" style="margin-bottom:16px"><h2>Versão ${esc(v.versao)} <span class="miudo">· ${esc(v.canal)} · ${dataLonga(v.data)}</span></h2><ul>${v.notas.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>${d ? `<h3>Arquivos</h3><ul>${d}</ul>` : '<p class="miudo">Sem arquivos publicados.</p>'}</article>`;
+    let d = '';
+    if (v.versao === atual.versao && (v.publicada || previa)) {
+      d = `<h3>Arquivos</h3><ul>${Object.values(arqs).map((a) => `<li><a href="${esc(a.url)}">${esc(a.arquivo)}</a> · ${mb(a.tamanho)} · SHA-256 <code>${a.hash}</code> · ${a.assinado ? 'assinado' : 'sem assinatura digital'}</li>`).join('')}</ul>`;
+    } else if (v.publicada && config.urlProjeto) {
+      d = `<p class="miudo">Arquivos e SHA-256: <a href="${esc(config.urlProjeto)}/releases/tag/v${esc(v.versao)}">página da versão ${esc(v.versao)} no GitHub</a>.</p>`;
+    }
+    return `<article class="cartao" style="margin-bottom:16px"><h2>Versão ${esc(v.versao)} <span class="miudo">· ${esc(v.canal)} · ${dataLonga(v.data)}</span></h2><ul>${v.notas.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>${d || '<p class="miudo">Sem arquivos publicados.</p>'}</article>`;
   }).join('\n');
   return `<section class="secao"><div class="largura"><h1>Versões</h1><p class="chamada">Histórico de versões e limitações conhecidas.</p>${lista}</div></section>
 <section class="secao secao-suave" id="limitacoes"><div class="largura"><h2>Limitações conhecidas da versão ${esc(atual.versao)}</h2>${lim}</div></section>`;
@@ -213,6 +236,10 @@ const tokens = {
   URL_SHA256SUMS: win.urlSums,
   ASSINATURA_WIN11: win.assinado ? 'Assinado' : 'Ainda não assinado (veja o aviso abaixo)',
   REQUISITOS_WIN11: versoes.plataformas.find((p) => p.id === 'windows11-x64').requisitos.map((r) => `<li>${esc(r)}</li>`).join(''),
+  REQUISITOS_IA: (versoes.plataformas.find((p) => p.id === 'windows11-x64').ia || []).map((r) => `<li>${esc(r)}</li>`).join(''),
+  AVISO_TESTE: previa
+    ? `<strong>Prévia local da versão de testes ${esc(atual.versao)}</strong> — ainda não publicada; a versão pública continua sendo a anterior.`
+    : `<strong>${esc(atual.canal)} ${esc(atual.versao)}</strong> — disponível somente para Windows 11 de 64 bits.`,
   TABELA_PLATAFORMAS: plataformasHtml,
   LINK_PROJETO: config.urlProjeto ? `<li><a href="${esc(config.urlProjeto)}">Código-fonte e relatos de problemas</a></li>` : '',
   CANAL_CONTATO: config.urlProjeto ? `Abra um relato na <a href="${esc(config.urlProjeto)}/issues">página do projeto</a>.` : 'O canal público de relatos será publicado junto com o site.',

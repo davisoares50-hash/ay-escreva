@@ -1,0 +1,31 @@
+# Ferramentas da faixa com diálogo: na bateria, cada uma roda num aplicativo próprio (fase 12b, testar_ferramentas_isoladas.ps1)
+# porque alguns diálogos do motor caem com entrada simulada (RESULTADOS §9). Um comando por linha.
+.uno:InsertSection
+.uno:InsertFrame
+.uno:TitlePageDialog
+design:.uno:PageDialog
+design:.uno:PageDialog:bordas
+layout:.uno:PageDialog
+.uno:LineNumberingDialog
+.uno:Watermark
+.uno:FootnoteDialog
+.uno:InsertIndexesEntry
+.uno:ProtectTraceChangeMode
+.uno:AcceptTrackedChanges
+.uno:SplitCell
+.uno:AutoFormat
+.uno:SortDialog
+.uno:TableDialog
+.uno:CompressGraphic
+.uno:InsertCaptionDialog
+.uno:GraphicDialog
+.uno:TransformDialog
+.uno:FormatArea
+.uno:SetDocumentProperties
+.uno:FontDialog
+.uno:ParagraphDialog
+.uno:SetOutline
+.uno:SearchDialog
+.uno:LineSpacing
+.uno:InsertObjectChart
+.uno:SetOptimalColumnWidth

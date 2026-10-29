@@ -701,7 +701,7 @@ class Comandos(unohelper.Base, XDispatchProvider, XDispatch, XInitialization, XS
     ACOES = ('PaginaEmBranco', 'Recuperacao', 'Guia', 'Atalhos', 'Limitacoes', 'Diagnostico', 'DetalhesFontes',
              'Assistente', 'VerificarDocumento', 'CorrecaoAutomatica', 'NaoCorrigir',
              'FormatarTrabalho', 'Conformidade', 'Galeria', 'SalvarModelo', 'RevisaoIA', 'GerenciarIA',
-             'ConferirReferencias', 'ConferirConsistencia', 'VerificarAtualizacoes')
+             'ConferirReferencias', 'ConferirConsistencia', 'VerificarAtualizacoes', 'ExibicaoPaginas')
 
     def __init__(self, ctx, *args):
         self.ctx = ctx
@@ -745,14 +745,24 @@ class Comandos(unohelper.Base, XDispatchProvider, XDispatch, XInitialization, XS
             nome, args_url = self._acao(url)
             if nome == 'NaoCorrigir':
                 return self._NaoCorrigir(args_url)
+            if nome == 'ExibicaoPaginas':
+                return self._ExibicaoPaginas(args_url)
             getattr(self, '_' + nome)()
         except Exception:
             _log('comando ' + url.Complete + ': ' + traceback.format_exc())
             _mensagem(self.ctx, self.frame, 'AY ESCREVA', 'Não foi possível executar este comando. Detalhes foram gravados em ayescreva-extensao.log na pasta temporária.', 'aviso')
 
-    def _executar(self, cmd):
+    def _executar(self, cmd, args=()):
         desp = _servico(self.ctx, 'com.sun.star.frame.DispatchHelper')
-        desp.executeDispatch(self.frame, cmd, '', 0, ())
+        desp.executeDispatch(self.frame, cmd, '', 0, args)
+
+    def _ExibicaoPaginas(self, args):
+        """Uma página (colunas=1), várias páginas (colunas=0, automático) ou exibição de livro (colunas=2&livro=1): o
+        mesmo comando do controle de leiaute da barra de status. Os comandos .uno:ShowSinglePage, ShowTwoPages e
+        ShowBookview, ligados antes a estes botões, ficam desabilitados no editor de texto (conferido em 22/10/2026)."""
+        colunas = int(args.get('colunas', '1'))
+        livro = args.get('livro', '0') == '1'
+        self._executar('.uno:ViewLayout', _props(**{'ViewLayout.Columns': uno.Any('short', colunas), 'ViewLayout.BookMode': livro}))
 
     def _PaginaEmBranco(self):
         # Página vazia no ponto do cursor: quebra, parágrafo vazio, quebra; o cursor fica na página nova

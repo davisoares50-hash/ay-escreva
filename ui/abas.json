@@ -1544,21 +1544,30 @@
             },
             {
               "funcao": "Uma página",
-              "comando": ".uno:ShowSinglePage",
+              "comando": null,
+              "comandoAY": "ayescreva:ExibicaoPaginas?colunas=1&livro=0",
+              "icone": "cmd/lc_showsinglepage.png",
               "prioridade": "P1",
-              "criterio": "Uma página por linha"
+              "criterio": "Uma página por linha",
+              "lacuna": "Até 22/10/2026 o botão usava .uno:ShowSinglePage, que fica desabilitado no editor de texto; agora a extensão AY chama .uno:ViewLayout (o controle da barra de status)."
             },
             {
               "funcao": "Várias páginas",
-              "comando": ".uno:ShowTwoPages",
+              "comando": null,
+              "comandoAY": "ayescreva:ExibicaoPaginas?colunas=0&livro=0",
+              "icone": "cmd/lc_showmultiplepages.png",
               "prioridade": "P1",
-              "criterio": "Páginas lado a lado"
+              "criterio": "Páginas lado a lado",
+              "lacuna": "Até 22/10/2026 o botão usava .uno:ShowTwoPages, desabilitado no editor de texto; agora .uno:ViewLayout pela extensão AY."
             },
             {
               "funcao": "Exibição de livro",
-              "comando": ".uno:ShowBookview",
+              "comando": null,
+              "comandoAY": "ayescreva:ExibicaoPaginas?colunas=2&livro=1",
+              "icone": "cmd/lc_showbookview.png",
               "prioridade": "P2",
-              "criterio": "Páginas espelhadas"
+              "criterio": "Páginas espelhadas",
+              "lacuna": "Até 22/10/2026 o botão usava .uno:ShowBookview, desabilitado no editor de texto; agora .uno:ViewLayout pela extensão AY."
             }
           ]
         },

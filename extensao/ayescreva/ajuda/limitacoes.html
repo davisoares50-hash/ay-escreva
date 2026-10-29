@@ -41,6 +41,13 @@ h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:32px}li{
 <li>Em janelas estreitas, os grupos da faixa de opções não se recolhem automaticamente: alguns botões ficam fora da área visível.</li>
 </ul>
 
+<h2>Ferramentas com comportamento diferente do esperado</h2>
+<ul>
+<li><strong>Marca-d'água</strong> (Design): é aplicada e mantida ao salvar em ODT e DOCX, mas o <kbd>Ctrl+Z</kbd> não a remove. Para tirar, abra Marca-d'água de novo e apague o texto.</li>
+<li><strong>Gráfico</strong> (Inserir): o gráfico abre em modo de edição; enquanto ele estiver em edição, o <kbd>Ctrl+Z</kbd> vale para o gráfico. Tecle Esc duas vezes (ou clique no texto) e então o <kbd>Ctrl+Z</kbd> remove o gráfico inserido.</li>
+<li>Ao salvar em DOCX, uma imagem ancorada "na página" ou "no parágrafo" volta presa a um caractere (a posição na página é mantida), e o espelhamento vertical de imagem pode não voltar.</li>
+</ul>
+
 <h2>Revisão de texto</h2>
 <ul>
 <li>A correção automática só troca palavras de uma tabela de casos inequívocos (cerca de 88 mil, quase todas acentuação). Formas flexionadas que não estão na tabela, como "estao", ficam só sublinhadas.</li>
@@ -88,12 +95,14 @@ h2{border-bottom:3px solid var(--amarelo);padding-bottom:4px;margin-top:32px}li{
 
 <h2>Falha conhecida do motor</h2>
 <ul>
-<li>Abrir a <strong>Galeria do Fontwork</strong> (Inserir › Fontwork), fechá-la e em seguida abrir o diálogo de <strong>Link</strong> pode fechar o AY de repente. É um defeito da base (LibreOffice 26.8.1), reproduzido nos testes também sem as partes do AY. Se acontecer, ao abrir de novo o AY oferece recuperar o que não estava salvo; para evitar, salve antes ou insira o link antes de usar o Fontwork.</li>
+<li>Nos testes automáticos, o motor de documentos (LibreOffice 26.8.1) às vezes fecha o AY de repente quando um diálogo é fechado por teclas <em>simuladas</em> pelo próprio motor — com o diálogo de Link, a Galeria do Fontwork ou Propriedades, inclusive sem passar pelo Fontwork. Com o <strong>teclado de verdade</strong>, a mesma sequência (Fontwork, Esc, Link, Esc) foi repetida várias vezes sem nenhuma queda. A causa está no motor e não foi corrigida; não dá para garantir que nunca aconteça no uso normal.</li>
+<li><strong>Se o AY fechar de repente</strong>, ele tenta salvar os documentos abertos (aparece a janela “Recuperação de documentos”; tecle Enter) e, ao abrir de novo, oferece recuperá-los. <strong>A recuperação não é garantida</strong>: nos testes de queda, o salvamento de emergência às vezes falhou; nesse caso volta só a última cópia de recuperação, gravada a cada 3 minutos quando você para de digitar, e o que foi escrito depois dela se perde. Depois de uma queda, ao abrir o mesmo arquivo o AY pode avisar “Documento em uso”: a trava foi deixada pela queda; escolha abrir o documento. <strong>Salve com frequência (Ctrl+S).</strong></li>
 </ul>
 
 <h2>Acessibilidade</h2>
 <ul>
-<li>O documento, a régua, a barra lateral e a barra de status são expostos a leitores de tela. A leitura das abas e botões da faixa de opções por NVDA e Narrador <strong>ainda não foi validada</strong>.</li>
+<li>O documento, a régua, a barra lateral e a barra de status são expostos a leitores de tela, e os testes conferiram que os controles da faixa, dos painéis e dos diálogos do AY têm nome acessível. <strong>Ninguém ainda usou o AY de fato com um leitor de tela</strong> (Narrador ou NVDA) para confirmar a experiência: isso continua pendente.</li>
+<li>A tela foi testada só na escala de 100 %. Em 125 %, 150 % e 200 % ainda não houve conferência: textos podem ficar cortados ou diálogos maiores que a tela.</li>
 </ul>
 
 <h2>Automação</h2>

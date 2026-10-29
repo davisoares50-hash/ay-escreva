@@ -8,7 +8,13 @@
       <li><strong>Sem conta e sem cadastro.</strong> O aplicativo não pede nem guarda dados pessoais para funcionar.</li>
       <li><strong>Documentos locais.</strong> Ficam onde você os salvar. O aplicativo não envia conteúdo de documentos a servidores.</li>
       <li><strong>Sem telemetria e sem relatório automático de falhas.</strong> O envio de relatórios de falha do motor está desligado.</li>
-      <li><strong>Sem acesso automático à internet.</strong> Imagens e conteúdos vinculados a endereços da internet não são baixados ao abrir um documento. A verificação automática de atualizações está desligada.</li>
+      <li><strong>Sem acesso automático à internet.</strong> Imagens e conteúdos vinculados a endereços da internet não são baixados ao abrir um documento, e nada é consultado sozinho. A internet só é usada quando você pede:
+        <ul>
+          <li><strong>Ajuda › Verificar atualizações</strong>: baixa do site oficial (GitHub Pages) o arquivo de versões e a assinatura dele e, se você confirmar, o instalador (GitHub Releases). Nada sobre você ou seus documentos é enviado.</li>
+          <li><strong>Revisão › Gerenciar IA local › Baixar</strong>: baixa o motor de IA do GitHub e o modelo do Hugging Face, de endereços fixos. Nada sobre você ou seus documentos é enviado.</li>
+        </ul>
+        Como qualquer servidor, GitHub e Hugging Face recebem dados técnicos da conexão (como o endereço IP), segundo as políticas de privacidade deles; o projeto AY ESCREVA não recebe esses dados.</li>
+      <li><strong>IA local.</strong> Roda no seu computador, num programa que só aceita conexões do próprio computador e com uma senha aleatória criada a cada início. O texto que você envia à IA não sai do computador, e o programa é encerrado depois de 10 minutos sem uso ou ao fechar o AY.</li>
       <li><strong>Macros de documentos não são executadas.</strong></li>
       <li><strong>Relatório de diagnóstico</strong> (Ajuda › Relatório de diagnóstico): é um arquivo de texto criado no seu computador, sem conteúdo de documentos. Ele só sai de lá se você mesmo o enviar.</li>
       <li>O que fica no seu perfil (<code>%APPDATA%\AYEscreva</code>): preferências, lista de arquivos recentes, dicionário pessoal e cópias de recuperação.</li>

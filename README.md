@@ -7,9 +7,12 @@ identidade própria. Sem mensalidade, sem conta, offline e com documentos locais
 Versão de testes local mais recente, ainda não publicada: **0.7.0**, que reúne tudo o que veio depois da 0.2.0 —
 revisão de texto e painel **Assistente AY** (0.3.0), formatação de trabalhos acadêmicos e galeria de modelos (0.4.0), IA
 local opcional (0.5.0), revisão do documento inteiro, referências, títulos, explicações e inconsistências (entrega D) e
-**Verificar atualizações** (entrega E). Instalador: `out\instalador\AYEscreva-0.7.0-teste-windows11-x64.exe` (209 MB,
-SHA-256 `a4d4653b8cd994f7e20216773085df2f4703cff4c960ab313f4c06b7535bf14d`), gerado por `scripts\instalador.ps1`. O modelo de IA não vem no instalador: o download (3,1 GB) é
-opcional e feito pelo próprio AY. Situação de cada item do projeto: [docs/SITUACAO.md](docs/SITUACAO.md). Windows 10, Windows em ARM, macOS e Linux
+**Verificar atualizações** (entrega E). Instalador: `out\instalador\AYEscreva-0.7.0-teste-windows11-x64.exe` (208 MB,
+SHA-256 `3c84f90a4a674eb53a688c1ad7a90b8e13aef47a6e9b5e8555b4826b07a26f95`, de 22/10/2026), gerado por `scripts\instalador.ps1`. O modelo de IA não vem no instalador: o download (cerca de 3,4 GB; o
+Windows mostra 3,1 GB) é opcional e feito pelo próprio AY. O pacote de publicação da 0.7.0 (notas, SHA256SUMS, arquivo de
+versões assinado, site) está pronto em `out\` e **não foi publicado** ([docs/ATUALIZACOES.md](docs/ATUALIZACOES.md)).
+Situação de cada item do projeto: [docs/SITUACAO.md](docs/SITUACAO.md). Testes manuais pendentes (escalas de tela e
+leitor de tela): [docs/TESTES-MANUAIS.md](docs/TESTES-MANUAIS.md). Windows 10, Windows em ARM, macOS e Linux
 estão em desenvolvimento. Veja
 [docs/PLANO.md](docs/PLANO.md) e, sobre revisão e IA, [docs/REVISAO-E-IA.md](docs/REVISAO-E-IA.md).
 
@@ -116,11 +119,16 @@ Site oficial e publicação de versões: [docs/SITE.md](docs/SITE.md).
 | Aceite (várias páginas, formatação, tabela, imagem, salvar/fechar/reabrir ODT e DOCX, PDF e PDF/UA) | 40/40 |
 | Instalador: instalar, abrir, usar com o motor instalado, desinstalar, perfil do LibreOffice intacto | 0.2.0: 18/18 · 0.3.0: 19/19 · 0.4.0: 19/19 · 0.5.0: 19/19 |
 | Atualizar 0.2.0/0.3.0 → 0.4.0 e 0.2.0/0.4.0 → 0.5.0: preferências (dicionário pessoal, unidade, "não corrigir") e documentos preservados; IA continua sem modelo; desinstalar mantém perfil e documentos | 14/14 · 14/14 |
-| Faixa de opções testada pela interface (de dentro do aplicativo; 11 abas + Tabela e Imagem; 10 fases, 0.7.0) | 222/222 botões presentes; 160 acionados; 135/136 efeitos conferidos; 0 quedas |
+| Faixa de opções testada pela interface (de dentro do aplicativo; 11 abas + contextuais; 12 fases, 0.7.0, 22/10/2026) | 222/222 botões presentes; 200 acionados; 127 funções validadas pelo efeito (122 na bateria + 5 num complemento das fases 12/12b); 223/236 efeitos conferidos na bateria (os 13 restantes: §4 de RESULTADOS-TESTES) |
+| Ferramentas da faixa pelo **efeito real**, com desfazer/refazer e salvar/reabrir em ODT e DOCX (fases 12 e 12b) | 92/93 validadas (a que falta: Ctrl+Z não remove a marca-d'água); 2 com queda do motor por entrada simulada; detalhes por ferramenta em [docs/VALIDACAO-FERRAMENTAS.md](docs/VALIDACAO-FERRAMENTAS.md) |
+| Queda do motor (investigação de 22/10): teclas simuladas pelo motor × teclado real | simuladas: quedas frequentes, até sem Fontwork; robô que só aperta: 0/6; teclado real: 0 quedas em 11 execuções (§9) |
+| Recuperação depois de queda provocada, com o AY aberto como uma pessoa abre | texto não salvo voltou em 3 de 4; não há garantia (§9) |
+| Teclado real: F6 até as abas, setas entre abas, Esc fechando 8 diálogos com o foco de volta ao texto | confirmados; Tab dentro da aba, ordem em 5 diálogos e foco visível: conferência manual (§14) |
 | Entrega D (0.7.0): referências e consistência por regras · com o modelo real · pela interface | 21/21 · 12/12 · 12/12 |
-| Entrega E (0.7.0): assinatura e conferências · documentos não salvos bloqueiam · atualização pelo próprio AY de ponta a ponta · pela interface | 16/16 · 2/2 · 8/8 · 4/4 |
+| Entrega E (0.7.0): assinatura e conferências · documentos não salvos bloqueiam · atualização pelo próprio AY de ponta a ponta · pela interface | 17/17 · 2/2 · 8/8 · 4/4 |
+| Segurança da distribuição: chave privada ausente do repositório, histórico, dist, out, site, testes, registros e instalação; só a chave pública no AY | 0 ocorrências (com controle positivo); §13 |
 | Download do modelo: real pela interface (3,4 GB, cancelar e continuar) · com falhas simuladas | 11/11 · 13/13 |
-| Escala de tela em uso (100 %) · Narrador recebe os nomes dos controles | 8/8 · 5/5 |
+| Escala de tela em uso (100 %) · Narrador recebe os nomes dos controles | 8/8 · 5/5 (125/150/200 % e uso real com leitor de tela: pendentes, [docs/TESTES-MANUAIS.md](docs/TESTES-MANUAIS.md)) |
 | IA local (0.5.0): partes sem modelo · no editor com motor e modelo reais (chave, rede, desfazer, cancelar, queda) · pela interface (teclado, aceitar/rejeitar, Ctrl+Z, Gerenciar IA local) | 10/10 · 21/21 · 18/18 |
 | Escolha do modelo: 12 casos em pt-BR, tempo, memória e cancelamento (Qwen3 4B, Gemma 4 E2B, Gemma 4 E4B) | Gemma 4 E2B 12/12, ~3,3 s por pedido curto, 2,6 GB |
 | Formatar trabalho acadêmico (0.4.0): formatar → desfazer → refazer → salvar DOCX/ODT → reabrir → PDF → imprimir, numa cópia · pela interface (teclado, prévia, relatório, original intacto, Ctrl+Z/Ctrl+Y, galeria) | 38/38 · 18/18 |

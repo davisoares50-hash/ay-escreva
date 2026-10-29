@@ -110,6 +110,15 @@ $reg = Get-ItemProperty $ChaveDesinst -ErrorAction SilentlyContinue
 Verificar 'registro de desinstalação' ($null -ne $reg) "$($reg.DisplayName) | versão $($reg.DisplayVersion)"
 $ow = Get-Item 'HKCU:\Software\Classes\.docx\OpenWithProgids' -ErrorAction SilentlyContinue
 Verificar '"Abrir com" oferece o AY ESCREVA para .docx' ($ow -and ($ow.GetValueNames() -contains 'AYEscreva.Documento'))
+# Só material público de assinatura: a chave privada das atualizações não pode estar em nenhum arquivo instalado
+# (o roteiro procura o conteúdo dela sem exibi-lo; ver docs/ATUALIZACOES.md)
+$codificacao0 = [Console]::OutputEncoding
+[Console]::OutputEncoding = [Text.Encoding]::UTF8
+$busca = & (Join-Path $PastaApp 'program\python.exe') (Join-Path $Raiz 'tests\seguranca\procurar_chave_privada.py') "instalação=$PastaApp" 2>&1 | ForEach-Object { "$_" } | Where-Object { $_ -notmatch 'platform independent' }
+$codigoBusca = $LASTEXITCODE
+[Console]::OutputEncoding = $codificacao0
+$chavePublica = Select-String -Path (Join-Path $extInst 'pythonpath\ay_atualizacao.py') -Pattern "CHAVE_PUBLICA = bytes.fromhex\('([0-9a-f]{64})'\)" | ForEach-Object { $_.Matches[0].Groups[1].Value }
+Verificar 'instalação sem a chave privada de assinatura; só a chave pública vai no aplicativo' ($codigoBusca -eq 0 -and $chavePublica) (($busca | Select-Object -Last 2) -join ' | ')
 
 # ---------------------------------------------------------------------------
 Write-Host "`n== Abertura pela interface"

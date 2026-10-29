@@ -131,18 +131,26 @@ trecho → pedir → original × sugestão com conferência de preservação →
 desfazer) ou rejeitar; download do modelo opcional e informado; servidor local fechado (127.0.0.1, chave, offline).
 Resultados em [RESULTADOS-TESTES.md](RESULTADOS-TESTES.md) §5.5; decisões em [REVISAO-E-IA.md](REVISAO-E-IA.md) §5.
 
-**Próxima: entrega D (0.6.0)** — análise de documentos longos, referências estruturadas, mais pedidos de IA
-(títulos, explicar, inconsistências). Continuam previstos em paralelo: clique automatizado nas abas Forma e Visualizar impressão; validação com
-NVDA e Narrador; recolhimento dos grupos em janelas estreitas; teste em Windows 10 limpo.
+**0.7.0 — entregas D e E + estabilização (22/10/2026): pronta como versão de testes local, aguardando avaliação.**
+Investigação da queda do motor (ligada a entrada simulada pelos testes; recuperação medida e sem promessa de
+recuperação integral), validação das ferramentas da faixa pelo efeito real com desfazer/refazer e ODT/DOCX, correção
+dos botões Uma página, Várias páginas e Exibição de livro, revisão de segurança da chave das atualizações, site e
+pacote de publicação preparados (não publicados). Resultados em [RESULTADOS-TESTES.md](RESULTADOS-TESTES.md) §9, §13 e
+§14 e em [VALIDACAO-FERRAMENTAS.md](VALIDACAO-FERRAMENTAS.md).
+
+**Próximos passos (antes de novas funções):** testes manuais em 125 %, 150 % e 200 % e com leitor de tela
+([TESTES-MANUAIS.md](TESTES-MANUAIS.md)); rodar o teste de teclado real com a sessão desbloqueada; conferir à mão
+Espaçamento entre linhas e Bordas de página (o teste automático derruba o motor nelas); avaliação da 0.7.0 e decisão
+de publicar. Continuam previstos: recolhimento dos grupos em janelas estreitas; teste em Windows 10 limpo.
 
 Ainda pendente depois disso (resumo das etapas acima):
 
 | Área | Pendente |
 |---|---|
-| Funções sem comando (fora da faixa) | marca-texto, borracha, pressão da caneta, revisão gramatical avançada offline, modo de leitura, verificar atualizações |
+| Funções sem comando (fora da faixa) | marca-texto, borracha, pressão da caneta, revisão gramatical avançada offline, modo de leitura |
 | Plataformas | Windows 10, Windows em ARM, macOS, Linux — nenhuma testada; o site as mostra como "Em desenvolvimento" |
 | Distribuição | assinatura de código do instalador; MSI corporativo; domínio próprio (opcional) |
-| Acessibilidade | leitores de tela, só teclado, escalas 125–200 %, temas |
+| Acessibilidade | uso real com leitores de tela, teclado real na faixa e nos diálogos (teste pronto), escalas 125–200 % (instruções prontas), temas |
 | Compatibilidade | página em branco automática (I1), refluxo de colunas em DOCX (I3), corpus real maior |
 | Motor (Nível 2) | ícone e AppUserModelID próprios; correção da queda com automação UNO externa |
 

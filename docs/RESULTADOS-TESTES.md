@@ -1,11 +1,11 @@
 # Resultados dos testes — versão 0.7.0 (versão de testes local, em avaliação) · versão pública: 0.2.0
 
-Execução da 0.7.0: 21/10/2026 · `scripts/testar.ps1 -ComInterface` (20 etapas) + `tests/interface/testar_faixa.ps1` (11 fases)
-+ instalação, atualização de versões anteriores e atualização de ponta a ponta pelo próprio AY. Na bateria, todas as
-etapas sem interface passaram; a etapa de interface caiu na fase 1 por um defeito do motor isolado depois (§9: Galeria do
-Fontwork → Link); com a Fontwork acionada por último na fase 1 e a sequência que derruba o motor testada à parte (fase 11,
-FALHA CONHECIDA), a interface foi executada de novo por inteiro. Resultados da 0.3.0 à 0.5.0 ficam indicados onde ainda
-servem de comparação; a publicação (§10) e o fluxo do site referem-se à 0.2.0, a versão pública.
+Execução da 0.7.0: 21/10/2026 (bateria completa) e **22/10/2026** (estabilização: investigação da queda do motor e
+recuperação, §9; ferramentas pelo efeito real, §4.1; teclado real, §14; segurança da distribuição, §13; bateria da
+interface de novo por inteiro, 12 fases; instalação e atualização com o instalador final). A queda antes atribuída a
+"Galeria do Fontwork → Link" aparece com entrada **simulada** pelo motor, inclusive sem Fontwork, e não se repetiu com o
+teclado real (§9). Resultados da 0.3.0 à 0.5.0 ficam indicados onde ainda servem de comparação; a publicação (§10) e o
+fluxo do site referem-se à 0.2.0, a versão pública.
 Ambiente: Windows 11 Pro 10.0.26200 x64, Intel Core i5-8500, 16 GB · Motor: LibreOffice 26.8.1.1 (binários oficiais)
 Oráculo independente: Microsoft Word 16.0 (instalado na máquina, usado só via automação COM com macros desativadas)
 
@@ -56,11 +56,14 @@ O mesmo teste roda com o motor **instalado** pelo instalador (§3).
 
 ## 3. Instalador e instalação — `tests/instalacao/testar_instalacao.ps1`
 
-**0.7.0 (local, 21/10/2026): 19/19** — `out\instalador\AYEscreva-0.7.0-teste-windows11-x64.exe` · 209 MB (218.778.245 bytes) ·
-SHA-256 `a4d4653b8cd994f7e20216773085df2f4703cff4c960ab313f4c06b7535bf14d` · sem assinatura digital do Windows. Mesmas verificações; a extensão instalada traz as entregas D e E
-(versão 0.7.0), sem modelo de IA.
+**0.7.0 final (local, 22/10/2026): 20/20** — `out\instalador\AYEscreva-0.7.0-teste-windows11-x64.exe` · 208 MB
+(218.457.871 bytes) · SHA-256 `3c84f90a4a674eb53a688c1ad7a90b8e13aef47a6e9b5e8555b4826b07a26f95` · sem assinatura digital do
+Windows. As verificações de antes e uma nova: a pasta instalada (13.960 arquivos, 847 MB) não contém a chave privada de
+assinatura (procurada sem exibi-la) e o AY leva só a chave pública (§13). Instalado: 808 MB. (Instalador de 21/10,
+substituído: 19/19, SHA-256 `a4d4653b…bf14d`.)
 
-**Atualização para a 0.7.0 — `tests/instalacao/testar_atualizacao.ps1`: 14/14**, a partir da 0.2.0 (pública) e da 0.5.0.
+**Atualização para a 0.7.0 final — `tests/instalacao/testar_atualizacao.ps1`: 14/14**, a partir da 0.2.0 (pública) e da
+0.5.0 (22/10/2026).
 
 | Verificação | Resultado |
 |---|---|
@@ -176,16 +179,47 @@ testes de interface do LibreOffice), numa extensão de testes instalada só em p
 clicado na faixa; o teste confere qual comando o botão disparou e, nas funções principais, o efeito no documento.
 Diálogos e listas abertos pelos botões são registrados e fechados.
 
-| Medida | Resultado |
+| Medida | Resultado (0.7.0, bateria de 22/10/2026, 13:44–14:45) |
 |---|---|
-| Funções com botão nas 11 abas e nas contextuais Tabela e Imagem (as testadas) | 222 |
+| Funções com botão nas 11 abas e nas contextuais | 227 |
 | Botão presente na aba certa | 222/222 |
-| Acionadas pelo clique (comando disparado conferido; diálogo ou lista registrado e fechado) | 160 |
-| Validadas pelo efeito no documento ou na exibição | 35 |
-| Efeitos conferidos nas 11 fases (inclui IA local, entregas D e E, escala) | 135/136: 0 falha(s) e 1 FALHA CONHECIDA da base (§9) |
+| Acionadas pelo clique (comando disparado conferido; diálogo ou lista registrado e fechado) | 200 |
+| Validadas pelo efeito no documento ou na exibição | 122 na bateria + 5 no complemento das fases 12/12b = 127 (eram 35 na bateria de 21/10) |
+| Efeitos conferidos nas 12 fases | 223/236 — os 13 restantes: 10 da avaliação de teclado real (a leitura do foco do teste ainda não funcionava; corrigida depois, resultados no §14), Marca-d'água (Ctrl+Z não a remove) e 2 quedas do motor com entrada simulada (Bordas de página, Espaçamento entre linhas) |
 | Diálogos e listas abertos pelos botões e fechados pelo teste | 52 |
-| Erros do teste · quedas do motor · conexões de rede para fora do computador | 1 · 1 (a da fase 11, esperada) · 1 (a consulta pedida ao site oficial em "Verificar agora") |
-| Duração | fase 1: 17:42:32–17:49:16; fase 2: 17:49:30–17:49:48; fase 3: 17:50:04–17:50:20; fase 4: 17:50:34–17:50:54; fase 5: 17:51:08–17:52:58; fase 6: 17:53:11–18:00:58; fase 7: 18:01:13–18:01:29; fase 8: 18:01:44–18:02:38; fase 9: 18:02:51–18:05:29; fase 10: 18:05:50–18:07:07; fase 11: 18:07:15–18:07:54 (0.7.0, 21/10/2026) |
+| Erros do teste · quedas do motor · conexões de rede para fora do computador | 0 · 2 (as das ferramentas isoladas acima) · 1 (a consulta pedida ao site oficial em "Verificar agora") |
+
+### 4.1 Ferramentas pelo efeito real — fases 12 e 12b
+
+Para cada ferramenta (`tests/interface/extensao_testes/pythonpath/testes_ferramentas.py`): o documento é limpo e
+preparado; o teste **clica no botão da faixa**; quando abre um diálogo, preenche os campos pelos controles do próprio
+diálogo e **confirma com Enter do teclado de verdade** (o clique simulado no OK às vezes derruba o motor, §9); confere
+o **efeito** no documento pela API do motor; **Ctrl+Z** (o mesmo comando do teclado) tem de voltar ao estado anterior e
+**refazer**, ao efeito; por fim salva o documento em **ODT e DOCX**, reabre cada arquivo e confere o efeito nele. As
+ferramentas com diálogo rodam cada uma num aplicativo próprio (fase 12b, `testar_ferramentas_isoladas.ps1`): uma queda
+fica registrada só naquela ferramenta, com o código de saída do motor (queda × tempo esgotado). Resultado individual,
+com as limitações por formato: [VALIDACAO-FERRAMENTAS.md](VALIDACAO-FERRAMENTAS.md).
+
+- **92 de 93 ferramentas validadas** (efeito, desfazer/refazer e ODT), somando um complemento das fases 12/12b às 15:28–15:32
+  (casos de página separados em aplicativos próprios; Marcas de formatação e Layout de impressão na aba Exibir; Verificar
+  acessibilidade). Prioridades do pedido: formatação (cor, tamanho
+  pelo diálogo Caractere, espaçamento entre parágrafos, recuos), estilos (painel), listas (marcadores, numeração, lista
+  multinível), tabelas (inserir/excluir linhas e colunas, mesclar, dividir, ajustar largura, sombreamento, estilos,
+  classificar, propriedades, excluir), imagens (girar, espelhar, âncora, quebra de texto, alinhar, compactar, legenda,
+  propriedades), margens e página (estilo de página, cor da página), seções, quadro, capa, numeração de linhas, notas,
+  sumário e índices, campos, comentários e controle de alterações (aceitar, rejeitar, aceitar/rejeitar todas,
+  próxima/anterior, mostrar, proteger com senha de teste, gerenciar).
+- **Achados reais:** Ctrl+Z não remove a marca-d'água (o motor não registra desfazer para ela); com o gráfico ainda em
+  edição, o Ctrl+Z vale para o gráfico (fora da edição, remove-o); os botões **Uma página, Várias páginas e Exibição de
+  livro** usavam comandos que ficam **desabilitados** no editor e não faziam nada — **corrigidos** (agora chamam o
+  leiaute da exibição, como a barra de status, e foram validados).
+- **Limitações do DOCX** (registradas, não escondidas): imagem ancorada na página ou no parágrafo volta presa a um
+  caractere; espelhamento vertical de imagem não volta ao reabrir; quadros voltam como caixas de texto (contados como tal).
+- **Sem conferência automática** (motivo na matriz): ferramentas de desenho com o mouse (caneta, linha, curva, formas,
+  girar, recortar), pincel de formatação, mala direta (exige fonte de dados), assinatura digital (exige certificado),
+  modo de segurança e tema; as listas suspensas de margens, tamanho do papel e bordas de tabela ainda não têm caso de
+  teste. **Espaçamento entre linhas** e **Bordas de página**: o teste automático derruba o motor ao escolher o valor
+  (entrada simulada); conferência manual pendente.
 
 Efeitos conferidos (amostra): Negrito, Itálico, Sublinhado, Tachado, Sobrescrito, Subscrito, Aumentar fonte, Diminuir fonte, Limpar formatação, Centralizar, Alinhar à direita, Justificar, Alinhar à esquerda, Aumentar recuo, Diminuir recuo, Marcadores, Numeração, Marcas de formatação, Quebra de página, Página em branco, Comentário, Nota de rodapé, Nota de fim, Controlar alterações, Régua, Página inteira, 100%, Largura da página, Guia de utilização do AY, Atalhos de teclado, Limitações conhecidas, Recuperação de documentos, Relatório de diagnóstico, Aba contextual Tabela, Inserir linha abaixo, Aba contextual Imagem, Salvar, Aviso de substituição de fontes, Aviso de perdas ao salvar em DOCX, Aviso de formato ao fechar e salvar DOCX. As 62 funções não acionadas genericamente ficam de fora de propósito (fechar, abrir, salvar como, recortar/colar, tela inteira, mala direta, aceitar/rejeitar tudo etc.) ou são listas suspensas; elas aparecem como "não validado" na matriz.
 
@@ -200,8 +234,10 @@ histórico dele), relatório, Ctrl+Z e Ctrl+Y na cópia, modelo da instituição
 "Salvar como modelo", com capturas `tests/output/interface/dialogo-*.png`; (9) IA local (0.5.0): painel sem modelo e
 com o modelo — pedido pelo teclado, digitação durante a análise, aceitar como alteração controlada, Ctrl+Z, rejeitar,
 trecho alterado durante a análise, cancelar, servidor só em 127.0.0.1 — e "Gerenciar IA local" (§5.5). Todas as fases
-são de uma única execução; (10) entrega D com o modelo; (11) a sequência do defeito do motor (FALHA CONHECIDA).
+são de uma única execução; (10) entrega D com o modelo.
 Na fase 1, a Fontwork é acionada depois dos outros botões (antes ela vinha logo antes do Link e derrubava o motor).
+(11) Galeria do Fontwork e Link com o teclado real e a avaliação de teclado (§14); (12) e (12b) ferramentas pelo efeito
+real (§4.1).
 
 Limites deste teste: as abas contextuais **Forma** e **Visualizar impressão** foram conferidas só visualmente
 (capturas em `tests/output/interface/abas/`), sem clique automatizado. Nos comandos de Ajuda que abrem uma página
@@ -780,7 +816,9 @@ download conferido), fecha, instala a AYEscreva-0.7.0-teste-windows11-x64.exe po
 |---|---|
 | Versão anterior instalada | OK — código 0; 0.5.0 |
 | Preferências gravadas no perfil (dicionário pessoal, unidade de medida) | OK — {"modo":"gravar","nao_corrigir":true,"dicionario":true,"unidade_mm":true,"lista_nao_corrigir":["nao"],"comandos_entrega_b":true,"comandos_entrega_c":true,"ia_sem_modelo":true,"versao_extensao":"0.5.0"} |
-| O AY fecha sozinho ao instalar (depois de conferir que não há documentos com alterações) | OK — atualização: roteiro E:\AY\tests\output\atualizacao-pelo-ay\atualizacoes\instalar-atualizacao.cmd roteiro E:\AY\tests\output\atualizacao-pelo-ay\atualizacoes\instalar-atualizacao.cmd  |
+| O AY fecha sozinho ao instalar (depois de conferir que não há documentos com alterações) | OK — atualização: roteiro E:\AY\tests\output\atualizacao-pelo-ay\atualizacoes\instalar-atualizacao.cmd
+ roteiro E:\AY\tests\output\atualizacao-pelo-ay\atualizacoes\instalar-atualizacao.cmd
+  |
 | A versão nova é instalada por cima (0.7.0) | OK — registro 0.7.0; extensão 0.7.0; 103 s |
 | Depois de instalar, o AY abre de novo sozinho | OK — pid 6412 |
 | Preferências preservadas e recursos novos registrados | OK — {"modo":"conferir","dicionario":true,"unidade_mm":true,"lista_nao_corrigir":["nao"],"comandos_entrega_b":true,"comandos_entrega_c":true,"ia_sem_modelo":true,"versao_extensao":"0.7.0"} |
@@ -846,28 +884,76 @@ atender) e uma vez na bateria completa (fase 4, edição feita pela thread do te
 - nos testes, todo acesso ao documento passou a ser feito na thread principal (`no_principal`), e o executor da
   bateria desiste de uma fase assim que o motor dela termina, em vez de esperar o tempo-limite.
 
-**Achado da 0.7.0 — queda do motor: Galeria do Fontwork e depois Link (defeito da base, reproduzível).**
-Na bateria da 0.7.0, a fase 1 da interface caiu ou travou na aba Inserir em duas execuções seguidas (e uma vez na
-0.5.0). Com cada comando registrado, a queda veio logo depois de Gráfico → Fontwork → Link. Isolado com passos de
-diagnóstico (`testar_faixa.ps1 -Somente seq_…`, 21/10/2026):
+**Achado da 0.7.0 — queda do motor ao fechar diálogos com teclas simuladas** (antes descrita como "Galeria do
+Fontwork e depois Link"). Na bateria de 21/10/2026, a fase 1 caiu depois de Gráfico → Fontwork → Link, e a sequência
+Fontwork → Link caiu 3 em 3 vezes, também sem a extensão do AY. Em 22/10/2026 a investigação continuou com passos de
+diagnóstico (`tests/interface/extensao_testes/pythonpath/testes_diagnostico.py`, `testar_faixa.ps1 -Somente diag_…`),
+cada um num aplicativo novo. A queda foi identificada pelo código de saída do processo (`C0000409`, encerramento
+forçado em `ucrtbase.dll`): o Windows deixa de registrar no log de eventos quedas repetidas com a mesma assinatura.
 
-| Sequência pela faixa | Quedas |
-|---|---|
-| Galeria do Fontwork (fechada com Esc, como uma pessoa) → Link | 3 em 3 |
-| Galeria do Fontwork (acionada de novo, como o teste fazia) → Link | 3 em 3 |
-| a mesma, **sem a extensão do AY** na montagem | 2 em 2 |
-| a mesma, com a faixa da 0.5.0 | 2 em 2 |
-| Gráfico → Fontwork → Link | 0 em 3 |
-| Gráfico → Link | 0 em 3 |
+| Sequência (cada janela aberta por comando ou pela faixa) | Como as janelas foram fechadas | Execuções | Quedas |
+|---|---|---|---|
+| Galeria do Fontwork → Link | robô de teclas do motor (Esc simulado) | 9 | 3 — todas **ao fechar a galeria**, antes de abrir o Link |
+| Galeria do Fontwork → 10 s → Link | robô | 2 | 1 (ao fechar o Link) |
+| Galeria do Fontwork 5 vezes → Propriedades | Esc simulado / botão Cancelar pelo UITest / Enter simulado (insere) | 2 / 2 / 1 | 1 / 1 / 1 |
+| Galeria do Fontwork → Inserir tabela → Propriedades; Fontwork → Fontwork; Fontwork inserido → Link | robô | 1 cada | 0 |
+| **Sem abrir a Galeria do Fontwork** (estilos lidos pela API) → Propriedades → Link → Propriedades | robô | 1 | 1 (ao fechar o Link) |
+| **Sem Fontwork**: Link → Propriedades → Link | robô | 4 | 2 |
+| Teste de recuperação (abaixo): Link aberto e fechado até cair | robô | 4 | 4 |
+| Fontwork → Esc → Ctrl+K (Link) → Esc → Propriedades → Esc | **teclado real do Windows** | 4 | **0** |
+| Pela faixa: Fontwork → Esc → Link → Esc, duas vezes seguidas | **teclado real** | 4 | **0** |
+| Ctrl+K → Esc → Propriedades → Esc → Ctrl+K → Esc | **teclado real** | 1 | **0** |
 
-A queda (`soffice.bin`, `ucrtbase.dll`, exceção 0xc0000409 — encerramento forçado) acontece também sem a extensão
-do AY: é do motor LibreOffice 26.8.1.1. Não foi possível dizer por que as baterias da 0.4.0 e da 0.5.0 passaram pela
-mesma sequência (lá, o gráfico vinha logo antes, como na linha que não cai). O teste não foi alterado para evitá-la:
-a fase 1 continua acionando todos os botões, e uma queda vira falha registrada (as demais fases seguem). A
-recuperação de documentos após queda está testada (§5.2). Próximo passo sugerido: conferir se uma versão mais nova
-do motor corrige; sem isso, a limitação fica na Ajuda.
+Conclusões:
+
+- A queda **não é do Fontwork nem do Link**: acontece ao fechar diálogos (Galeria do Fontwork, Link, Propriedades)
+  quando o fechamento vem de entrada **simulada** pelo próprio motor (robô de teclas `XToolkitRobot` ou ações do
+  UITest), inclusive sem nunca abrir o Fontwork. É o mesmo gênero da falha com automação UNO externa descrita acima.
+- Com o **teclado de verdade** (teclas enviadas pelo Windows, como uma pessoa), as mesmas sequências foram repetidas
+  9 vezes, com cerca de 30 diálogos fechados, **sem nenhuma queda**. Isso não prova que a queda nunca aconteça no uso
+  normal — a causa está no motor e não foi corrigida —, mas o gatilho reproduzível é a entrada simulada.
+- Não há versão do motor com correção: a 26.8.1 é a mais recente da série, e não foi achado relato do defeito.
+- **Mitigações adotadas:** (1) a informação de recuperação passou a ser gravada a cada **3 minutos** (antes 5); o
+  motor só grava quando a pessoa para de digitar; (2) as fases novas dos testes fecham janelas com Esc real ou pelos
+  botões do diálogo, e a fase 11 da bateria passou a testar Fontwork → Link com o teclado real (se o motor cair, a
+  fase registra a queda); (3) Ajuda › Limitações e o site explicam o risco e **não prometem recuperação integral**.
+- A bateria antiga (fase 1) continua acionando todos os botões com o UITest; uma queda ali vira falha registrada.
+
+### Recuperação depois de uma queda — `tests/interface/testar_recuperacao.ps1`
+
+O AY aberto como uma pessoa abre (sem `--norestore`, que os outros testes usam), um ODT com texto digitado e **não
+salvo**, e a queda provocada pelo gatilho conhecido. As janelas "Recuperação de documentos" foram respondidas com Enter
+real; se o motor não reiniciasse sozinho, o roteiro abria o AY de novo, **sem** o documento (só a recuperação poderia
+trazê-lo de volta).
+
+| Rodada (22/10/2026) | Situação antes da queda | O que aconteceu | Resultado |
+|---|---|---|---|
+| 1 | texto digitado, sem salvar; nenhuma cópia automática ainda | salvamento de emergência → o motor reiniciou sozinho → janela de recuperação → Iniciar | **texto voltou** |
+| 2 | idem | idem | **texto voltou** |
+| 3 | idem | o motor caiu **de novo durante o salvamento de emergência** (C0000409) e não reiniciou | **texto perdido** (não havia cópia automática) |
+| 4 | texto 1 digitado; cópia automática gravada (190 s depois, intervalo de 3 min); texto 2 digitado depois da cópia | salvamento de emergência funcionou, mas o motor não reiniciou; a pessoa abriu o AY de novo → recuperação | **textos 1 e 2 voltaram** |
+
+Em 4 quedas provocadas, o texto não salvo voltou em 3. Na quarta, a perda foi total porque o salvamento de emergência
+falhou antes da primeira cópia automática. Com a cópia automática a cada 3 minutos, o pior caso passa a ser perder o que
+foi digitado nos últimos minutos — **não há garantia de recuperação integral**. As rodadas com tela bloqueada não são
+possíveis (o roteiro responde às janelas com Enter real); mais rodadas ficam para quando o computador estiver livre.
+
+O que a pessoa vê: a janela "Recuperação de documentos AY ESCREVA 26.8" (salvamento de emergência) no processo que
+caiu; depois, ao reiniciar ou ao abrir o AY de novo, a mesma janela com **Iniciar** para recuperar. Se o salvamento
+de emergência falhar, o motor fecha sem reiniciar, e o que volta é a última cópia automática — ou nada, se ela ainda
+não existia. Abrir de novo o mesmo arquivo depois de uma queda pode mostrar "Documento em uso" (trava deixada pela
+queda). Observação de identidade: o título dessa janela mostra a versão do motor ("26.8"), não a do AY.
 
 ## 10. Site oficial e publicação
+
+**0.7.0 preparada, não publicada (22/10/2026):** prévia local em `out\site-previa-0.7.0` e site no modo de publicação em
+`out\site-publicacao-0.7.0` (gerado a partir de uma cópia de `site/versoes.json` com a 0.7.0 marcada como publicada; o
+arquivo do projeto continua com `"publicada": false`, e o gerador recusa o modo de publicação com ele). Conteúdo
+conferido nas capturas `tests\output\site-previa\*.png`: requisitos (incluindo "testado só em 100 %"), limitações,
+tamanho (208 MB), SHA-256, instruções, as duas assinaturas (do instalador, que não existe, e das atualizações, conferida
+pelo AY), IA local (≈3,4 GB, requisitos testados, o que depende dela) e a privacidade com os dois acessos à internet que
+só acontecem a pedido. Notas do lançamento e `SHA256SUMS.txt` em `out\publicacao\v0.7.0`. A versão pública continua a
+0.2.0.
 
 Publicado em 20/10/2026, com autorização do responsável, só com recursos gratuitos (repositório público,
 GitHub Releases e GitHub Pages; nenhum serviço pago nem cobrança ativada):
@@ -985,10 +1071,11 @@ Imagens lado a lado (original | cópia | diferença) em `tests/output/visual/*.p
 - Windows ARM64, x86 32 bits, macOS e Linux: não montados nem testados.
 - **Leitores de tela:** só o Narrador está disponível neste computador. O teste confere o que ele **recebe** (nome,
   papel e foco pela interface MSAA, §5.6), não o áudio. NVDA e JAWS não estão instalados (instalar programas de
-  terceiros depende de autorização). Navegação só por teclado na faixa (Alt, F6, setas): sem teste automatizado.
-- **Escalas 125 %, 150 % e 200 %:** não observadas. Trocar a escala do Windows é configuração do sistema e não é feita
-  pelo teste; ele confere a escala em uso (100 % aqui). Para as outras, troque a escala e rode
-  `tests\interface\conferir_escala.ps1`.
+  terceiros depende de autorização). Ninguém usou o AY de fato com leitor de tela e ouviu o resultado: roteiro manual
+  em `docs/TESTES-MANUAIS.md` §2. Navegação só por teclado na faixa e nos diálogos: §14.
+- **Escalas 125 %, 150 % e 200 %:** não observadas e **não aprovadas**. Trocar a escala do Windows é configuração do
+  sistema e não é feita pelo teste; ele confere a escala em uso (100 % aqui). Instruções curtas para o teste manual em
+  `docs/TESTES-MANUAIS.md` §1 (o roteiro `tests\interface\conferir_escala.ps1` ajuda, mas não substitui olhar a tela).
 - Os controles do diálogo de perdas do AY não aparecem por nome para o UITest (o teste usa Enter real); a leitura
   desse diálogo por leitor de tela não foi conferida.
 - "Salvar uma cópia" com o diálogo de perdas: usa o mesmo código de "Salvar como" (testado pela interface), mas
@@ -1025,8 +1112,8 @@ Imagens lado a lado (original | cópia | diferença) em `tests/output/visual/*.p
   ~2,6 GB). O teste de qualidade tem 12 casos: não mede a precisão da IA em textos reais. A conferência de preservação
   pega números, datas, citações, endereços, siglas e nomes perdidos ou inventados e frases apagadas em "Revisar", mas
   não garante que o sentido foi mantido. Download pelo diálogo testado só com cancelamento e conferência de SHA-256
-  pelo mesmo código (`ay_ia.baixar`) num script; o clique em "Baixar…" pela interface não foi testado de ponta a
-  ponta (3,1 GB). Leitura do painel por NVDA ou Narrador não testada. GPU (Vulkan/CUDA) não é usada nesta versão.
+  pelo mesmo código (`ay_ia.baixar`) num script e, depois, o clique em "Baixar…" pela interface de ponta a ponta
+  (§5.6, 11/11). Leitura do painel por NVDA ou Narrador não testada. GPU (Vulkan/CUDA) não é usada nesta versão.
 - Queda do motor na primeira execução da bateria da 0.5.0 (fase 1 da interface, `KERNELBASE.dll`, exceção 0x0 — a
   mesma assinatura genérica do §9): a única novidade da 0.5.0 carregada na inicialização era o módulo da IA (rede
   local e processos). Ele passou a ser carregado só quando a pessoa usa a IA, e a fase 1 completa voltou a passar sem
@@ -1036,3 +1123,47 @@ Imagens lado a lado (original | cópia | diferença) em `tests/output/visual/*.p
 - Máquina sem Microsoft Office (para ver a substituição de Calibri por Carlito): não testada.
 - Site: o fluxo foi testado num único computador (Windows 11), com o navegador embutido e com o PowerShell;
   não foi testado em outros navegadores nem em outras redes.
+
+## 13. Segurança da distribuição (0.7.0)
+
+**Chave privada de assinatura das atualizações** (`%USERPROFILE%\.ay-escreva\chave-atualizacoes-ed25519.pem`).
+Procurada em 22/10/2026 por `tests/seguranca/procurar_chave_privada.py`, que lê a chave só para montar o que procurar
+(PEM, DER, semente em hexadecimal e base64) e nunca a exibe, e que também acusa qualquer bloco PEM de chave privada:
+
+| Lugar | Arquivos | Ocorrências |
+|---|---|---|
+| Repositório, `dist\` (o que vira o instalador), `out\` (instaladores, site, prévias), `site\`, `tests\output\` | 37.500 (11,6 GB) | 0 |
+| `dist\` remontado (bloco PEM procurado em arquivos de qualquer tamanho) | 14.027 (841 MB) | 0 |
+| Histórico do git (todos os objetos, inclusive não alcançáveis) | 275 | 0 |
+| Registros em `%TEMP%` e das conversas de desenvolvimento | — | 0 |
+| Instalação feita pelo instalador final (teste de instalação, antes de desinstalar) | ver §3 | 0 |
+| Controle positivo: pasta com uma chave descartável gerada na hora | 1 | 1 (encontrada) |
+| Varredura final, depois do instalador final: projeto inteiro (repositório, `dist\`, `out\` com instaladores, site e IA, `tests\output\`) | 37.691 (17 GB) | 0 |
+
+A primeira varredura de `dist\` acusou o texto `-----BEGIN PRIVATE KEY-----` dentro de `program\mergedlo.dll`: é a
+constante que o motor usa para ler arquivos PEM (seguida de bytes nulos, sem conteúdo de chave). A ferramenta passou
+a acusar só blocos PEM com conteúdo em base64, e o controle positivo confirma que eles continuam sendo achados.
+
+- O aplicativo leva só a **chave pública** (`ay_atualizacao.py`, `CHAVE_PUBLICA`); o teste de instalação confere.
+- `tools/gerar-manifesto.mjs` recusa assinar com uma chave cuja parte pública não seja a do AY (teste em
+  `tests/atualizacao/testar_verificacao.py`, 17/17); `tools/conferir-chave.mjs` confere uma cópia de segurança
+  mostrando só a chave pública derivada.
+- Permissões do arquivo da chave: só o usuário, os administradores e o sistema (padrão do perfil).
+- Cópia de segurança protegida, perda e vazamento: `docs/ATUALIZACOES.md`.
+- **Assinatura digital do instalador** (Authenticode): não existe (exige certificado pago; não contratado). O site e as
+  notas da versão separam essa assinatura da assinatura das atualizações.
+
+## 14. Navegação por teclado e leitor de tela (0.7.0)
+
+Três níveis, que não se confundem:
+
+| Nível | O que confere | Situação |
+|---|---|---|
+| **Nome acessível** | cada controle da faixa, dos painéis e dos diálogos do AY tem nome e papel na árvore de acessibilidade (o que um leitor de tela recebe) | conferido: fases 5, 8, 9 e 10 (§5.1, §5.3, §5.5–5.8) e Narrador recebendo os nomes (§5.6, 5/5) |
+| **Teclado simulado pelo motor** (robô de teclas) | foco inicial, Tab, Shift+Tab, teclas de acesso sem repetição e botões acionados nos diálogos e painéis do AY | conferido nas fases 5, 8, 9 e 10. É entrada **simulada**: prova a ordem do foco e o acesso aos comandos, não a experiência com o teclado de verdade |
+| **Teclado real do Windows** (`tests/interface/extensao_testes/pythonpath/testes_teclado.py`, fase 11) | F6 do documento até as abas da faixa; setas entre as abas; Tab pelos botões até "Negrito" e Espaço aplicando negrito; Esc devolvendo o foco ao documento; em 9 diálogos (Formatar trabalho, Galeria, Verificar atualizações, Conferir referências, Propriedades, Caractere, Parágrafo, Link, Inserir tabela): foco inicial num controle com nome, Tab avança, Shift+Tab volta, Esc fecha e o foco volta ao documento; capturas para conferir o **foco visível** | teste pronto, **não executado**: na tarde de 22/10/2026 a sessão do Windows ficou bloqueada (tela de bloqueio em primeiro plano) e nenhuma tecla real chega a programa algum. O teste agora reconhece a tela bloqueada e registra "BLOQUEADO" em vez de falha. Rodar com a sessão desbloqueada: `powershell -ExecutionPolicy Bypass -File tests\interface\testar_faixa.ps1 -Somente teclado` |
+| **Uso real com leitor de tela** | uma pessoa navegando com Narrador ou NVDA e ouvindo o resultado | **pendente**: roteiro curto em `docs/TESTES-MANUAIS.md` §2 |
+
+Com o teclado real já foi conferido, no diagnóstico do §9: Esc fecha a Galeria do Fontwork, o diálogo de Link (aberto
+com Ctrl+K) e Propriedades, sem queda, em 9 execuções. Escalas de 125 %, 150 % e 200 %: não aprovadas (só houve teste
+em 100 %); instruções em `docs/TESTES-MANUAIS.md` §1.

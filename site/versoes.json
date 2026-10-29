@@ -1,7 +1,28 @@
 {
-  "descricao": "Versões e plataformas do AY ESCREVA exibidas no site. Tamanho e SHA-256 são calculados pelo gerador a partir do arquivo real (out/instalador); a página não é gerada se um arquivo marcado como disponível não existir.",
-  "atual": "0.2.0",
+  "descricao": "Versões e plataformas do AY ESCREVA exibidas no site. Tamanho e SHA-256 são calculados pelo gerador a partir do arquivo real (out/instalador); a página não é gerada se um arquivo marcado como disponível não existir. \"publicada\": false = versão preparada e ainda não enviada ao GitHub Releases: o gerador só a mostra na prévia local e recusa o modo de publicação até que ela seja marcada como publicada.",
+  "atual": "0.7.0",
   "versoes": [
+    {
+      "versao": "0.7.0",
+      "data": "2026-10-22",
+      "canal": "Versão de testes",
+      "publicada": false,
+      "notas": [
+        "Revisão de texto em português do Brasil: painel Assistente AY (aba Revisão) com sugestões de ortografia e gramática por regras, “Pôr no dicionário”, “Não corrigir mais” e correção automática ao digitar, que o Ctrl+Z desfaz.",
+        "Trabalhos acadêmicos: Formatar trabalho acadêmico com prévia do que vai mudar, aplicado numa cópia; relatório de conformidade que separa o que foi conferido do que não foi avaliado; galeria de modelos e “Salvar como modelo”.",
+        "IA local opcional (aba Revisão › Revisão com IA): revisar, deixar mais claro, mais formal, simplificar, resumir, sugerir títulos, explicar e apontar inconsistências. Roda no seu computador; o download adicional (cerca de 3,4 GB) só acontece quando você pede. Cada sugestão mostra o original e a sugestão antes de aceitar e pode ser desfeita.",
+        "Conferir referências (citações × lista de referências) e Conferir consistência (grafias, siglas, numeração de figuras e tabelas, datas, porcentagens e aspas), por regras e sem IA. Nenhuma referência é inventada.",
+        "Verificar atualizações (aba Ajuda): consulta o site oficial só quando você pede, confere a assinatura do arquivo de versões e o SHA-256 do instalador e pergunta antes de instalar. Documentos e preferências são mantidos.",
+        "Informações de recuperação gravadas a cada 3 minutos (antes, 5)."
+      ],
+      "arquivos": [
+        {
+          "plataforma": "windows11-x64",
+          "arquivo": "AYEscreva-0.7.0-teste-windows11-x64.exe",
+          "assinado": false
+        }
+      ]
+    },
     {
       "versao": "0.2.0",
       "data": "2026-10-19",
@@ -15,7 +36,11 @@
         "Guia de utilização e lista de atalhos que funcionam sem internet."
       ],
       "arquivos": [
-        { "plataforma": "windows11-x64", "arquivo": "AYEscreva-0.2.0-teste-windows11-x64.exe", "assinado": false }
+        {
+          "plataforma": "windows11-x64",
+          "arquivo": "AYEscreva-0.2.0-teste-windows11-x64.exe",
+          "assinado": false
+        }
       ]
     },
     {
@@ -31,15 +56,53 @@
     }
   ],
   "plataformas": [
-    { "id": "windows11-x64", "nome": "Windows 11", "detalhe": "64 bits (x64)", "status": "disponivel",
-      "requisitos": ["Windows 11 de 64 bits (versão 21H2, build 22000, ou mais nova)", "Cerca de 850 MB livres em disco", "Não precisa de internet nem de conta", "Memória: ainda não medida; testado em computador com 16 GB"] },
-    { "id": "windows10-x64", "nome": "Windows 10", "detalhe": "64 bits (x64)", "status": "em-desenvolvimento",
-      "nota": "O motor de documentos é compatível com o Windows 10, segundo o fornecedor, mas o AY ESCREVA ainda não foi testado nele. O instalador atual só aceita Windows 11." },
-    { "id": "windows-arm64", "nome": "Windows 11 em ARM", "detalhe": "ARM64", "status": "em-desenvolvimento",
-      "nota": "Depende de testes em computador ARM." },
-    { "id": "macos", "nome": "macOS", "detalhe": "Intel e Apple Silicon", "status": "em-desenvolvimento",
-      "nota": "Exige assinatura e notarização próprias da Apple." },
-    { "id": "linux", "nome": "Linux", "detalhe": "x86_64", "status": "em-desenvolvimento",
-      "nota": "Pacote previsto em AppImage ou Flatpak." }
+    {
+      "id": "windows11-x64",
+      "nome": "Windows 11",
+      "detalhe": "64 bits (x64)",
+      "status": "disponivel",
+      "requisitos": [
+        "Windows 11 de 64 bits (x64), versão 21H2 (build 22000) ou mais nova",
+        "Cerca de 850 MB livres em disco para o aplicativo",
+        "Não precisa de internet nem de conta para escrever; a internet só é usada quando você pede (verificar atualizações e baixar a IA local)",
+        "Memória para o editor: ainda não medida; testado em computador com 16 GB",
+        "Tela: testado em escala de 100%; 125%, 150% e 200% ainda sem teste manual"
+      ],
+      "ia": [
+        "Opcional: o editor funciona inteiro sem ela",
+        "Download adicional de cerca de 3,4 GB (3,35 GB do modelo Gemma 4 E2B e 24 MB do motor llama.cpp); o AY e o Windows mostram 3,1 GB porque contam em GiB",
+        "Mais cerca de 3,4 GB livres no disco escolhido; o AY confere o espaço antes de baixar",
+        "Testada somente em: Intel Core i5-8500 (6 núcleos), 16 GB de RAM, sem placa de vídeo dedicada — até 2,6 GB de memória em uso, cerca de 3 s por pedido curto e 90 s na primeira carga",
+        "Em computadores com menos memória ou processadores mais antigos ainda não foi testada; o desempenho pode ser bem menor"
+      ]
+    },
+    {
+      "id": "windows10-x64",
+      "nome": "Windows 10",
+      "detalhe": "64 bits (x64)",
+      "status": "em-desenvolvimento",
+      "nota": "O motor de documentos é compatível com o Windows 10, segundo o fornecedor, mas o AY ESCREVA ainda não foi testado nele. O instalador atual só aceita Windows 11."
+    },
+    {
+      "id": "windows-arm64",
+      "nome": "Windows 11 em ARM",
+      "detalhe": "ARM64",
+      "status": "em-desenvolvimento",
+      "nota": "Depende de testes em computador ARM."
+    },
+    {
+      "id": "macos",
+      "nome": "macOS",
+      "detalhe": "Intel e Apple Silicon",
+      "status": "em-desenvolvimento",
+      "nota": "Exige assinatura e notarização próprias da Apple."
+    },
+    {
+      "id": "linux",
+      "nome": "Linux",
+      "detalhe": "x86_64",
+      "status": "em-desenvolvimento",
+      "nota": "Pacote previsto em AppImage ou Flatpak."
+    }
   ]
 }

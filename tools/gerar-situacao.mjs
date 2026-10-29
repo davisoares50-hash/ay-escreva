@@ -30,10 +30,13 @@ for (const linha of matriz.split(/\r?\n/)) {
   const [grupo, funcao, comando, encontrado, implementada, validado] = c;
   let sit;
   if (/^Não|pendente/i.test(implementada) || encontrado.startsWith('Não') || comando === '—' || comando === '') sit = 'pendente';
-  else if (/Pela interface:|Por API:/.test(validado)) sit = 'testado';
+  // "Pela interface:", "Pela interface (efeito real):", "Pela interface (teste dedicado):" ou "Por API:"
+  else if (/Pela interface( \([^)]*\))?:|Por API:/.test(validado)) sit = 'testado';
   else sit = 'parcial';
-  const como = sit === 'testado' ? (validado.match(/(Pela interface|Por API)[^·]*/) || [''])[0].trim()
-    : sit === 'parcial' ? (/Acionado/.test(validado) ? 'botão acionado pela interface; efeito não conferido' : 'botão presente; não validado')
+  const obs = c[8] ? ` — ${c[8]}` : '';
+  const como = sit === 'testado' ? (validado.match(/(Pela interface( \([^)]*\))?:|Por API:)[^·]*/) || [''])[0].trim()
+    : sit === 'parcial' ? (/FALHOU/.test(validado) ? validado.match(/Teste de efeito FALHOU[^·]*/)[0].trim()
+      : (/Acionado/.test(validado) ? 'botão acionado pela interface; efeito não conferido' : 'botão presente; não validado') + obs)
       : (c[8] || 'sem comando no motor');
   aba.itens.push({ grupo, funcao, sit, como: como.replace(/\|/g, '/') });
 }

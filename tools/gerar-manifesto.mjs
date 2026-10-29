@@ -47,6 +47,10 @@ const privada = crypto.createPrivateKey(fs.readFileSync(chave));
 const assinatura = crypto.sign(null, corpo, privada);
 const publica = crypto.createPublicKey(privada).export({ format: 'der', type: 'spki' }).subarray(-32).toString('hex');
 if (!crypto.verify(null, corpo, crypto.createPublicKey(privada), assinatura)) throw new Error('assinatura não confere');
+// recusa assinar com uma chave que o AY não aceitaria (cópia errada, chave de teste)
+const codigo = fs.readFileSync(new URL('../extensao/ayescreva/pythonpath/ay_atualizacao.py', import.meta.url), 'utf8');
+const doAY = (codigo.match(/CHAVE_PUBLICA = bytes\.fromhex\('([0-9a-f]{64})'\)/) || [])[1];
+if (publica !== doAY && !args['chave-de-teste']) throw new Error('a chave informada não corresponde à chave pública do AY (use --chave-de-teste 1 só em testes)');
 fs.mkdirSync(saida, { recursive: true });
 fs.writeFileSync(destino, corpo);
 fs.writeFileSync(destino + '.sig', assinatura.toString('hex') + '\n');

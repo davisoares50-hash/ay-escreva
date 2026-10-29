@@ -96,7 +96,10 @@ assinatura de código.
    `tests/interface/testar_faixa.ps1`) e gerar o instalador (`scripts/instalador.ps1`).
 2. Validar a instalação (`tests/instalacao/testar_instalacao.ps1`).
 3. Em `site/versoes.json`: nova entrada no topo de `versoes`, atualizar `atual`; mudar uma plataforma para
-   `"status": "disponivel"` **somente** depois de testada nela.
+   `"status": "disponivel"` **somente** depois de testada nela. Enquanto a versão não for publicada, ela fica com
+   `"publicada": false`: a prévia local mostra a faixa "Prévia local … ainda não publicada" e o modo de publicação
+   (`--modo github`) **se recusa** a gerar o site, para que ele não aponte para um instalador que ainda não está no
+   Releases. Marque `"publicada": true` só ao publicar (a 0.7.0 está preparada assim; ver `docs/ATUALIZACOES.md`).
 4. Atualizar `extensao/ayescreva/ajuda/limitacoes.html` (vira a seção de limitações do site).
 5. Gerar a prévia (`node tools\gerar-site.mjs --modo local`), rodar `tests\site\testar_fluxo.ps1` e, com
    autorização, `scripts\publicar-site.ps1 -Repositorio <dono>/<nome> -Executar` (cria a versão no Releases,

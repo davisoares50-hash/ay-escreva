@@ -55,9 +55,10 @@ def ler_local(url, limite=A.LIMITE_MANIFESTO):
         raise
 
 
-def gerar(chave, instalador, canal='testes', notas='Novidades de teste.', prefixo=None):
+def gerar(chave, instalador, canal='testes', notas='Novidades de teste.', prefixo=None, chave_de_teste=True):
     r = subprocess.run(['node', str(RAIZ / 'tools' / 'gerar-manifesto.mjs'), '--canal', canal, '--instalador', str(instalador),
-                        '--notas', notas, '--chave', str(chave), '--saida', str(SITE), '--prefixo', prefixo],
+                        '--notas', notas, '--chave', str(chave), '--saida', str(SITE), '--prefixo', prefixo]
+                       + (['--chave-de-teste', '1'] if chave_de_teste else []),
                        capture_output=True, text=True, encoding='utf-8')
     if r.returncode:
         raise RuntimeError(r.stderr)
@@ -101,6 +102,13 @@ def main():
         inst.write_bytes(os.urandom(11 * 2**20))
         (SITE / 'releases' / 'v9.9.9').mkdir(parents=True)
         shutil.copy(inst, SITE / 'releases' / 'v9.9.9' / inst.name)
+        try:
+            gerar(chave, inst, prefixo=prefixo, chave_de_teste=False)
+            r = None
+        except RuntimeError as e:
+            r = str(e)
+        verificar('Gerar o arquivo de versões com uma chave que o AY não aceita: recusado (sem --chave-de-teste)',
+                  r is not None and 'não corresponde' in r and not (SITE / 'atualizacoes.json').exists(), r)
         g = gerar(chave, inst, prefixo=prefixo)
         verificar('Gerar o arquivo de versões: assinado pelo Node.js com a chave do projeto (aqui, a de teste)', bytes.fromhex(g['chave_publica']) == pub, g)
         consulta = lambda **kw: A.consultar(kw.pop('versao', '0.6.0'), kw.pop('canal', 'testes'), manifesto=base + '/atualizacoes.json',

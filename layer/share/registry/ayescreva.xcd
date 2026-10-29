@@ -58,14 +58,15 @@
     </node>
   </oor:component-data>
 
-  <!-- Recuperação após falhas: informações de recuperação a cada 5 minutos -->
+  <!-- Recuperação após falhas: informações de recuperação a cada 3 minutos (o motor só grava quando a pessoa para de
+       digitar). Se o motor cair durante o salvamento de emergência, é esta cópia que volta: ver docs/RESULTADOS-TESTES.md §9 -->
   <oor:component-data oor:package="org.openoffice.Office" oor:name="Recovery">
     <node oor:name="RecoveryInfo">
       <prop oor:name="Enabled"><value>true</value></prop>
     </node>
     <node oor:name="AutoSave">
       <prop oor:name="Enabled"><value>true</value></prop>
-      <prop oor:name="TimeIntervall"><value>5</value></prop>
+      <prop oor:name="TimeIntervall"><value>3</value></prop>
     </node>
   </oor:component-data>
 

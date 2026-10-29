@@ -29,6 +29,9 @@ import zipfile
 import uno
 import unohelper
 from testes_academico import AcademicoMixin
+from testes_diagnostico import DiagnosticoMixin
+from testes_ferramentas import FerramentasMixin
+from testes_teclado import TecladoMixin
 from testes_escala import EscalaMixin
 from testes_ia import IAMixin
 from testes_revisao import RevisaoMixin
@@ -121,7 +124,7 @@ class Executor(unohelper.Base, XJob):
         return None
 
 
-class Teste(RevisaoMixin, AcademicoMixin, IAMixin, EscalaMixin):
+class Teste(RevisaoMixin, AcademicoMixin, IAMixin, EscalaMixin, DiagnosticoMixin, FerramentasMixin, TecladoMixin):
     def __init__(self, ctx, spec, modelo):
         self.ctx = ctx
         self.doc = modelo
@@ -417,7 +420,16 @@ class Teste(RevisaoMixin, AcademicoMixin, IAMixin, EscalaMixin):
                            'seq_grafico_fontwork_link': [(self.preparar_texto, 0.2)] + [(lambda c=c: self.acionar_por_comando(c), 0.2) for c in ('.uno:InsertObjectChart', '.uno:FontworkGalleryFloater', '.uno:HyperlinkDialog')],
                            'seq_grafico_link': [(self.preparar_texto, 0.2)] + [(lambda c=c: self.acionar_por_comando(c), 0.2) for c in ('.uno:InsertObjectChart', '.uno:HyperlinkDialog')],
                            'seq_fontwork_link': [(self.preparar_texto, 0.2)] + [(lambda c=c: self.acionar_por_comando(c), 0.2) for c in ('.uno:FontworkGalleryFloater', '.uno:HyperlinkDialog')],
-                           'seq_fontwork_como_pessoa': [(self.preparar_texto, 0.2), (self.fontwork_como_pessoa, 0.2)]}
+                           'seq_fontwork_como_pessoa': [(self.preparar_texto, 0.2), (self.fontwork_como_pessoa, 0.2)],
+                           **{n: [(self.preparar_texto, 0.2), (getattr(self, n), 0.2)] for n in ('diag_despacho', 'diag_espera_longa',
+                              'diag_inserir_fontwork', 'diag_outro_dialogo', 'diag_link_antes', 'diag_fontwork_duas', 'diag_galeria_link',
+                              'diag_fontwork_editar_link', 'diag_galeria_esc5', 'diag_galeria_cancelar5', 'diag_galeria_inserir5', 'diag_api_fontwork', 'diag_real_fontwork_link', 'diag_real_link', 'diag_robo_link', 'diag_real_faixa', 'diag_robo_so_apertar', 'diag_espacamento_teclado', 'diag_estados_vista', 'diag_viewlayout', 'diag_foco', 'diag_foco_uitest')},
+                           'explorar_ferramentas': [(self.preparar_texto, 0.2), (self.explorar_ferramentas, 0.5)],
+                           'queda_recuperacao': [(self.queda_recuperacao, 0.5)],
+                           # fase 12: ferramentas da faixa pelo efeito no documento, desfazer/refazer e ODT/DOCX
+                           'ferramentas': [(self.preparar_texto, 0.2), (self.validar_ferramentas, 0.5)],
+                           # navegação só pelo teclado, com teclas reais do Windows (faixa e diálogos)
+                           'teclado': [(self.preparar_texto, 0.2), (self.teclado_faixa, 0.5), (self.teclado_dialogos, 0.5)]}
             for nome in somente:
                 passos.extend(mapa_passos[nome])
             return passos

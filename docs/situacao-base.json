@@ -1,6 +1,6 @@
 {
   "descricao": "Itens do pedido original (19/10/2026) e das entregas, com a situação e a evidência. Situações: testado = concluído e testado; parcial = implementado sem validação completa; pendente = ainda não implementado. As ferramentas da faixa vêm de docs/MATRIZ-FUNCIONALIDADES.md. Gera docs/SITUACAO.md (node tools/gerar-situacao.mjs).",
-  "atualizado_em": "21/10/2026",
+  "atualizado_em": "22/10/2026",
   "versao_publica": "0.2.0",
   "versao_local": "0.7.0",
   "instalador_local": "out\\instalador\\AYEscreva-0.7.0-teste-windows11-x64.exe",
@@ -77,22 +77,22 @@
         {
           "item": "Navegação por teclado nos diálogos e painéis do AY",
           "sit": "testado",
-          "evidencia": "Foco inicial, Tab e Shift+Tab e teclas de acesso sem repetição conferidos nos diálogos Formatar, Modelo da instituição e Gerenciar IA local; botões dos painéis acionados com teclado real (RESULTADOS §4, §5.3, §5.5)."
+          "evidencia": "Foco inicial, Tab e Shift+Tab e teclas de acesso sem repetição conferidos nos diálogos Formatar, Modelo da instituição e Gerenciar IA local; botões dos painéis acionados pelo teclado. Esses testes usam teclas SIMULADAS pelo motor (robô de teclas), não o teclado do Windows (RESULTADOS §4, §5.3, §5.5, §14)."
         },
         {
           "item": "Navegação por teclado nos painéis de IA e diálogos novos (D e E)",
           "sit": "testado",
-          "evidencia": "Botões acionados com teclado real; Tab/Shift+Tab e teclas de acesso conferidos em Gerenciar IA local, Conferir referências e Verificar atualizações."
+          "evidencia": "Botões acionados pelo teclado; Tab/Shift+Tab e teclas de acesso conferidos em Gerenciar IA local, Conferir referências e Verificar atualizações, com teclas simuladas pelo motor (robô de teclas) (RESULTADOS §14)."
         },
         {
-          "item": "Navegação por teclado na faixa de opções (Alt, F6, setas)",
+          "item": "Navegação por teclado na faixa de opções e nos diálogos com o teclado real (F6, setas, Tab, Esc, foco visível)",
           "sit": "parcial",
-          "evidencia": "A faixa vem da base com suporte a teclado; não há teste automatizado de ponta a ponta."
+          "evidencia": "Teclado real do Windows (fase 11, RESULTADOS §14): F6 leva às abas da faixa (1 toque); setas trocam de aba; Esc fecha 8 diálogos (4 do AY e 4 do motor) e o foco volta ao texto; ordem do Tab/Shift+Tab conferida em Propriedades, Galeria de modelos e Verificar atualizações. Achado: na faixa, Esc não devolve o foco ao texto (F6 continua o ciclo e volta). Inconclusivo, para conferência manual: Tab dentro da aba até os botões; ordem em Formatar, Conferir referências, Caractere, Parágrafo e Link; foco visível nos botões dos diálogos do AY (não aparece nas capturas). Roteiro: docs/TESTES-MANUAIS.md."
         },
         {
           "item": "Leitor de tela: Narrador (Windows)",
           "sit": "parcial",
-          "evidencia": "Com o Narrador ligado, nomes, papéis e foco de botões, campos e listas do painel Revisão com IA e de 4 diálogos conferidos pela interface MSAA (5/5). Não confere o áudio falado nem a navegação completa por voz. O botão de menu da barra lateral (do motor) não tem nome."
+          "evidencia": "Conferido só o que o leitor RECEBE: com o Narrador ligado, nomes, papéis e foco de botões, campos e listas (5/5, lidos pela árvore de acessibilidade). Ninguém usou o AY de fato com o Narrador e ouviu o resultado: roteiro manual em docs/TESTES-MANUAIS.md §2."
         },
         {
           "item": "Leitores de tela NVDA e JAWS",
@@ -107,7 +107,7 @@
         {
           "item": "Escalas de exibição 125 %, 150 % e 200 %",
           "sit": "pendente",
-          "evidencia": "Trocar a escala do Windows é configuração do sistema: o teste está pronto (tests\\interface\\conferir_escala.ps1) e roda depois que a escala for trocada em Configurações › Sistema › Tela."
+          "evidencia": "Não aprovado: só houve teste em 100 % (a escala deste computador). Instruções curtas para o teste manual em 125 %, 150 % e 200 % em docs/TESTES-MANUAIS.md §1 (o roteiro tests/interface/conferir_escala.ps1 ajuda, mas não substitui a conferência visual)."
         }
       ]
     },
@@ -151,8 +151,8 @@
         },
         {
           "item": "Recuperação após falha e salvamento seguro",
-          "sit": "testado",
-          "evidencia": "Recuperação 7/7 (queda forçada do motor); salvamento seguro com falha e interrupção da gravação (19/19)."
+          "sit": "parcial",
+          "evidencia": "Implementada e testada com o AY aberto como uma pessoa abre (tests/interface/testar_recuperacao.ps1, RESULTADOS §9): na maioria das quedas provocadas o texto não salvo voltou; numa delas o motor caiu de novo durante o salvamento de emergência e o texto se perdeu (sem cópia automática anterior). Informação de recuperação a cada 3 min (antes 5). A recuperação não é garantida e a Ajuda diz isso. Salvamento seguro: confiabilidade 19/19."
         },
         {
           "item": "Substituição de fontes informada",
@@ -202,7 +202,12 @@
         {
           "item": "Usar todas as ferramentas da faixa sem queda do motor",
           "sit": "parcial",
-          "evidencia": "Defeito da base (LibreOffice 26.8.1) reproduzido: Galeria do Fontwork e depois Link fecha o aplicativo (3 em 3, também sem a extensão do AY). A recuperação após queda protege o que não foi salvo. RESULTADOS §9."
+          "evidencia": "Investigado em 22/10/2026 (RESULTADOS §9): a queda do motor aparece com entrada simulada pelo próprio motor (robô de teclas que solta a tecla numa janela já fechada; cliques e seleções do UITest), inclusive sem Fontwork. Com o robô que só aperta a tecla: 0 quedas em 6; com o teclado real: 0 quedas em 11 execuções de Fontwork → Link. No teste de efeito, 2 ferramentas derrubam o motor quando o valor é escolhido por simulação (Bordas de página, Espaçamento entre linhas): conferência manual pendente. Defeito do motor 26.8.1, sem correção disponível; risco no uso normal não confirmado nem descartado."
+        },
+        {
+          "item": "Ferramentas da faixa pelo efeito real (efeito, desfazer/refazer, ODT e DOCX reabertos)",
+          "sit": "parcial",
+          "evidencia": "92 de 93 ferramentas testadas validadas (fases 12 e 12b, docs/VALIDACAO-FERRAMENTAS.md); as demais ferramentas da faixa aparecem por aba no fim desta lista, com o motivo quando o efeito não tem conferência automática. Corrigidos: Uma página, Várias páginas e Exibição de livro (estavam desabilitados)."
         }
       ]
     },
@@ -257,12 +262,12 @@
         {
           "item": "Instalador Windows 11 x64 por usuário, sem administrador",
           "sit": "testado",
-          "evidencia": "Instalação 19/19 (0.5.0)."
+          "evidencia": "Instalação 20/20 com o instalador final da 0.7.0 (22/10/2026), inclusive a varredura da chave privada na pasta instalada."
         },
         {
           "item": "Atualizar uma instalação anterior preservando documentos e preferências",
           "sit": "testado",
-          "evidencia": "Atualização 0.2.0 → 0.5.0 e 0.4.0 → 0.5.0: 14/14."
+          "evidencia": "Atualização 0.2.0 → 0.7.0 e 0.5.0 → 0.7.0 com o instalador final: 14/14 (preferências, dicionário pessoal e documentos preservados)."
         },
         {
           "item": "Atualização pelo próprio AY (Ajuda › Verificar atualizações)",
@@ -273,6 +278,21 @@
           "item": "Site oficial com download e SHA-256",
           "sit": "testado",
           "evidencia": "Publicado (versão 0.2.0); fluxo acessar → baixar → conferir → instalar 25/25."
+        },
+        {
+          "item": "Chave privada de assinatura das atualizações protegida",
+          "sit": "testado",
+          "evidencia": "Procurada byte a byte, sem exibi-la (tests/seguranca/procurar_chave_privada.py, com controle positivo): ausente do repositório e de todo o histórico do git, de dist (o que vira o instalador), de out (instaladores, site, prévias), de tests/output, dos registros em TEMP e das conversas de desenvolvimento; a instalação de teste também é varrida. Só a chave pública vai no AY. Cópia de segurança, perda e vazamento: docs/ATUALIZACOES.md."
+        },
+        {
+          "item": "Site preparado para a 0.7.0 (versão de testes, Windows 11 x64)",
+          "sit": "parcial",
+          "evidencia": "Prévia local em out/site-previa-0.7.0: requisitos, limitações, tamanho, SHA-256, instruções, diferença entre assinatura das atualizações e assinatura digital do instalador, IA local (≈3,4 GB, requisitos testados, funções que dependem dela). Não publicado: o gerador recusa o modo de publicação enquanto a 0.7.0 não estiver marcada como publicada."
+        },
+        {
+          "item": "Pacote de distribuição e arquivo de versões assinado da 0.7.0",
+          "sit": "parcial",
+          "evidencia": "Instalador, NOTAS.md, SHA256SUMS.txt, atualizacoes.json + .sig (assinado com a chave do projeto e conferido com o código de verificação do AY) e site no modo de publicação, prontos em out/ (docs/ATUALIZACOES.md). Nada foi publicado; a 0.2.0 continua sendo a versão pública."
         },
         {
           "item": "Assinatura digital do instalador",
@@ -287,5 +307,5 @@
       ]
     }
   ],
-  "instalador_sha256": "a4d4653b8cd994f7e20216773085df2f4703cff4c960ab313f4c06b7535bf14d"
+  "instalador_sha256": "3c84f90a4a674eb53a688c1ad7a90b8e13aef47a6e9b5e8555b4826b07a26f95"
 }
