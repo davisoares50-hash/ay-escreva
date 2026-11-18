@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Versões e limitações — AY ESCREVA</title>
+<meta name="description" content="Histórico de versões do AY ESCREVA, arquivos com SHA-256 e limitações conhecidas.">
+<meta name="theme-color" content="#11806A">
+<link rel="icon" href="assets/img/icone.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/icone-32.png" sizes="32x32" type="image/png">
+<link rel="stylesheet" href="assets/estilo.css">
+<meta property="og:title" content="Versões e limitações — AY ESCREVA">
+<meta property="og:description" content="Histórico de versões do AY ESCREVA, arquivos com SHA-256 e limitações conhecidas.">
+<meta property="og:image" content="assets/img/tela-inicio.webp">
+</head>
+<body>
+<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+<header class="topo">
+  <div class="largura topo-linha">
+    <a class="marca" href="index.html" aria-label="AY ESCREVA — página inicial">
+      <img src="assets/img/icone.svg" alt="" width="36" height="36">
+      <span>AY ESCREVA</span>
+    </a>
+    <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu-principal">Menu</button>
+    <nav id="menu-principal" class="menu" aria-label="Principal">
+      <a href="recursos.html">Recursos</a>
+      <a href="instalar.html">Como instalar</a>
+      <a href="versoes.html" aria-current="page">Versões</a>
+      <a href="ajuda.html">Ajuda</a>
+      <a class="botao botao-pequeno" href="baixar.html">Baixar grátis</a>
+    </nav>
+  </div>
+</header>
+<div class="aviso-teste" role="note">
+  <div class="largura"><strong>Versão de testes 0.7.0</strong> — disponível somente para Windows 11 de 64 bits. <a href="versoes.html#limitacoes">Veja o que ainda não funciona</a>.</div>
+</div>
+<main id="conteudo">
+<section class="secao"><div class="largura"><h1>Versões</h1><p class="chamada">Histórico de versões e limitações conhecidas.</p><article class="cartao" style="margin-bottom:16px"><h2>Versão 0.7.0 <span class="miudo">· Versão de testes · 18 de novembro de 2026</span></h2><ul><li>Revisão de texto em português do Brasil: painel Assistente AY (aba Revisão) com sugestões de ortografia e gramática por regras, “Pôr no dicionário”, “Não corrigir mais” e correção automática ao digitar, que o Ctrl+Z desfaz.</li><li>Trabalhos acadêmicos: Formatar trabalho acadêmico com prévia do que vai mudar, aplicado numa cópia; relatório de conformidade que separa o que foi conferido do que não foi avaliado; galeria de modelos e “Salvar como modelo”.</li><li>IA local opcional (aba Revisão › Revisão com IA): revisar, deixar mais claro, mais formal, simplificar, resumir, sugerir títulos, explicar e apontar inconsistências. Roda no seu computador; o download adicional (cerca de 3,4 GB) só acontece quando você pede. Cada sugestão mostra o original e a sugestão antes de aceitar e pode ser desfeita.</li><li>Conferir referências (citações × lista de referências) e Conferir consistência (grafias, siglas, numeração de figuras e tabelas, datas, porcentagens e aspas), por regras e sem IA. Nenhuma referência é inventada.</li><li>Verificar atualizações (aba Ajuda): consulta o site oficial só quando você pede, confere a assinatura do arquivo de versões e o SHA-256 do instalador e pergunta antes de instalar. Documentos e preferências são mantidos.</li><li>Informações de recuperação gravadas a cada 3 minutos (antes, 5).</li></ul><h3>Arquivos</h3><ul><li><a href="https://github.com/davisoares50-hash/ay-escreva/releases/download/v0.7.0/AYEscreva-0.7.0-teste-windows11-x64.exe">AYEscreva-0.7.0-teste-windows11-x64.exe</a> · 208 MB · SHA-256 <code>10624b07a6c9941b2bb85baea826d03392419a3bbce66ad7e09ccbcdb2a059c4</code> · sem assinatura digital</li></ul></article>
+<article class="cartao" style="margin-bottom:16px"><h2>Versão 0.2.0 <span class="miudo">· Versão inicial de testes · 19 de outubro de 2026</span></h2><ul><li>Faixa de opções própria com as abas Arquivo, Página Inicial, Inserir, Desenhar, Design, Layout, Referências, Correspondência, Revisão, Exibir e Ajuda, mais as abas contextuais Tabela, Imagem, Forma e Visualizar impressão.</li><li>Aviso antes de salvar em DOCX, DOC, RTF ou TXT, com a lista do que pode se perder naquele documento e as opções de salvar em ODT ou guardar também uma cópia completa em ODT.</li><li>Aviso de fontes substituídas ao abrir documentos com fontes que não estão instaladas.</li><li>Comandos próprios: página em branco, recuperação de documentos, guia, atalhos, limitações conhecidas e relatório de diagnóstico.</li><li>Guia de utilização e lista de atalhos que funcionam sem internet.</li></ul><p class="miudo">Arquivos e SHA-256: <a href="https://github.com/davisoares50-hash/ay-escreva/releases/tag/v0.2.0">página da versão 0.2.0 no GitHub</a>.</p></article>
+<article class="cartao" style="margin-bottom:16px"><h2>Versão 0.1.0 <span class="miudo">· Interna (não publicada) · 19 de outubro de 2026</span></h2><ul><li>Primeira montagem: motor de documentos, identidade visual, perfil isolado, macros bloqueadas, recuperação automática e instalador por usuário.</li><li>Usava a faixa de opções padrão do motor; substituída pela faixa do AY na versão 0.2.0.</li></ul><p class="miudo">Sem arquivos publicados.</p></article></div></section>
+<section class="secao secao-suave" id="limitacoes"><div class="largura"><h2>Limitações conhecidas da versão 0.7.0</h2>
+<h3>Sistemas</h3>
+<ul>
+<li>Validado somente no <strong>Windows 11 x64</strong>. Windows 10, Windows em ARM, macOS e Linux estão em desenvolvimento.</li>
+<li>O instalador ainda não tem assinatura digital: o Windows pode mostrar o aviso de "editor desconhecido".</li>
+<li>Algumas janelas do motor, como a de recuperação de documentos, mostram no título o número de versão do motor (26.8), e não o do AY.</li>
+</ul>
+
+<h3>Compatibilidade com o Word</h3>
+<ul>
+<li>A aparência de um mesmo DOCX no AY e no Word pode diferir um pouco (quebras de linha, fonte das equações, cores das revisões). O número de páginas coincidiu nos testes, mas não há garantia de igualdade.</li>
+<li>Quando uma seção reinicia a numeração de páginas em uma página par, o AY insere uma página em branco automática: o campo "total de páginas" pode mostrar uma página a mais que o Word.</li>
+<li>Salvar em <strong>RTF</strong> pode perder quebras de seção com mudança de orientação e os níveis de tópico dos títulos (o sumário deixa de se atualizar). O AY avisa antes de salvar.</li>
+<li>Seções em paisagem com duas colunas podem refluir ao converter de ODT para DOCX.</li>
+<li>Os atalhos de teclado seguem o padrão do motor, não o do Word em português (negrito é Ctrl+B, não Ctrl+N).</li>
+<li>Fontes que não estão instaladas são substituídas por fontes parecidas; o AY avisa e mantém o nome original no arquivo.</li>
+</ul>
+
+<h3>Ferramentas ainda não disponíveis</h3>
+<ul>
+<li><strong>Desenhar:</strong> marca-texto, borracha por arrasto e sensibilidade à pressão da caneta. Traços feitos com mouse ou caneta são salvos como formas.</li>
+<li><strong>Exibir:</strong> modo de leitura dedicado (use Tela inteira e Exibição de livro).</li>
+<li><strong>Inserir:</strong> galeria de capas prontas (o botão Capa abre o diálogo de páginas de rosto).</li>
+<li><strong>Design:</strong> galeria visual de conjuntos de estilos (o botão importa estilos de um modelo).</li>
+<li>Em janelas estreitas, os grupos da faixa de opções não se recolhem automaticamente: alguns botões ficam fora da área visível.</li>
+</ul>
+
+<h3>Ferramentas com comportamento diferente do esperado</h3>
+<ul>
+<li><strong>Marca-d'água</strong> (Design): é aplicada e mantida ao salvar em ODT e DOCX, mas o <kbd>Ctrl+Z</kbd> não a remove. Para tirar, abra Marca-d'água de novo e apague o texto.</li>
+<li><strong>Gráfico</strong> (Inserir): o gráfico abre em modo de edição; enquanto ele estiver em edição, o <kbd>Ctrl+Z</kbd> vale para o gráfico. Tecle Esc duas vezes (ou clique no texto) e então o <kbd>Ctrl+Z</kbd> remove o gráfico inserido.</li>
+<li>Ao salvar em DOCX, uma imagem ancorada "na página" ou "no parágrafo" volta presa a um caractere (a posição na página é mantida), e o espelhamento vertical de imagem pode não voltar.</li>
+</ul>
+
+<h3>Revisão de texto</h3>
+<ul>
+<li>A correção automática só troca palavras de uma tabela de casos inequívocos (cerca de 88 mil, quase todas acentuação). Formas flexionadas que não estão na tabela, como "estao", ficam só sublinhadas.</li>
+<li>As regras de gramática e estilo vêm de verificadores automáticos e podem apontar trechos corretos; confira antes de aplicar.</li>
+<li>O painel verifica o corpo do texto e as tabelas. Cabeçalhos, rodapés, notas e caixas de texto continuam com o sublinhado, mas não entram na lista do painel; ocorrências encostadas em campos ou notas podem não ser marcadas.</li>
+<li>Em documentos muito longos a verificação completa leva alguns minutos (ela roda enquanto você escreve e pode ser cancelada).</li>
+</ul>
+
+<h3>Revisão com IA (local)</h3>
+<ul>
+<li>Opcional: exige baixar o motor (llama.cpp, cerca de 23 MB) e o modelo Gemma 4 E2B (3,1 GB). Sem isso, o restante do AY funciona normalmente.</li>
+<li>Roda só no processador (CPU) nesta versão; o tempo de resposta depende do computador. No computador de testes (Intel Core i5-8500, 16 GB, sem placa de vídeo dedicada) uma frase leva alguns segundos; textos longos, bem mais. O primeiro pedido também espera o modelo carregar.</li>
+<li>Durante o uso, o modelo ocupa vários GB de memória; o AY encerra o motor depois de 10 minutos sem pedidos e quando o aplicativo fecha.</li>
+<li>A IA pode errar, inclusive em crase, regência e "há/a". As conferências automáticas pegam números, datas, citações, endereços, siglas e nomes perdidos ou inventados e frases apagadas em "Revisar"; não garantem que o sentido foi mantido.</li>
+<li>Só texto comum: trechos com tabela, campo, nota, imagem, marcador ou alteração controlada são recusados. Uma seleção por vez, até cerca de 6.000 caracteres.</li>
+<li>Revisar o documento inteiro leva alguns segundos por parágrafo (no computador de testes, cerca de 3 s): um documento de 100 parágrafos leva alguns minutos. Parágrafos com campos, notas ou imagens, tabelas, títulos e a lista de referências ficam de fora.</li>
+<li>"Apontar inconsistências" e "Explicar" são respostas da IA: podem errar ou deixar de ver algo. Nos testes, a IA local apontou as contradições plantadas, mas às vezes só repetiu o trecho sem explicar (o AY marca essas linhas como "sem explicação") e deu um falso alarme num trecho coerente. Use como apoio; "Conferir consistência" (por regras) e a sua leitura continuam sendo a conferência.</li>
+</ul>
+
+<h3>Verificar atualizações</h3>
+<ul>
+<li>Enquanto o arquivo de versões assinado não estiver publicado no site oficial, "Verificar agora" responde que ainda não há informação de atualização; instale as versões novas pelo site.</li>
+<li>O instalador ainda não tem assinatura digital do Windows; a autenticidade vem da assinatura do arquivo de versões e do SHA-256.</li>
+</ul>
+
+<h3>Conferir referências e consistência</h3>
+<ul>
+<li>Só o sistema autor-data (NBR 10520). Citações numéricas, notas de rodapé com referências e "apud" não são conferidos.</li>
+<li>A conferência das entradas é básica (ano, "Disponível em", "Acesso em", ordem, repetições): não substitui a revisão de cada referência pela NBR 6023:2025.</li>
+<li>Tabelas, notas, cabeçalhos e caixas de texto ficam de fora nesta versão. Maiúsculas no meio da frase podem ser nomes próprios: o AY só aponta quando as duas formas aparecem várias vezes.</li>
+</ul>
+
+<h3>Formatar trabalho acadêmico e galeria de modelos</h3>
+<ul>
+<li>As regras vêm de guias públicos de bibliotecas universitárias atualizados para as normas vigentes; o texto oficial das normas ABNT (vendido pela ABNT) não foi conferido. Confira com a norma e com o manual da sua instituição.</li>
+<li>NBR 10719:2025 (relatório técnico ou científico): nenhum guia público consultado descreve esta edição. O AY aplica as regras gerais da NBR 14724 como preferência e não confere requisitos próprios da NBR 10719:2025.</li>
+<li>Capa, folha de rosto e resumo recebem só a fonte e o tamanho; alinhamento, negrito e espaços desses elementos não são conferidos.</li>
+<li>Citações longas só são formatadas quando já estão marcadas (estilo Citação ou recuo à esquerda); parágrafos longos entre aspas são apontados, mas não mudados. Legendas e fontes são formatadas, mas o AY não move figuras nem tabelas.</li>
+<li>Com a capa fora da contagem, a numeração recomeça em 1 na folha de rosto e o motor mostra na tela uma página em branco automática depois da capa (o verso da capa). Só frente: essa página não é impressa nem vai para o PDF, e o Word não a mostra. Frente e verso: as páginas em branco automáticas (versos) são impressas, como deve ser; o PDF exportado com as opções padrão as omite, então, para um PDF de gráfica em frente e verso, marque "Exportar páginas em branco inseridas automaticamente" na exportação.</li>
+<li>A formatação só é feita numa cópia sem título: no motor, criar o número de página no cabeçalho apaga o histórico de desfazer, e o documento aberto não pode perder o seu. Na cópia, desfazer e refazer funcionam por inteiro (testado, inclusive a numeração).</li>
+<li>Em DOCX, o filete das notas de rodapé é o separador padrão do Word, sem comprimento gravado no arquivo; o relatório avisa em vez de conferir.</li>
+<li>O conteúdo das referências (NBR 6023:2025) não é conferido nem completado.</li>
+<li>Modelos da galeria: o Brasão de Armas da República não acompanha o modelo de ofício (insira a imagem oficial). Ata, carta, currículo, proposta e relatório administrativo não têm norma oficial; a aparência é preferência do AY.</li>
+</ul>
+
+<h3>Falha conhecida do motor</h3>
+<ul>
+<li>Nos testes automáticos, o motor de documentos (LibreOffice 26.8.1) às vezes fecha o AY de repente quando um diálogo é fechado por teclas <em>simuladas</em> pelo próprio motor — com o diálogo de Link, a Galeria do Fontwork ou Propriedades, inclusive sem passar pelo Fontwork. Com o <strong>teclado de verdade</strong>, a mesma sequência (Fontwork, Esc, Link, Esc) foi repetida várias vezes sem nenhuma queda. A causa está no motor e não foi corrigida; não dá para garantir que nunca aconteça no uso normal.</li>
+<li><strong>Se o AY fechar de repente</strong>, ele tenta salvar os documentos abertos (aparece a janela “Recuperação de documentos”; tecle Enter) e, ao abrir de novo, oferece recuperá-los. <strong>A recuperação não é garantida</strong>: nos testes de queda, o salvamento de emergência às vezes falhou; nesse caso volta só a última cópia de recuperação, gravada a cada 3 minutos quando você para de digitar, e o que foi escrito depois dela se perde. Depois de uma queda, ao abrir o mesmo arquivo o AY pode avisar “Documento em uso”: a trava foi deixada pela queda; escolha abrir o documento. <strong>Salve com frequência (Ctrl+S).</strong></li>
+</ul>
+
+<h3>Acessibilidade</h3>
+<ul>
+<li>O documento, a régua, a barra lateral e a barra de status são expostos a leitores de tela, e os testes conferiram que os controles da faixa, dos painéis e dos diálogos do AY têm nome acessível. <strong>Ninguém ainda usou o AY de fato com um leitor de tela</strong> (Narrador ou NVDA) para confirmar a experiência: isso continua pendente.</li>
+<li><strong>Foco do teclado:</strong> nos diálogos e painéis do AY, o botão com foco aparece sublinhado. Na faixa de opções e nos diálogos do motor (Caractere, Parágrafo, Link…), o realce do foco é fraco no Windows 11: a faixa ganha só um contorno claro. Para navegar só com o teclado vendo bem onde está, ligue a barra de menus (botão ≡ no canto direito da faixa › Barra de menus) e use Alt e as setas.</li>
+<li>A tela foi conferida nas escalas de 100 %, 125 % e 150 %. Em 200 % ainda não houve conferência: textos podem ficar cortados ou diálogos maiores que a tela.</li>
+</ul>
+
+<h3>Automação</h3>
+<ul>
+<li>Programas externos que controlam o AY pela interface UNO enquanto a faixa de opções está na tela podem fazê-lo fechar inesperadamente (falha do motor, reproduzida também no LibreOffice 26.8.1 sem alterações). O uso normal pela interface não apresentou o problema nos testes.</li>
+</ul>
+
+</div></section>
+</main>
+<footer class="rodape">
+  <div class="largura rodape-grade">
+    <div>
+      <p class="marca-rodape"><img src="assets/img/icone.svg" alt="" width="28" height="28"> AY ESCREVA</p>
+      <p>Editor de textos gratuito, em português do Brasil. Sem conta, sem mensalidade, funciona sem internet.</p>
+    </div>
+    <nav aria-label="Rodapé">
+      <ul>
+        <li><a href="baixar.html">Baixar</a></li>
+        <li><a href="instalar.html">Como instalar</a></li>
+        <li><a href="recursos.html">Recursos</a></li>
+        <li><a href="versoes.html">Versões e limitações</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Informações">
+      <ul>
+        <li><a href="ajuda.html">Ajuda</a></li>
+        <li><a href="privacidade.html">Privacidade</a></li>
+        <li><a href="licencas.html">Licenças</a></li>
+        <li><a href="https://github.com/davisoares50-hash/ay-escreva">Código-fonte e relatos de problemas</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="largura rodape-nota">
+    <p>O AY ESCREVA é um projeto independente construído sobre o motor de documentos do LibreOffice. “LibreOffice” é marca da The Document Foundation, que não produz nem endossa este projeto. Este site não usa cookies, não usa rastreadores e não carrega nada de outros servidores.</p>
+  </div>
+</footer>
+<script src="assets/site.js" defer></script>
+</body>
+</html>

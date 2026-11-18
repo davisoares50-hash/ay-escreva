@@ -1,0 +1,19 @@
+{
+  "formato": 1,
+  "descricao": "Versões do AY ESCREVA para \"Verificar atualizações\". Assinado pela chave do projeto.",
+  "canais": {
+    "testes": {
+      "versao": "0.7.0",
+      "data": "2026-10-29",
+      "notas": "Versão de testes 0.7.0: revisão de texto e Assistente AY, formatação de trabalhos acadêmicos e galeria de modelos, IA local opcional (download de cerca de 3,4 GB), conferência de referências e de consistência e verificação de atualizações. Recuperação gravada a cada 3 minutos; foco do teclado realçado nos diálogos do AY.",
+      "pagina": "https://github.com/davisoares50-hash/ay-escreva/releases/tag/v0.7.0",
+      "instalador": {
+        "arquivo": "AYEscreva-0.7.0-teste-windows11-x64.exe",
+        "url": "https://github.com/davisoares50-hash/ay-escreva/releases/download/v0.7.0/AYEscreva-0.7.0-teste-windows11-x64.exe",
+        "tamanho": 218118208,
+        "sha256": "10624b07a6c9941b2bb85baea826d03392419a3bbce66ad7e09ccbcdb2a059c4"
+      }
+    }
+  },
+  "gerado_em": "2026-10-29T19:33:16.848Z"
+}
