@@ -4,9 +4,9 @@
   "versoes": [
     {
       "versao": "0.7.0",
-      "data": "2026-10-22",
+      "data": "2026-11-18",
       "canal": "Versão de testes",
-      "publicada": false,
+      "publicada": true,
       "notas": [
         "Revisão de texto em português do Brasil: painel Assistente AY (aba Revisão) com sugestões de ortografia e gramática por regras, “Pôr no dicionário”, “Não corrigir mais” e correção automática ao digitar, que o Ctrl+Z desfaz.",
         "Trabalhos acadêmicos: Formatar trabalho acadêmico com prévia do que vai mudar, aplicado numa cópia; relatório de conformidade que separa o que foi conferido do que não foi avaliado; galeria de modelos e “Salvar como modelo”.",

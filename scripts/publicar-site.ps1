@@ -61,6 +61,18 @@ Set-Content -Path (Join-Path $siteDir '.nojekyll') -Value '' -Encoding ASCII
 foreach ($f in 'SHA256SUMS.txt', 'NOTAS.md') { if (-not (Test-Path (Join-Path $pub $f))) { throw "Falta $pub\$f (gerado por gerar-site.mjs)" } }
 $linha = Get-Content (Join-Path $pub 'SHA256SUMS.txt') | Where-Object { $_ -match [regex]::Escape($arquivo) }
 if (-not $linha -or (($linha -split '\s+')[0]).ToLowerInvariant() -ne $hash) { throw 'SHA256SUMS.txt não corresponde ao instalador atual' }
+# Arquivo de versões assinado de "Verificar atualizações" (docs\ATUALIZACOES.md): vai na raiz do site só se anunciar
+# esta versão e este instalador; o site é enviado num commit único, então ele precisa estar junto.
+$manifesto = Join-Path $Raiz 'out\atualizacoes\atualizacoes.json'
+if (Test-Path $manifesto) {
+  $canal = (Get-Content $manifesto -Raw -Encoding UTF8 | ConvertFrom-Json).canais.testes
+  if ($canal.versao -ne $versao -or $canal.instalador.sha256 -ne $hash -or $canal.instalador.url -ne "https://github.com/$Repositorio/releases/download/$tag/$arquivo") {
+    throw 'out\atualizacoes\atualizacoes.json não anuncia esta versão e este instalador: refaça com tools\gerar-manifesto.mjs'
+  }
+  if (-not (Test-Path "$manifesto.sig")) { throw "Falta $manifesto.sig" }
+  Copy-Item $manifesto, "$manifesto.sig" $siteDir
+  Write-Host "   arquivo de versões assinado incluído (canal testes: $versao)"
+} else { Write-Host '   sem arquivo de versões assinado (o site vai sem ele)' -ForegroundColor Yellow }
 Write-Host "   gerado em $siteDir"
 
 # ---------------------------------------------------------------------------
@@ -80,7 +92,7 @@ if ($Executar -and ($existe -or $CriarRepositorio)) {
 }
 
 Passo "Versão $tag no GitHub Releases"
-$titulo = "AY ESCREVA $versao — versão inicial de testes (Windows 11 x64)"
+$titulo = "AY ESCREVA $versao — versão de testes (Windows 11 x64)"
 $temRelease = Sonda-Gh release view $tag --repo $Repositorio
 if ($temRelease) { Write-Host '   já existe (arquivos não são substituídos; para trocar, crie uma nova versão)' }
 elseif (-not $Executar) { Faria "gh release create $tag `"$exe`" `"$pub\SHA256SUMS.txt`" --repo $Repositorio --title `"$titulo`" --notes-file `"$pub\NOTAS.md`" --prerelease" }
