@@ -94,9 +94,10 @@ node tools/gerar-manifesto.mjs --canal testes --instalador out/instalador/AYEscr
 
 Nada disso é feito automaticamente: publicar continua sendo uma decisão de quem mantém o projeto.
 
-## Pacote preparado da 0.7.0 (não publicado)
+## Publicação da 0.7.0 (18/11/2026)
 
-Tudo o que a publicação da 0.7.0 precisa está pronto em `out\`, sem nada enviado à internet:
+Publicada com autorização do responsável, por `scripts\publicar-site.ps1 -Executar`, a partir destes arquivos de `out\`
+(resultados em RESULTADOS-TESTES.md §10):
 
 | Arquivo | Para quê |
 |---|---|
@@ -106,13 +107,14 @@ Tudo o que a publicação da 0.7.0 precisa está pronto em `out\`, sem nada envi
 | `out\site-previa-0.7.0\` | prévia local do site (abre direto no navegador) |
 | `out\site-publicacao-0.7.0\` | site já gerado no modo de publicação, com os links do GitHub Releases |
 
-Para publicar, quando decidir (nesta ordem; a versão pública atual, 0.2.0, continua no ar até o passo 3):
+Ordem seguida (a mesma para as próximas versões; a versão pública anterior continua no ar até o passo 3):
 
 1. Criar o lançamento `v0.7.0` (pré-lançamento) no GitHub com o instalador e o `SHA256SUMS.txt`, usando `NOTAS.md`.
 2. Conferir por HTTPS que o arquivo publicado tem o mesmo SHA-256.
 3. Em `site\versoes.json`, marcar a 0.7.0 como `"publicada": true` e publicar o site
    (`scripts\publicar-site.ps1 -Repositorio davisoares50-hash/ay-escreva -Executar`). Antes disso, o gerador do site
    **se recusa** a gerar o modo de publicação da 0.7.0, para que o site não aponte para um arquivo inexistente.
-4. Copiar `out\atualizacoes\atualizacoes.json` e `.sig` para a raiz do site publicado. A partir daí, quem tem a 0.2.0
+4. `out\atualizacoes\atualizacoes.json` e `.sig` vão para a raiz do site publicado: o script os inclui no envio do site,
+   só se anunciarem esta versão, este instalador (SHA-256) e o endereço do lançamento. A partir daí, quem tem a 0.2.0
    **não** recebe a oferta (a 0.2.0 não tem "Verificar atualizações"); quem tiver uma versão de testes com a verificação
    recebe a oferta.

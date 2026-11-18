@@ -3,14 +3,14 @@
 Editor de textos gratuito, instalável e em português do Brasil, com experiência próxima à do Microsoft Word e
 identidade própria. Sem mensalidade, sem conta, offline e com documentos locais.
 
-**Estado:** versão pública **0.2.0, versão inicial de testes para Windows 11 x64** (o único sistema validado).
-Versão de testes local mais recente, ainda não publicada: **0.7.0**, que reúne tudo o que veio depois da 0.2.0 —
+**Estado:** versão pública **0.7.0, versão de testes para Windows 11 x64** (o único sistema validado), publicada em
+18/11/2026 no site https://davisoares50-hash.github.io/ay-escreva/. Ela reúne tudo o que veio depois da 0.2.0 —
 revisão de texto e painel **Assistente AY** (0.3.0), formatação de trabalhos acadêmicos e galeria de modelos (0.4.0), IA
 local opcional (0.5.0), revisão do documento inteiro, referências, títulos, explicações e inconsistências (entrega D) e
 **Verificar atualizações** (entrega E). Instalador: `out\instalador\AYEscreva-0.7.0-teste-windows11-x64.exe` (208 MB,
 SHA-256 `10624b07a6c9941b2bb85baea826d03392419a3bbce66ad7e09ccbcdb2a059c4`, de 29/10/2026), gerado por `scripts\instalador.ps1`. O modelo de IA não vem no instalador: o download (cerca de 3,4 GB; o
-Windows mostra 3,1 GB) é opcional e feito pelo próprio AY. O pacote de publicação da 0.7.0 (notas, SHA256SUMS, arquivo de
-versões assinado, site) está pronto em `out\` e **não foi publicado** ([docs/ATUALIZACOES.md](docs/ATUALIZACOES.md)).
+Windows mostra 3,1 GB) é opcional e feito pelo próprio AY. Publicados em 18/11/2026: o instalador (GitHub Releases, `v0.7.0`), o site e o arquivo de
+versões assinado de "Verificar atualizações" ([docs/SITE.md](docs/SITE.md), [docs/ATUALIZACOES.md](docs/ATUALIZACOES.md)).
 Situação de cada item do projeto: [docs/SITUACAO.md](docs/SITUACAO.md). Testes manuais pendentes (escalas de tela e
 leitor de tela): [docs/TESTES-MANUAIS.md](docs/TESTES-MANUAIS.md). Windows 10, Windows em ARM, macOS e Linux
 estão em desenvolvimento. Veja

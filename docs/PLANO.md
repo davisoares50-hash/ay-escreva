@@ -135,7 +135,7 @@ Resultados em [RESULTADOS-TESTES.md](RESULTADOS-TESTES.md) §5.5; decisões em [
 Investigação da queda do motor (ligada a entrada simulada pelos testes; recuperação medida e sem promessa de
 recuperação integral), validação das ferramentas da faixa pelo efeito real com desfazer/refazer e ODT/DOCX, correção
 dos botões Uma página, Várias páginas e Exibição de livro, revisão de segurança da chave das atualizações, site e
-pacote de publicação preparados (não publicados). Resultados em [RESULTADOS-TESTES.md](RESULTADOS-TESTES.md) §9, §13 e
+pacote de publicação (publicados em 18/11/2026). Resultados em [RESULTADOS-TESTES.md](RESULTADOS-TESTES.md) §9, §13 e
 §14 e em [VALIDACAO-FERRAMENTAS.md](VALIDACAO-FERRAMENTAS.md).
 
 **Próximos passos (antes de novas funções):** testes manuais em 125 %, 150 % e 200 % e com leitor de tela

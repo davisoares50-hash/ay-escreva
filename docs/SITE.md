@@ -77,13 +77,15 @@ Com `-Executar`: cria o repositório público (com `-CriarRepositorio`) e envia 
 (HTTPS). Requer o GitHub CLI (`gh`) autenticado na conta dona do repositório; o commit do site usa o endereço
 "noreply" do GitHub, não o e-mail pessoal.
 
-**Estado (20/10/2026): 0.2.0 publicada** com autorização do responsável.
+**Estado (18/11/2026): 0.7.0 publicada** com autorização do responsável; é a versão oferecida no site. A 0.2.0
+(publicada em 20/10/2026) continua na página Versões e no GitHub Releases.
 
 | O quê | Endereço |
 |---|---|
 | Site (GitHub Pages, HTTPS obrigatório) | https://davisoares50-hash.github.io/ay-escreva/ |
-| Instalador (GitHub Releases, sem login) | https://github.com/davisoares50-hash/ay-escreva/releases/download/v0.2.0/AYEscreva-0.2.0-teste-windows11-x64.exe |
-| Versão e notas | https://github.com/davisoares50-hash/ay-escreva/releases/tag/v0.2.0 |
+| Instalador (GitHub Releases, sem login) | https://github.com/davisoares50-hash/ay-escreva/releases/download/v0.7.0/AYEscreva-0.7.0-teste-windows11-x64.exe |
+| Versão e notas | https://github.com/davisoares50-hash/ay-escreva/releases/tag/v0.7.0 |
+| Arquivo de versões assinado ("Verificar atualizações") | https://davisoares50-hash.github.io/ay-escreva/atualizacoes.json (e `.sig`) |
 | Repositório | https://github.com/davisoares50-hash/ay-escreva |
 
 Fluxo público testado (acessar, baixar, conferir o SHA-256, instalar, abrir, desinstalar): ver
@@ -99,7 +101,7 @@ assinatura de código.
    `"status": "disponivel"` **somente** depois de testada nela. Enquanto a versão não for publicada, ela fica com
    `"publicada": false`: a prévia local mostra a faixa "Prévia local … ainda não publicada" e o modo de publicação
    (`--modo github`) **se recusa** a gerar o site, para que ele não aponte para um instalador que ainda não está no
-   Releases. Marque `"publicada": true` só ao publicar (a 0.7.0 está preparada assim; ver `docs/ATUALIZACOES.md`).
+   Releases. Marque `"publicada": true` só ao publicar (a 0.7.0 foi publicada assim em 18/11/2026; ver `docs/ATUALIZACOES.md`).
 4. Atualizar `extensao/ayescreva/ajuda/limitacoes.html` (vira a seção de limitações do site).
 5. Gerar a prévia (`node tools\gerar-site.mjs --modo local`), rodar `tests\site\testar_fluxo.ps1` e, com
    autorização, `scripts\publicar-site.ps1 -Repositorio <dono>/<nome> -Executar` (cria a versão no Releases,

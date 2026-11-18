@@ -4,13 +4,13 @@
 > pedido original e das entregas, com a evidência de cada um) e de `docs/MATRIZ-FUNCIONALIDADES.md` (ferramentas da faixa,
 > geradas pelos testes). Não editar à mão.
 
-Versão pública: **0.2.0**. Versão de testes local mais recente: **0.7.0**
+Versão pública: **0.7.0**. Versão de testes local mais recente: **0.7.0**
 (`out\instalador\AYEscreva-0.7.0-teste-windows11-x64.exe`).
 
 | Situação | Requisitos e entregas | Ferramentas da faixa |
 |---|---|---|
-| ✅ Concluído e testado | 32 | 172 |
-| 🟡 Implementado sem validação completa | 12 | 73 |
+| ✅ Concluído e testado | 34 | 172 |
+| 🟡 Implementado sem validação completa | 10 | 73 |
 | ⬜ Ainda não implementado | 10 | 4 |
 
 Legenda: **concluído e testado** = há teste automatizado que conferiu o efeito (pela interface ou pela API do motor) ou,
@@ -104,8 +104,8 @@ Só há uma máquina disponível (Windows 11 Pro x64, Intel Core i5-8500). Teste
 | Atualização pelo próprio AY (Ajuda › Verificar atualizações) | 🟡 Implementado sem validação completa | Funciona de ponta a ponta com o instalador conferido; depende de publicar atualizacoes.json assinado no site oficial (docs/ATUALIZACOES.md). |
 | Site oficial com download e SHA-256 | ✅ Concluído e testado | Publicado (versão 0.2.0); fluxo acessar → baixar → conferir → instalar 25/25. |
 | Chave privada de assinatura das atualizações protegida | ✅ Concluído e testado | Procurada byte a byte, sem exibi-la (tests/seguranca/procurar_chave_privada.py, com controle positivo): ausente do repositório e de todo o histórico do git, de dist (o que vira o instalador), de out (instaladores, site, prévias), de tests/output, dos registros em TEMP e das conversas de desenvolvimento; a instalação de teste também é varrida. Só a chave pública vai no AY. Cópia de segurança, perda e vazamento: docs/ATUALIZACOES.md. |
-| Site preparado para a 0.7.0 (versão de testes, Windows 11 x64) | 🟡 Implementado sem validação completa | Prévia local em out/site-previa-0.7.0: requisitos, limitações, tamanho, SHA-256, instruções, diferença entre assinatura das atualizações e assinatura digital do instalador, IA local (≈3,4 GB, requisitos testados, funções que dependem dela). Não publicado: o gerador recusa o modo de publicação enquanto a 0.7.0 não estiver marcada como publicada. |
-| Pacote de distribuição e arquivo de versões assinado da 0.7.0 | 🟡 Implementado sem validação completa | Instalador, NOTAS.md, SHA256SUMS.txt, atualizacoes.json + .sig (assinado com a chave do projeto e conferido com o código de verificação do AY) e site no modo de publicação, prontos em out/ (docs/ATUALIZACOES.md). Nada foi publicado; a 0.2.0 continua sendo a versão pública. |
+| Site da 0.7.0 (versão de testes, Windows 11 x64) | ✅ Concluído e testado | Publicado em 18/11/2026 (https://davisoares50-hash.github.io/ay-escreva/), com a 0.7.0 como versão oferecida: requisitos, limitações, tamanho, SHA-256, instruções, diferença entre assinatura das atualizações e assinatura digital do instalador, IA local (≈3,4 GB, requisitos testados, funções que dependem dela); a 0.2.0 continua na página Versões. Teste do fluxo no endereço publicado: 25/25, incluindo baixar, conferir o SHA-256, instalar, abrir, usar e desinstalar (RESULTADOS §10). |
+| Pacote de distribuição e arquivo de versões assinado da 0.7.0 | ✅ Concluído e testado | Publicado em 18/11/2026: lançamento v0.7.0 no GitHub com o instalador e o SHA256SUMS.txt (o arquivo baixado por HTTPS confere com o SHA-256 local) e atualizacoes.json + .sig na raiz do site; o código de verificação do AY, contra o site publicado, oferece a 0.7.0 a partir da 0.5.0 e informa “atualizada” na 0.7.0 (RESULTADOS §10). |
 | Assinatura digital do instalador | ⬜ Ainda não implementado | Sem certificado de assinatura de código; o SmartScreen pode avisar. |
 | Pacote MSI para empresas | ⬜ Ainda não implementado | Não feito. |
 

@@ -957,14 +957,24 @@ queda). Observação de identidade: o título dessa janela mostra a versão do m
 
 ## 10. Site oficial e publicação
 
-**0.7.0 preparada, não publicada (22/10/2026):** prévia local em `out\site-previa-0.7.0` e site no modo de publicação em
+**0.7.0 publicada (18/11/2026)**, com autorização do responsável, por `scripts\publicar-site.ps1 -Executar`: código
+enviado ao `main` do repositório público (8af4774); lançamento `v0.7.0` (pré-lançamento) com o instalador e o
+`SHA256SUMS.txt`; o arquivo baixado por HTTPS confere com o SHA-256 local (`10624b07…59c4`); site no GitHub Pages com a
+0.7.0 como versão oferecida (a 0.2.0 continua na página Versões) e o arquivo de versões assinado na raiz. Antes do
+envio, a busca da chave privada no histórico do git (333 objetos) e nos arquivos do site e do lançamento não achou
+nada. Teste do fluxo no endereço publicado (`tests\site\testar_fluxo.ps1`): **25/25**, incluindo baixar, conferir,
+instalar, abrir, usar (aceite 40/40) e desinstalar o arquivo baixado (19/19). "Verificar atualizações" contra o site
+publicado, com o código do AY: a partir da 0.5.0 oferece a 0.7.0 (SHA-256 `10624b07…`); na 0.7.0, informa que está
+atualizada.
+
+**0.7.0 preparada (22/10/2026, antes da publicação):** prévia local em `out\site-previa-0.7.0` e site no modo de publicação em
 `out\site-publicacao-0.7.0` (gerado a partir de uma cópia de `site/versoes.json` com a 0.7.0 marcada como publicada; o
 arquivo do projeto continua com `"publicada": false`, e o gerador recusa o modo de publicação com ele). Conteúdo
 conferido nas capturas `tests\output\site-previa\*.png`: requisitos (incluindo "testado só em 100 %"), limitações,
 tamanho (208 MB), SHA-256, instruções, as duas assinaturas (do instalador, que não existe, e das atualizações, conferida
 pelo AY), IA local (≈3,4 GB, requisitos testados, o que depende dela) e a privacidade com os dois acessos à internet que
-só acontecem a pedido. Notas do lançamento e `SHA256SUMS.txt` em `out\publicacao\v0.7.0`. A versão pública continua a
-0.2.0.
+só acontecem a pedido. Notas do lançamento e `SHA256SUMS.txt` em `out\publicacao\v0.7.0`. Até 18/11/2026, a versão pública
+continuou a 0.2.0.
 
 Publicado em 20/10/2026, com autorização do responsável, só com recursos gratuitos (repositório público,
 GitHub Releases e GitHub Pages; nenhum serviço pago nem cobrança ativada):
